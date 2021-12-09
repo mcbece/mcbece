@@ -1,0 +1,36 @@
+    <div class="mdui-dialog" id="custom-tool">
+        <div class="mdui-dialog-title mdui-color-theme">
+            <span class="mdui-typo-headline">自定义</span>
+            <div class="mdui-typo-caption-opacity">你可以通过这个工具对本站进行自定义</div>
+        </div>
+        <div class="mdui-divider-dark" style="height: 2px;"></div>
+        <div class="mdui-dialog-content">
+            <div class="mdui-row">
+                <div class="mdui-col-xs-12 mdui-p-b-1">
+                    <div class="mdui-typo-title">说明：</div>
+                </div>
+                <div class="mdui-col-xs-1 mdui-p-b-1 retract"></div>
+                <div class="mdui-col-xs-10 mdui-col-sm-11 mdui-p-b-1">
+                    <span class="mdui-typo">
+                        网站会自动识别以 "/custom.json" 结尾的链接，并使用其中的内容<br />
+                        网站会自动识别以 "/custom.js" 结尾的链接，并将其添加到 body 的最下方<br />
+                        点击保存后会<strong>刷新页面</strong><br />
+                        您添加的所有信息都将保存在 localStorage 中
+                    </span>
+                </div>
+                <div class="mdui-col-xs-12 mdui-p-b-1">
+                    <div class="mdui-typo-title">输入：</div>
+                </div>
+                <div class="mdui-col-xs-1 mdui-p-b-1 retract"></div>
+                <div class="mdui-col-xs-10 mdui-col-sm-11 mdui-p-b-1">
+                    <div class="mdui-textfield mdui-textfield-black mdui-p-a-0">
+                        <input class="mdui-textfield-input" placeholder="请输入文件链接" id="customURL" />
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="mdui-dialog-actions">
+            <button class="mdui-btn mdui-ripple" onclick="page.custom.setURL()">保存</button>
+            <button class="mdui-btn mdui-ripple" mdui-dialog-close>关闭</button>
+        </div>
+    </div>

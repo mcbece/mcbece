@@ -1,0 +1,107 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>基岩版命令编写助手</title>
+    <meta name="theme-color" content="#3F51B5">
+    <link rel="shortcut icon" type="image/png" href="./icon.png">
+    <!--Manifest-->
+    <link rel="manifest" href="/manifest.json"/>
+    <!--CSS-->
+    <link rel="stylesheet" href="/css/index.css"/>
+    <!--MDUI CSS-->
+    <link rel="stylesheet" href="/mdui/dist/css/mdui.min.css"/>
+    <!--Eruda.js-->
+    <script>
+        /**
+         * 移动端开发者工具（eruda）：默认关闭
+         * Mobile Devtools(eruda): default off
+         * 
+         * https://github.com/liriliri/eruda
+         */
+        if (localStorage.getItem("devTool") === null) {
+            localStorage.setItem("devTool", "false")
+        }
+        if (localStorage.getItem("devTool") === "true") {
+            let script = document.createElement("script")
+            script.src = "/eruda/eruda.js"
+            document.head.appendChild(script)
+            script.onload = () => {
+                eruda.init()
+            }
+        }
+        localStorage.setItem("devTool", "true")
+    </script>
+</head>
+
+<body class="mdui-theme-primary-indigo mdui-theme-accent-pink" style="padding-top: 128px;">
+    <!--应用栏-->
+    <%- include("layout/header") %>
+    <!--侧边栏-->
+    <%- include("layout/sidebar") %>
+    <!--工具-->
+    <%- include("layout/tool", { availableLanguages, lang }) %>
+    <!--列表-->
+    <div class="mdui-container-fluid mdui-p-a-0">
+        <div class="mdui-list mdui-p-t-0" id="list"></div>
+    </div>
+    <!--MDUI JS-->
+    <script src="./mdui/dist/js/mdui.min.js"></script>
+    <!--JavaScript-->
+    <script>
+        /**
+         * 默认语言：简体中文
+         * Default language: Simplified Chinese
+         */
+        if (localStorage.getItem("language") === null) {
+            localStorage.setItem("language", "zh")
+        }
+        /** 
+         * 默认主题色：{primary: "indigo", accent: "pink"}
+         * Default Theme Color: {primary: "indigo", accent: "pink"}
+         * 可用主题色：参见 https://www.mdui.org/docs/color
+         * Available Theme Color: by https://www.mdui.org/docs/color
+         * 
+         * https://github.com/zdhxiong/mdui
+         */
+        if (localStorage.getItem("mduiThemeColor") === null) {
+            localStorage.setItem("mduiThemeColor", '{primary: "indigo", accent: "pink"}')
+        }
+        /** 
+         * 默认自定义链接：""(空)
+         * Default Custom URL: ""(none)
+         */
+        if (localStorage.getItem("customURL") === null) {
+            localStorage.setItem("customURL", "")
+        }
+        /** 
+         * 默认列表是否加载图片："true"
+         * Default The List Item Is With Image: "true"
+         */
+        if (localStorage.getItem("withImage") === null) {
+            localStorage.setItem("withImage", "true")
+        }
+    </script>
+    <script src="/js/index.js"></script>
+    <script type="module" src="/js/module.js"></script>
+    <script>
+        /* 来源于 https://www.jianshu.com/p/f82e06abc10e
+        let vh = window.innerHeight / 100
+        document.documentElement.style.setProperty("--vh", `${vh}px`)
+        window.addEventListener("resize", () => {
+            let vh = window.innerHeight / 100
+            document.documentElement.style.setProperty("--vh", `${vh}px`)
+        })*/
+        
+        const LANG = page.option.language.get()
+        page.list.withImage = page.option.withImage.get()
+        page.option.mduiThemeColor.setFromStorage()
+        window.onload = () => {
+            page.initialization()
+        }
+    </script>
+</body>
+
+</html>

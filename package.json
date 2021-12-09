@@ -1,0 +1,30 @@
+{
+    "name": "mcbece",
+    "version": "0.0.0",
+    "author": "PFiS1737",
+    "private": true,
+    "license":" GPL-3.0",
+    "homepage": "https://github.com/PFiS1737/mcbece#readme",
+    "repository": {
+        "type": "git",
+        "url": "https://github.com/PFiS1737/mcbece.git"
+    },
+    "bugs": {
+        "url": "http://path/to/bug",
+        "email": "pfis1737@qq.com"
+    },
+    "dependencies": {
+        "cookie-parser": "^1.4.6",
+        "ejs": "^3.1.6",
+        "eruda": "^2.4.1",
+        "express": "^4.17.1",
+        "mdui": "^1.0.2"
+    },
+    "devDependencies": {
+        "morgan": "^1.10.0"
+    },
+    "scripts": {
+        "start": "node app",
+        "dev:start": "nodemon app"
+    }
+}

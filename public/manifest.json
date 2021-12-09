@@ -1,0 +1,17 @@
+{
+   "name": "基岩版命令编写助手",
+   "short_name": "Command Editer",
+   "start_url": "/",
+   "display": "standalone",
+   "orientation": "any",
+   "prefer_related_applications": false,
+   "background_color": "white",
+   "icons": [
+      {
+         "src": "/icon.png",
+         "sizes": "144x144",
+         "type": "image/png"
+      }
+   ],
+   "scope": "/"
+}

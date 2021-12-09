@@ -1,0 +1,124 @@
+@import url(./mdui.extension.css);
+
+*::-webkit-scrollbar {
+    display: none;
+}
+
+
+#listName {
+    height: 20px;
+    overflow: hidden;
+}
+
+
+.minecraft-font {
+    font-family: Minecraft !important;
+}
+
+@font-face{
+    font-family: Minecraft;
+    src: url(./fonts/minecraft.ttf) format('truetype')/*,
+         url(./fonts/minecraft.eot) formaqt('embedded-opentype'),
+         url(./fonts/minecraft.woff) format('woff')*/;
+}
+
+@media (min-width: 600px) {
+    .mdui-row .retract {
+        width: 30px;
+    }
+}
+
+
+/* thin model */
+body.thin-model {
+    padding-top: 45px !important;
+    padding-bottom: 40px !important;
+}
+
+body.thin-model .minecraft-font {
+    font-family: Roboto, Noto, Helvetica, Arial, sans-serif !important;
+}
+
+body.thin-model .mdui-fab {
+    bottom: 56px;
+}
+
+body.thin-model .mdui-toolbar:nth-child(1) {
+    height: 40px !important;
+    bottom: 0 !important;
+    top: auto !important;
+    position: fixed;
+}
+
+body.thin-model .mdui-toolbar:nth-child(1) .mdui-textfield-input {
+    font-size: 13px;
+    padding: 0 !important;
+    border: 0 !important;
+    margin: 0 !important;
+}
+
+body.thin-model .mdui-toolbar:nth-child(1) .mdui-icon {
+    display: none;
+}
+
+body.thin-model .mdui-toolbar:nth-child(1) .mdui-textfield {
+    padding: 8px 0 !important;
+}
+
+body.thin-model .mdui-toolbar:nth-child(1) .mdui-textfield-focus .mdui-textfield-input,
+body.thin-model .mdui-toolbar:nth-child(1) .mdui-textfield-focus .mdui-textfield-input:hover,
+body.thin-model .mdui-toolbar:nth-child(1) .mdui-textfield-input {
+    box-shadow: 0 0 0 0 !important;
+}
+
+body.thin-model .mdui-toolbar:nth-child(2) {
+    height: 45px !important;
+}
+
+body.thin-model .mdui-toolbar:nth-child(2) .mdui-list-item-content {
+    margin: 0 12px;
+}
+
+body.thin-model #grammar {
+    font-size: 13px;
+}
+
+body.thin-model #note {
+    font-size: 11px;
+    margin-top: 0;
+}
+
+body.thin-model #list .mdui-list-item {
+    padding-right: 8px;
+    padding-left: 8px;
+    min-height: 24px;
+    max-height: 36px;
+    height: calc(100vh / 16);
+    height: calc(var(--vh, 1vh) * 100 / 16);
+    /* transition: height .3s; */
+    /* 因为在加载长列表时会比较卡，所以这行先注释掉了 */
+    /* 建议开启输入法的 不挤压页面 等类似功能 */
+}
+
+body.thin-model #list .mdui-list-item-content {
+    padding: 0;
+    height: 20px;
+}
+
+body.thin-model #list .mdui-list-item-title {
+    display: inline;
+    font-size: 13px;
+}
+
+body.thin-model #list .mdui-list-item-text {
+    display: inline;
+    font-size: 11px;
+}
+
+body.thin-model .mdui-dialog-full-screen {
+    max-height: 100% !important;
+    max-width: 100% !important;
+    height: 100% !important;
+    width: 100% !important;
+    margin: 0 !important;
+}

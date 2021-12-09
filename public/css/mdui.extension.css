@@ -1,0 +1,50 @@
+.mdui-drawer-always-wide.mdui-drawer {
+    width: 320px !important;
+    max-width: 320px !important;
+}
+
+.mdui-drawer-always-wide.mdui-drawer-close {
+    -webkit-transform: translateX(-330px) !important;
+            transform: translateX(-330px) !important;
+}
+
+.mdui-drawer-always-wide.mdui-drawer-close.mdui-drawer-right {
+    -webkit-transform: translateX(330px) !important;
+            transform: translateX(330px) !important;
+}
+
+
+
+
+
+
+
+.mdui-textfield-white .mdui-textfield-input{
+    border-bottom: 1px solid white;
+}
+
+.mdui-textfield-focus.mdui-textfield-white .mdui-textfield-input, 
+.mdui-textfield-focus.mdui-textfield-white .mdui-textfield-input:hover {
+    border-bottom-color: white;
+    -webkit-box-shadow: 0 1px 0 0 white;
+            box-shadow: 0 1px 0 0 white;
+}
+
+.mdui-textfield-focus.mdui-textfield-black .mdui-textfield-input, 
+.mdui-textfield-focus.mdui-textfield-black .mdui-textfield-input:hover {
+    border-bottom-color: rgba(0,0,0,0.7);
+    -webkit-box-shadow: 0 1px 0 0 rgba(0,0,0,0.7);
+            box-shadow: 0 1px 0 0 rgba(0,0,0,0.7);
+}
+
+
+
+
+
+.mdui-list-item-things-display-when-hover {
+    display: none !important;
+}
+
+.mdui-list-item:hover .mdui-list-item-things-display-when-hover {
+    display: inline !important;
+}

@@ -1,0 +1,19 @@
+{
+    "zh": {
+        "list": {
+            "player": [
+                {
+                    "template": {
+                        "input": {
+                            "text": "{name} "
+                        }
+                    }
+                },
+                {
+                    "name": "PFiS1737",
+                    "info": "作者名称 :-("
+                }
+            ]
+        }
+    }
+}

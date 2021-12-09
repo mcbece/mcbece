@@ -1,0 +1,87 @@
+    <div class="mdui-dialog" id="enumerate-tool">
+        <div class="mdui-dialog-title mdui-color-theme">
+            <span class="mdui-typo-headline">穷举助手（未完工）</span>
+            <div class="mdui-typo-caption-opacity">您可以通过这个工具输入穷举的内容</div>
+        </div>
+        <div class="mdui-tab mdui-tab-full-width" mdui-tab>
+            <a href="#enumerate-tab1-byList" class="mdui-ripple">通过列表</a>
+            <a href="#enumerate-tab2-byInput" class="mdui-ripple">自行输入</a>
+        </div>
+        <div class="mdui-divider-dark" style="height: 2px;"></div>
+        <div class="mdui-dialog-content mdui-p-b-0 mdui-p-t-3">
+            <div class="mdui-row">
+                <div class="mdui-col-xs-12 mdui-p-b-1">
+                    <div class="mdui-typo-title">配置：</div>
+                </div>
+                <div class="mdui-col-xs-1 mdui-p-b-1" style="width: 30px;"></div>
+                <div class="mdui-col-xs-11 mdui-p-b-1">
+                    <div class="mdui-typo-Subheading-opacity">当前列表：
+                        <span id="getListName"></span>
+                    </div>
+                </div>
+                <div class="mdui-col-xs-1 mdui-p-b-1" style="width: 30px;"></div>
+                <div class="mdui-col-xs-11 mdui-p-b-1">
+                    <div class="mdui-typo-Subheading-opacity">
+                        选择预设：
+                        <select class="mdui-select" mdui-select>
+                            <option value="tag">目标选择器 tag 参数</option>
+                            <option value="tag-back">目标选择器 tag 参数 (反选)</option>
+                            <option value="name">目标选择器 name 参数</option>
+                            <option value="name-back">目标选择器 name 参数 (反选)</option>
+                            <option value="scores">目标选择器 scores 参数</option>
+                            <option value="json">JSON 物品组件</option>
+                        </select>
+                        （已自动选择）
+                    </div>
+                </div>
+            </div>
+            <div id="enumerate-tab1-byList" class="mdui-p-a-0">
+                <div class="mdui-row">
+                    <div class="mdui-col-xs-12 mdui-p-b-1">
+                        <div class="mdui-typo-title">操作：</div>
+                    </div>
+                    <div class="mdui-col-xs-1 mdui-p-b-1" style="width: 30px;"></div>
+                    <div class="mdui-col-xs-11 mdui-p-b-1">
+                        <button class="mdui-btn mdui-ripple mdui-color-theme-accent mdui-m-r-1" onclick="page.listEle.enumerate.button.select.all()">全选</button>
+                        <button class="mdui-btn mdui-ripple mdui-color-theme-accent mdui-m-r-1" onclick="page.listEle.enumerate.button.select.none()">全不选</button>
+                        <button class="mdui-btn mdui-ripple mdui-color-theme-accent mdui-m-r-1" onclick="page.listEle.enumerate.button.select.contrary()">反选</button>
+                    </div>
+                        <div class="mdui-col-xs-12 mdui-p-b-1">
+                        <div class="mdui-typo-title">预览：</div>
+                    </div>
+                    <div class="mdui-col-xs-1 mdui-p-b-1" style="width: 30px;"></div>
+                    <div class="mdui-col-xs-11 mdui-p-b-1">
+                        <div class="mdui-textfield mdui-textfield-black mdui-p-a-0" onclick="enumerate('preview')">
+                            <input class="mdui-textfield-input" placeholder="点击生成预览" id="getEnumeratePreview" disabled/>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div id="enumerate-tab2-byInput" class="mdui-p-a-0">
+                <div class="mdui-row">
+                    <div class="mdui-col-xs-12 mdui-p-b-1">
+                        <div class="mdui-typo-title">内容：</div>
+                    </div>
+                    <div class="mdui-col-xs-1 mdui-p-b-1" style="width: 30px;"></div>
+                    <div class="mdui-col-xs-11 mdui-p-b-1">
+                        <div class="mdui-textfield mdui-textfield-black mdui-p-a-0">
+                            <textarea class="mdui-textfield-input" onchange="enumerate('preview')" placeholder="输入要穷举的内容，每行一个" id="setEnumerateInput"></textarea>
+                        </div>
+                    </div>
+                    <div class="mdui-col-xs-12 mdui-p-b-1">
+                        <div class="mdui-typo-title">预览：</div>
+                    </div>
+                    <div class="mdui-col-xs-1 mdui-p-b-1" style="width: 30px;"></div>
+                    <div class="mdui-col-xs-11 mdui-p-b-1">
+                        <div class="mdui-textfield mdui-textfield-black mdui-p-a-0">
+                            <input class="mdui-textfield-input" placeholder="预览将会自动生成" id="getEnumeratePreview" disabled/>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="mdui-dialog-actions" style="padding-bottom: 56px;">            
+            <button class="mdui-btn mdui-ripple" onclick="enumerate('add')">添加</button>
+            <button class="mdui-btn mdui-ripple" mdui-dialog-close>关闭</button>
+        </div>
+    </div>
