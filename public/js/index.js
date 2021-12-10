@@ -215,9 +215,9 @@ const page = {
             if (Object.keys(JSON.parse(JSON.stringify(this.name))).sort().toString() !== Object.keys(JSON.parse(JSON.stringify(result.name))).sort().toString()) {
                 //this._name = listGroup
                 this.name = result.name
-                this._module.loadToPage(result.list, list => {
+                this._module.renderToHTML(result.list, list => {
                     listEle.innerHTML = ""
-                    this._module.loadByIntersectionObserver(list)
+                    this._module.loadToPage(list)
                     window.scrollTo({
                         top: 0,
                         left: 0,
@@ -377,7 +377,7 @@ const page = {
                     }
                 }
             },
-            loadToPage(_list, callback) {
+            renderToHTML(_list, callback) {
                 let _name = Object.keys(_list)
                 let list = Object.values(_list)
                 console.log({list})
@@ -464,15 +464,18 @@ const page = {
                     }
                 }
             },
-            /** 
-             * FIXME
-             * 以下两种加载列表的方法依然有重大问题
-             * 同时加载多个列表时，会出现无法正常显示的问题
-             * 正在寻找解决方法
-             */
+            loadToPage(data, container = listEle) {
+                if (window.IntersectionObserver) this.loadByIntersectionObserver(data, container)
+                else {
+                    let items = document.createDocumentFragment()
+                    data.forEach(item => {
+                        items.appendChild(document.createRange().createContextualFragment(item))
+                    })
+                    container.appendChild(items)
+                }
+            },
             loadByIntersectionObserver(data, container = listEle) {
                 // https://www.xiabingbao.com/post/scroll/longlist-optimization.html
-                if (!window.IntersectionObserver) return container.innerHTML = '<p style="color: #f00; text-align: center; font-size: 18px;">当前环境不支持IntersecionObserver</p>'
                 container.innerHTML += '<div id="observer"></div>'
                 let start = 0
                 let count = 20
@@ -493,47 +496,6 @@ const page = {
                         div.appendChild(item)
                     }
                     container.insertBefore(div, container.querySelector(`#observer`))
-                }
-            },
-            loadByVirtualScroll(data, container = listEle) {
-                // https://www.xiabingbao.com/post/scroll/longlist-optimization.html
-                if (typeof data === "object" && !Array.isArray(data)) return Object.keys(data).forEach(name => {
-                    let list = data[name]
-                    container.innerHTML += `<div id="${name}"></div>`
-                    this.loadByVirtualScroll(list, container.querySelector(`[id="${name}"]`))
-                })
-                let start = 0
-                let count = 20
-                createListItem(start, count)
-                window.addEventListener("scroll", handleScroller())
-                function createListItem(start, count, height) {
-                    let div = document.createDocumentFragment()
-                    if (height) {
-                        let p = document.createElement("p")
-                        p.style.height = height + "px"
-                        div.appendChild(p)
-                    }
-                    for (let i = start, len = start + count; i < len && i < data.length; i++) {
-                        let item = document.createRange().createContextualFragment(data[i])
-                        div.appendChild(item)
-                    }
-                    container.innerHTML = ""
-                    container.appendChild(div)
-                }
-                function handleScroller() {
-                    let lastStart = 0
-                    let item = container.querySelector(".mdui-list-item")
-                    let itemStyle = getComputedStyle(item)
-                    let itemHeight = item.offsetHeight + parseInt(itemStyle["marginTop"]) + parseInt(itemStyle["marginBottom"])
-                    return () => {
-                        let currentScrollTop = Math.max(document.documentElement.scrollTop, document.body.scrollTop)
-                        let fixedScrollTop = currentScrollTop - currentScrollTop % itemHeight
-                        let start = Math.floor(currentScrollTop / itemHeight)
-                        if (lastStart !== start) {
-                            lastStart = start
-                            createListItem(start, count, fixedScrollTop)
-                        }
-                    }
                 }
             },
             /** 
