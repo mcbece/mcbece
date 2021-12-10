@@ -1,3 +1,7 @@
+# These are build from node_modules
+public/mdui/
+public/eruda/
+
 # Logs
 logs
 *.log
