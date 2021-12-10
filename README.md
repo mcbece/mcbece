@@ -25,3 +25,8 @@
     - vercel 配置优惠
         - 目前通过将 public 中的 mdui, eruda 上传到 github, 以使 vercel 可以正确读取
         - 需要研究更好的方法
+    - ES Module
+        - 由于 vercel 会将 esm 的文件自动编译成 commonjs, 导致 json 部分无法正常导入
+        - 正在研究解决方法
+        - 待 [mcbelist-api](https://github.com/PFiS1737/mcbelist-api) 制作完成，则可在服务器层面生成全部 json, 可解决此问题
+        - 此问题暂时搁置
