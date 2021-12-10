@@ -37,7 +37,7 @@ const page = {
         getList(name, _return,  lang = LANG) {
             try {
                 let result = eval(`page.json.${lang}.list.${name}`)
-                return result === undefined ? _return : result
+                return result ?? _return
             } catch (err) {
                 if (lang !== "zh") return this.getList(name, _return, "zh")
                 return _return
@@ -66,11 +66,11 @@ const page = {
     initialization() {
         inputEle.placeholder = page.json.getGlobal("inputText")
         if (screen.height < 800) {
-            document.body.classList.add("thin-model")
+            //document.body.classList.add("thin-model")
             document.querySelectorAll(".mdui-dialog").forEach(ele => {
                 ele.classList.add("mdui-dialog-full-screen")
             })
-            page.thin_model = true
+            //page.thin_model = true
         }
         if (LANG === "en") grammarEle.classList.add("minecraft-font")
         page.custom.setURLFromStorage()
@@ -198,24 +198,33 @@ const page = {
         }
     },
     list: {
+        /** TODO
+         * 当前的列表加载及搜索算法对 /tp 这样有复杂语法的命令和 selecor 这样复杂的命令参数的支持不是很好
+         * 虽然可以正常加载，但会出现列表混乱的情况
+         * 对不是很懂命令的人有较大影响
+         * 亟待修复
+         * 
+         * 而且，现在的搜索算法在对长列表进行操作时会出现明显卡顿
+         * 已有初步解决方案
+         */
         name: [],
         //_name: "",
         load(listGroup) {
             let result = this._module.getFromJson(listGroup)
-            //console.log({result})
-            if (JSON.parse(JSON.stringify(this.name)).sort().toString() !== JSON.parse(JSON.stringify(result.name)).sort().toString()) {
+            console.log({result})
+            if (Object.keys(JSON.parse(JSON.stringify(this.name))).sort().toString() !== Object.keys(JSON.parse(JSON.stringify(result.name))).sort().toString()) {
                 //this._name = listGroup
                 this.name = result.name
                 this._module.loadToPage(result.list, list => {
                     listEle.innerHTML = ""
-                    this._module.loadByIntersectionObserver(list, listEle)
+                    this._module.loadByIntersectionObserver(list)
+                    window.scrollTo({
+                        top: 0,
+                        left: 0,
+                        behavior: "smooth"
+                    })
                 })
-                window.scrollTo({
-                    top: 0,
-                    left: 0,
-                    behavior: "smooth"
-                })
-                console.log(this.name)
+                //console.log(this.name)
             }
         },
         _module: {
@@ -293,95 +302,94 @@ const page = {
             },
             getFromJson(listGroup) {
                 if (listGroup === undefined) return {}
-                listGroup = [...new Set(listGroup.replace(/(\s)?;(\s)?/g, ";").split(";"))]
-                let allList = []
-                let allName = []
-                let extend = {
-                    list: [],
-                    name: []
+                listGroup = [...new Set(listGroup.replace(/\s?;\s?/g, ";").split(";"))]
+                let output = {
+                    name: {},
+                    list: {}
                 }
                 for (let i = 0; i < listGroup.length; i++) {
-                    let part = listGroup[i].match(/(^[.a-z\[\]0-9_]+)({.*}$)?/)
-                    let listName = this.rename(part[1])
-                    if (/\s*;\s*/.test(listName)) {
-                        let callback = this.getFromJson(listName)
-                        allList.push(...callback.list)
-                        allName.push(...callback.name)
+                    let part = listGroup[i].match(/^([.A-Za-z0-9\[\]\(\)_@#$&*%=^~]+)({.*})?$/) ?? []
+                    let _name = this.rename(part[1])
+                    let option = part[2] ?? ""
+                    let name = _name + option
+                    let item = page.json.getList(_name)
+                    if (/\s*;\s*/.test(_name)) {
+                        let result = this.getFromJson(_name)
+                        Object.assign(output.list, result.list)
+                        Object.assign(output.name, result.name)
                         continue
                     }
-                    let option = part[2] === undefined ? {} : JSON.parse(part[2])
-                    let { length: { max: maxLength, min: minLength = 1 } = {}, input: { replace, text } = {} } = option
-                    let item = page.json.getList(listName)
                     if (item === undefined) {
-                        allList.push([
+                        output.list[name] = [
                             {
                                 "info": "未知的列表"
                             }
-                        ])
-                        allName.push(listName)
+                        ]
+                        output.name[name] = {}
                         continue
                     } else if (item.length === 0 || (item.length === 1 && !("extend" in item[0]))) {
-                        allList.push([
+                        output.list[name] = [
                             {
                                 "info": "空列表"
                             }
-                        ])
-                        allName.push(listName)
+                        ]
+                        output.name[name] = {}
                         continue
                     } else if ("extend" in item[0]) {
-                        extend = this.getFromJson(item[0].extend)
-                        allList.push(...extend.list)
-                        allName.push(...extend.name)
+                        let result = this.getFromJson(item[0].extend)
+                        Object.assign(output.list, result.list)
+                        Object.assign(output.name, result.name)
                         if (item.length === 1) continue
                     }
+                    let { length: { max: maxLength = item.length - 1, min: minLength = 1 } = {}, input: { replace, text } = {} } = option && JSON.parse(option)
                     item = JSON.parse(JSON.stringify(item))
-                    if (maxLength === undefined || maxLength > item.length - 1) maxLength = item.length - 1
-                    if (minLength < 2) minLength = 1
-                    if (maxLength < 2) maxLength = 1
+                    ~~maxLength
+                    ~~minLength
+                    if (maxLength > item.length - 1) maxLength = item.length - 1
+                    if (minLength < 1) minLength = 1
+                    if (maxLength < 1) maxLength = 1
                     if (minLength > maxLength) minLength = maxLength - 1
-                    let header = item[0]
-                    let { input = {}, url } = header.template || {}
+                    let _header = item[0]
+                    let { input = {}, url } = _header.template ?? {}
                     if (replace !== undefined) input.replace = replace
                     if (text !== undefined) input.text = text
-                    let result = []
+                    let list = {
+                        header: reeditHeader(_header, name),
+                        body: []
+                    }
                     for (let i = minLength; i < maxLength + 1; i++) {
                         if (item[i].input === undefined) item[i].input = input
                         if (item[i].url === undefined) item[i].url = url
-                        result.push(item[i])
+                        list.body.push(item[i])
                     }
-                    allList.push(result)
-                    allName.push(listName)
+                    output.list[name] = list.body
+                    output.name[name] = list.header
                 }
-                return {
-                    list: allList,
-                    
-                    // TODO : name返回header中有意义的部分
-                    /* name: {
-                        name: String,
-                        minecraft_version: String,
-                        option: {
-                            searchable: Boolean,
-                            longList: Boolean
-                        }
-                    } */
-                    name: allName
+                return output
+                
+                function reeditHeader(header, name) {
+                    return {
+                        name: header.name || name,
+                        minecraft_version: header.minecraft_version || page.json[LANG]?.MINECRAFT_VERSION,
+                        option: Object.assign({
+                            searchable: false
+                        }, header.option)
+                    }
                 }
             },
-            loadToPage(list, callback, config = []) {
-                //console.log({list})
-                let name = page.list.name
-                let output = {}
-                for (let i = 0; i < list.length; i++) {
-                    let item = list[i]
-                    let newListEle = []
-                    if (!page.thin_model) newListEle.push(`<li id="listName"><div class="mdui-list-item-text">---------- ${name[i]} ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------</div></li>`)
-                    let [ minLength = 0, maxLength = item.length - 1] = config
-                    for (let id = minLength; id < maxLength + 1; id++) {
-                        let listItem = item[id]
+            loadToPage(_list, callback) {
+                let _name = Object.keys(_list)
+                let list = Object.values(_list)
+                console.log({list})
+                let output = []
+                list.forEach((item, i) => {
+                    let name = _name[i]
+                    if (!page.thin_model) output.push(`<li class="${name}" id="listName"><div class="mdui-list-item-text">---------- ${page.list.name[name].name} ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------</div></li>`)
+                    item.forEach((listItem, id) => {
                         if (listItem.name === undefined) listItem.name = ""
                         if (listItem.info === undefined) listItem.info = ""
-                        newListEle.push(
-                            `<li class="mdui-list-item mdui-ripple" id="${id}">
+                        output.push(
+                            `<li class="mdui-list-item mdui-ripple ${name}" id="${id}">
                                 ${_getImage(listItem)}
                                 <div class="mdui-list-item-content"${_getOnclick(listItem)}>
                                     <div class="mdui-list-item-title minecraft-font" id="name">${_getName(listItem)}</div>
@@ -390,9 +398,8 @@ const page = {
                                 ${_getURL(listItem)}
                             </li>`
                         )
-                    }
-                    output[name[i]] = newListEle
-                }
+                    })
+                })
                 callback(output)
                 /** TODO
                  * {\s*(This:|Header:|Global:)?(\w+)\s*} 即 {...}
@@ -463,14 +470,10 @@ const page = {
              * 同时加载多个列表时，会出现无法正常显示的问题
              * 正在寻找解决方法
              */
-            loadByIntersectionObserver(data, container) {
+            loadByIntersectionObserver(data, container = listEle) {
                 // https://www.xiabingbao.com/post/scroll/longlist-optimization.html
                 if (!window.IntersectionObserver) return container.innerHTML = '<p style="color: #f00; text-align: center; font-size: 18px;">当前环境不支持IntersecionObserver</p>'
-                if (typeof data === "object" && !Array.isArray(data)) return Object.keys(data).forEach(name => {
-                    let list = data[name]
-                    container.innerHTML += `<div id="${name}"><div id="observer"></div></div>`
-                    this.loadByIntersectionObserver(list, container.querySelector(`[id="${name}"]`))
-                })
+                container.innerHTML += '<div id="observer"></div>'
                 let start = 0
                 let count = 20
                 loadList(start, count)
@@ -492,7 +495,7 @@ const page = {
                     container.insertBefore(div, container.querySelector(`#observer`))
                 }
             },
-            loadByVirtualScroll(data, container) {
+            loadByVirtualScroll(data, container = listEle) {
                 // https://www.xiabingbao.com/post/scroll/longlist-optimization.html
                 if (typeof data === "object" && !Array.isArray(data)) return Object.keys(data).forEach(name => {
                     let list = data[name]
