@@ -1,6 +1,6 @@
 # These are build from node_modules
-public/mdui/
-public/eruda/
+## public/mdui/
+## public/eruda/
 
 # Logs
 logs

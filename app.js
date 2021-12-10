@@ -1,9 +1,3 @@
-// Build
-const { copyFile, copyDir } = require("./build")
-copyDir("./node_modules/mdui/dist", "./public/mdui")
-copyFile("./node_modules/eruda/eruda.js", "./public/eruda")
-
-// App
 const express = require("express")
 const logger = require("morgan")
 const cookieParser = require("cookie-parser")

@@ -1,10 +1,8 @@
 const fs = require('fs')
 const path = require('path')
 
-module.exports = {
-    copyDir,
-    copyFile
-}
+copyDir("./node_modules/mdui", "./public/mdui")
+copyDir("./node_modules/eruda", "./public/eruda")
 
 function copyFile(from, to) {
     let fileName = from.split("/")[from.split("/").length - 1]
