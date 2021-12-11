@@ -25,9 +25,7 @@
     },
     "scripts": {
         "start": "node app",
-        "vercel:start": "node app --on-vercel",
         "dev:start": "nodemon app",
-        "mobile:dev:start": "nodemon app --mobile-dev",
-        "vercel:dev:start": "nodemon app --on-vercel"
+        "vercel:start": "node app --use-cdn"
     }
 }

@@ -12,8 +12,8 @@ app.use(express.json())
 app.use(cookieParser())
 app.use(express.static(__dirname + "/public"))
 
-let ON_VERCEL = false
-if (process.argv.includes("--on-vercel")) ON_VERCEL = true
+let USE_CDN = false
+if (process.argv.includes("--use-cdn")) USE_CDN = true
 else app.use(express.static(__dirname + "/node_modules"))
 
 let MOBILE_DEV_MODEL = false
@@ -30,7 +30,7 @@ app.get("/", (req, res) => {
 Object.keys(AVAILABLE_LANGUAGES).forEach(LANG => {
     app.get(`/${LANG}`, (req, res) => {
         res.render("index", {
-            ON_VERCEL,
+            USE_CDN,
             MOBILE_DEV_MODEL, 
             AVAILABLE_LANGUAGES,
             LANG
