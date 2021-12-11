@@ -503,7 +503,6 @@ const page = {
              * 新的搜索方式，
              * 需为将来穷举助手保留接口
              */
-            searchByDisplay() {},
             searchByReload() {}
         },
         search() {
@@ -550,17 +549,11 @@ const page = {
             if (grammarGroup !== undefined) {
                 noteEle.innerHTML = `<span>${grammarGroup[0].command.info}</span>`
                 let result = this._module.getFromJson(grammarGroup)
-                if (result.info.length < inputEle.value.split(" ").length - 1) {
-                    return {
-                        finish: true
-                    }
-    
-                    // FIXME: 英文下会将英文的语法项加载为html标签
-                    // 可暂时使用零宽字符（这里建议使用"\u200E" 或其实体 "&lrm;"）将 "<" 与其后的文本隔开，不能用 "&lt;" 代替 "<"
-                    // 可以参考 “fog” 命令的语法部分
-    
-                } else {
-                    grammarEle.innerHTML += `<span>${result.grammar.replace(/x y z/g, "x&ensp;<span>y&ensp;</span><span>z</span>").replace(/(>|]|[a-z])\s(<|\[|[a-z])/g, "$1 </span><span>$2")}</span>`
+                if (result.info.length < inputEle.value.split(" ").length - 1) return {
+                    finish: true
+                }
+                else {
+                    grammarEle.innerHTML += `<span>${result.grammar.replace(/\</g, "<&lrm;").replace(/\>/g, "&lrm;>").replace(/x y z/g, "x&ensp;<span>y&ensp;</span><span>z</span>").replace(/(>|]|[a-z])\s(<|\[|[a-z])/g, "$1 </span><span>$2")}</span>`
                     grammarEle.querySelectorAll("span")[inputEle.value.split(" ").length - 1].style.fontWeight = "bold"
                     noteEle.innerHTML = result.info[inputEle.value.split(" ").length - 2].note
                     return {
@@ -576,55 +569,37 @@ const page = {
             getFromJson(grammarGroup) {
                 let commandLength = inputEle.value.split(" ").length - 1
                 if (grammarGroup.length > 2) {
-                    let output = new Array
+                    let output = []
                     for (let i = 1; i < grammarGroup.length; i++) {
-                        let result = new Array
+                        let result = []
                         for (let e = 0; e < commandLength && e < grammarGroup[i].display.length; e++) {
                             let length = grammarGroup[i].display[e].length
                             let rule = grammarGroup[i].display[e].rule
                             if (rule.type === "regex") {
-                                if (eval(`${rule.text}.test(page.input.getByLength(length))`)) {
-                                    result.push(true)
-                                } else {
-                                    result.push(false)
-                                }
+                                if (eval(`${rule.text}.test(page.input.getByLength(length))`)) result.push(true)
+                                else result.push(false)
                             } else if (rule.type === "regex-contrary") {
-                                if (eval(`${rule.text}.test(page.input.getByLength(length))`)) {
-                                    result.push(false)
-                                } else {
-                                    result.push(true)
-                                }
+                                if (eval(`${rule.text}.test(page.input.getByLength(length))`)) result.push(false)
+                                else result.push(true)
                             } else if (rule.type === "isSelector") {
                                 if (page.input.getByLength(length) !== undefined) {
-                                    if (page.input.getByLength(length).isSelector()) {
-                                        result.push(true)
-                                    } else {
-                                        result.push(false)
-                                    }
+                                    if (page.input.getByLength(length).isSelector()) result.push(true)
+                                    else result.push(false)
                                 }
                             } else if (rule.type === "isCoordinate") {
                                 if (page.input.getByLength(length) !== undefined) {
-                                    if (page.input.getByLength(length).isCoordinate()) {
-                                        result.push(true)
-                                    } else {
-                                        result.push(false)
-                                    }
+                                    if (page.input.getByLength(length).isCoordinate()) result.push(true)
+                                    else result.push(false)
                                 }
                             }
                         }
-                        if (result.includes(false) === false) {
-                            output.push(i)
-                        }
+                        if (!result.includes(false)) output.push(i)
                     }
                     //console.log({output})
-                    if (output[0] !== undefined) {
-                        return grammarGroup[output[0]]
-                    } else {
-                        return grammarGroup[1]
-                    }
-                } else {
-                    return grammarGroup[1]
+                    if (output[0] !== undefined) return grammarGroup[output[0]]
+                    else return grammarGroup[1]
                 }
+                else return grammarGroup[1]
             }
         }
     },
@@ -713,16 +688,11 @@ const page = {
                 if (init.list !== undefined && init.list.constructor === Object) {
                     let list = init.list
                     list.forEach((listName, value) => {
-                        if (page.json[lang].list[listName] === undefined || page.json[lang].list[listName].length === 0) {
-                            page.json[lang].list[listName] = [...value]
-                        } else {
-                            page.json[lang].list[listName].push(...value)
-                        }
+                        if (page.json[lang].list[listName] === undefined || page.json[lang].list[listName].length === 0) page.json[lang].list[listName] = [...value]
+                        else page.json[lang].list[listName].push(...value)
                     })
                 }
-                if (init.grammar !== undefined && init.grammar.constructor === Array) {
-                    page.json[lang].grammar.push(...init.grammar)
-                }
+                if (init.grammar !== undefined && init.grammar.constructor === Array) page.json[lang].grammar.push(...init.grammar)
             })
         }
     }

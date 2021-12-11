@@ -1144,7 +1144,7 @@ export let grammar = [
         // 因为wiki没有该部分内容，此处翻译参考 ProjectXero 大佬的命令助手
         
         {
-            "grammar": "<目标：目标> push <迷雾 ID：字符串> <\u200EuserProvidedId：字符串>",
+            "grammar": "<目标：目标> push <迷雾 ID：字符串> <userProvidedId：字符串>",
             "info": [
                 {
                     "length": 1,
@@ -1178,7 +1178,7 @@ export let grammar = [
             ]
         },
         {
-            "grammar": "<目标：目标> <\u200Emode：delete> <\u200EuserProvidedId：字符串>",
+            "grammar": "<目标：目标> <mode：delete> <userProvidedId：字符串>",
             "info": [
                 {
                     "length": 1,
