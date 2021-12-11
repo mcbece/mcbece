@@ -22,9 +22,6 @@
 - 后端
     - cookie
         - 使可以通过 GET 中的 cookie, 按需进行 SSR
-    - vercel 配置优惠
-        - 目前通过将 public 中的 mdui, eruda 上传到 github, 以使 vercel 可以正确读取
-        - 需要研究更好的方法
     - ES Module
         - 由于 vercel 会将 esm 的文件自动编译成 commonjs, 导致 json 部分无法正常导入
         - 正在研究解决方法

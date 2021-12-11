@@ -629,19 +629,6 @@ const page = {
         }
     },
     option: {
-        developer: {
-            devTool: {
-                set(value) {
-                    if (value === "true" || value === "false") {
-                        localStorage.setItem("devTool", value)
-                    }
-                    location.reload()
-                },
-                get() {
-                    return localStorage.getItem("devTool")
-                }
-            }
-        },
         language: {
             set(lang) {
                 localStorage.setItem("language", lang)

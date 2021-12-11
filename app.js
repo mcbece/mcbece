@@ -1,3 +1,4 @@
+const process = require("process")
 const express = require("express")
 const logger = require("morgan")
 const cookieParser = require("cookie-parser")
@@ -11,7 +12,14 @@ app.use(express.json())
 app.use(cookieParser())
 app.use(express.static(__dirname + "/public"))
 
-let availableLanguages = {
+let ON_VERCEL = false
+if (process.argv.includes("--on-vercel")) ON_VERCEL = true
+else app.use(express.static(__dirname + "/node_modules"))
+
+let MOBILE_DEV_MODEL = false
+if (process.argv.includes("--mobile-dev")) MOBILE_DEV_MODEL = true
+
+let AVAILABLE_LANGUAGES = {
     zh: "中文（简体）",
     en: "English"
 }
@@ -19,15 +27,17 @@ let availableLanguages = {
 app.get("/", (req, res) => {
     res.redirect("/zh")
 })
-Object.keys(availableLanguages).forEach(lang => {
-    app.get(`/${lang}`, (req, res) => {
+Object.keys(AVAILABLE_LANGUAGES).forEach(LANG => {
+    app.get(`/${LANG}`, (req, res) => {
         res.render("index", {
-            availableLanguages,
-            lang
+            ON_VERCEL,
+            MOBILE_DEV_MODEL, 
+            AVAILABLE_LANGUAGES,
+            LANG
         })
     })
 })
 
 const server = app.listen(8080, () => {
-    console.log("Web server at 127.0.0.1:8080")
+    console.log("====================\nWeb server is running at 127.0.0.1:8080\n====================")
 })
