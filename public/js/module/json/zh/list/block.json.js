@@ -7,6 +7,9 @@ export let json = [
                 "text": "{name} "
             },
             "url": "{normal_page}{info}"
+        },
+        "option": {
+            "searchable": true
         }
     },
     {

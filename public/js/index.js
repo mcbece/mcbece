@@ -151,9 +151,9 @@ const page = {
             else return commandName
         },
         getByLength(length) {
-            if (length === "the_latest_command_parameter") return inputEle.value.split(" ")[inputEle.value.split(" ").length - 1]
+            if (length === -1) return inputEle.value.split(" ")[inputEle.value.split(" ").length - 1]
             else if (length === "the_latest_selector_variable") {
-                let all = this.getByLength("the_latest_command_parameter").split("[")[1].split(",")
+                let all = this.getByLength(-1).split("[")[1].split(",")
                 return all[all.length - 1]
             } else return inputEle.value.split(" ")[length]
         },
@@ -172,7 +172,7 @@ const page = {
                     "selector_variable_value_scores_value",
                 ]
             let input = inputEle.value
-            let latest = this.getByLength("the_latest_command_parameter")
+            let latest = this.getByLength(-1)
             if (latest.startsWith("@")) {
                 let selector = latest
                 if (selector.length < 2) return "selector_parameter"
@@ -198,39 +198,22 @@ const page = {
         }
     },
     list: {
-        /** TODO
-         * 当前的列表加载及搜索算法对 /tp 这样有复杂语法的命令和 selecor 这样复杂的命令参数的支持不是很好
-         * 虽然可以正常加载，但会出现列表混乱的情况
-         * 对不是很懂命令的人有较大影响
-         * 亟待修复
-         * 
-         * 而且，现在的搜索算法在对长列表进行操作时会出现明显卡顿
-         * 已有初步解决方案
-         */
-        name: [],
-        //_name: "",
+        names: {},
+        lists: {},
+        complete: false,
         load(listGroup) {
-            let result = this._module.getFromJson(listGroup)
-            console.log({result})
-            if (Object.keys(JSON.parse(JSON.stringify(this.name))).sort().toString() !== Object.keys(JSON.parse(JSON.stringify(result.name))).sort().toString()) {
-                //this._name = listGroup
-                this.name = result.name
-                this._module.renderToHTML(result.list, list => {
-                    listEle.innerHTML = ""
-                    this._module.loadToPage(list)
-                    window.scrollTo({
-                        top: 0,
-                        left: 0,
-                        behavior: "smooth"
-                    })
-                })
-                //console.log(this.name)
+            let { names, lists } = this._module.getFromJson(listGroup)
+            console.log({ names, lists })
+            if (Object.keys(JSON.parse(JSON.stringify(this.names))).sort().toString() !== Object.keys(JSON.parse(JSON.stringify(names))).sort().toString()) {
+                this.names = names
+                this.lists = lists
+                this._module.renderToHTML(list => this._module.loadToPage(list))
             }
         },
         _module: {
             rename(listName) {
                 if (listName === "selector") {
-                    let selector = page.input.getByLength("the_latest_command_parameter")
+                    let selector = page.input.getByLength(-1)
                     if (selector.length < 2) {
                         return "selector.parameter"
                     } else if (selector.length === 2 && selector.startsWith("@")) {
@@ -239,9 +222,7 @@ const page = {
                         let variable_item = selector.split("[")[1].split("]")[0].split(",")[selector.split("[")[1].split("]")[0].split(",").length - 1]
                         let key = variable_item.split("=")[0]
                         let value = variable_item.split("=")[1]
-                        let index = page.json.getList("selector.variable", [{}]).findIndex(_item => {
-                            return _item.name === key
-                        })
+                        let index = page.json.getList("selector.variable", [{}]).findIndex(_item => _item.name === key)
                         if (key !== undefined && key !== "" && value !== undefined && value !== "" && !selector.endsWith("]")) {
                             
                             // TODO
@@ -261,41 +242,33 @@ const page = {
                         }
                     }
                 } else if (/^coordinate.(x|y|z)$/.test(listName)) {
-                    let coordinate = page.input.getByLength("the_latest_command_parameter")
+                    let coordinate = page.input.getByLength(-1)
                     if (coordinate.length < 1) return listName
                     else if (coordinate === "~" || coordinate === "^") return `${listName}[0].value`
                     else return "next"
                 } else if (/^rotation.(x|y)$/.test(listName)) {
-                    let rotation = page.input.getByLength("the_latest_command_parameter")
+                    let rotation = page.input.getByLength(-1)
                     if (rotation.length < 1) return listName
                     else if (rotation === "~") return `${listName}[0].value`
                     else return "next"
                 } else if (listName === "enchantment.level") {
                     let enchantment = page.input.getByLength(inputEle.value.split(" ").length - 2)
-                    let index = page.json.getList("enchantment", [{}]).findIndex(_item => {
-                        return _item.name === enchantment
-                    })
+                    let index = page.json.getList("enchantment", [{}]).findIndex(_item => _item.name === enchantment)
                     if (index !== -1) return `enchantment[${index}].level`
                     else return "enchantment[0].level"
                 } else if (listName === "entity.event") {
                     let entity = page.input.getByLength(inputEle.value.split(" ").length - 2)
-                    let index = page.json.getList("entity", [{}]).findIndex(_item => {
-                        return _item.name === entity
-                    })
+                    let index = page.json.getList("entity", [{}]).findIndex(_item => _item.name === entity)
                     if (index !== -1) return `entity[${index}].event`
                     else return "entity[0].event"
                 } else if (listName === "block.data") {
                     let block = page.input.getByLength(inputEle.value.split(" ").length - 2)
-                    let index = page.json.getList("block", [{}]).findIndex(_item => {
-                        return _item.name === block
-                    })
+                    let index = page.json.getList("block", [{}]).findIndex(_item => _item.name === block)
                     if (index !== -1) return `block[${index}].data`
                     else return "block[0].data"
                 } else if (listName === "item.data") {
                     let item = page.input.getByLength(inputEle.value.split(" ").length - 2)
-                    let index = page.json.getList("item", [{}]).findIndex(_item => {
-                        return _item.name === item
-                    })
+                    let index = page.json.getList("item", [{}]).findIndex(_item => _item.name === item)
                     if (index !== -1) return `item[${index}].data`
                     else return "item[0].data"
                 } else return listName
@@ -304,8 +277,8 @@ const page = {
                 if (listGroup === undefined) return {}
                 listGroup = [...new Set(listGroup.replace(/\s?;\s?/g, ";").split(";"))]
                 let output = {
-                    name: {},
-                    list: {}
+                    names: {},
+                    lists: {}
                 }
                 for (let i = 0; i < listGroup.length; i++) {
                     let part = listGroup[i].match(/^([.A-Za-z0-9\[\]\(\)_@#$&*%=^~]+)({.*})?$/) ?? []
@@ -315,30 +288,30 @@ const page = {
                     let item = page.json.getList(_name)
                     if (/\s*;\s*/.test(_name)) {
                         let result = this.getFromJson(_name)
-                        Object.assign(output.list, result.list)
-                        Object.assign(output.name, result.name)
+                        Object.assign(output.lists, result.lists)
+                        Object.assign(output.names, result.names)
                         continue
                     }
                     if (item === undefined) {
-                        output.list[name] = [
+                        output.lists[name] = [
                             {
                                 "info": "未知的列表"
                             }
                         ]
-                        output.name[name] = {}
+                        output.names[name] = {}
                         continue
-                    } else if (item.length === 0 || (item.length === 1 && !("extend" in item[0]))) {
-                        output.list[name] = [
+                    } else if (!item.length || (item.length === 1 && !("extend" in item[0]))) {
+                        output.lists[name] = [
                             {
                                 "info": "空列表"
                             }
                         ]
-                        output.name[name] = {}
+                        output.names[name] = {}
                         continue
                     } else if ("extend" in item[0]) {
                         let result = this.getFromJson(item[0].extend)
-                        Object.assign(output.list, result.list)
-                        Object.assign(output.name, result.name)
+                        Object.assign(output.lists, result.lists)
+                        Object.assign(output.names, result.names)
                         if (item.length === 1) continue
                     }
                     let { length: { max: maxLength = item.length - 1, min: minLength = 1 } = {}, input: { replace, text } = {} } = option && JSON.parse(option)
@@ -349,12 +322,12 @@ const page = {
                     if (minLength < 1) minLength = 1
                     if (maxLength < 1) maxLength = 1
                     if (minLength > maxLength) minLength = maxLength - 1
-                    let _header = item[0]
-                    let { input = {}, url } = _header.template ?? {}
+                    let header = item[0]
+                    let { input = {}, url } = header.template ?? {}
                     if (replace !== undefined) input.replace = replace
                     if (text !== undefined) input.text = text
                     let list = {
-                        header: reeditHeader(_header, name),
+                        header: reeditHeader(header, name),
                         body: []
                     }
                     for (let i = minLength; i < maxLength + 1; i++) {
@@ -362,8 +335,8 @@ const page = {
                         if (item[i].url === undefined) item[i].url = url
                         list.body.push(item[i])
                     }
-                    output.list[name] = list.body
-                    output.name[name] = list.header
+                    output.lists[name] = list.body
+                    output.names[name] = list.header
                 }
                 return output
                 
@@ -377,19 +350,22 @@ const page = {
                     }
                 }
             },
-            renderToHTML(_list, callback) {
-                let _name = Object.keys(_list)
-                let list = Object.values(_list)
-                console.log({list})
+            renderToHTML(callback, _names = page.list.names, _lists = page.list.lists) {
+                let names = Object.keys(_names)
+                let lists = Object.values(_lists)
                 let output = []
-                list.forEach((item, i) => {
-                    let name = _name[i]
-                    if (!page.thin_model) output.push(`<li class="${name}" id="listName"><div class="mdui-list-item-text">---------- ${page.list.name[name].name} ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------</div></li>`)
+                lists.forEach((item, i) => {
+                    let name = names[i]
+                    if (!page.thin_model) output.push(
+                        `<li id="list_name" data-list-name="${name}">
+                            <div class="mdui-list-item-text">---------- ${_names[name].name} ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------</div>
+                        </li>`
+                    )
                     item.forEach((listItem, id) => {
                         if (listItem.name === undefined) listItem.name = ""
                         if (listItem.info === undefined) listItem.info = ""
                         output.push(
-                            `<li class="mdui-list-item mdui-ripple ${name}" id="${id}">
+                            `<li class="mdui-list-item mdui-ripple" id="${id}" data-list-name="${name}">
                                 ${_getImage(listItem)}
                                 <div class="mdui-list-item-content"${_getOnclick(listItem)}>
                                     <div class="mdui-list-item-title minecraft-font" id="name">${_getName(listItem)}</div>
@@ -401,20 +377,24 @@ const page = {
                     })
                 })
                 callback(output)
-                /** TODO
-                 * {\s*(This:|Header:|Global:)?(\w+)\s*} 即 {...}
+                /**
+                 * TODO
+                 * {\s*(This:|Header:|Global:)?(.+)(\|(.+))?\s*}
+                 *     即 { <namespace>:<things>[|<return_if_notfound>] }
                  *     会被替换为该列表项中的对应内容**的字符串形式**
-                 *     若在该列表项中没有找到，则使用列表头的对应内容
+                 *     若在该列表项中没有找到，则使用列表头中的对应内容
                  *     若也没有，则会在 page.json.global 中查找并替换
                  *     否则会输出为 "" (空字符串)
-                 *     使用 {This ...} 强制匹配该列表项中的内容
-                 *     使用 {Header ...} 强制匹配列表头中的内容
-                 *     使用 {Global ...} 强制匹配全局内容
-                 * ^{{\s*(This:|Header:|Global:)?(\w+)\s*}}$ 即 {{...}}
-                 *     具有与 {...} 基本相同的规则
-                 *     不同的是，这个花括号外不能有其他字符，否则会按照 {...} 进行匹配
-                 *     而且这会使该项对应的键的值变成所找到的内容
-                 *     否则输出 {} (空对象)
+                 *     namespace 为:
+                 *       - This 强制匹配该列表项中的内容
+                 *       - Header 强制匹配列表头中的内容
+                 *       - Global 强制匹配全局内容
+                 * ^{\$\s*(.+)\s*\$}$ 即 {$...$}
+                 *     执行 js 代码
+                 *     可以与 {...} 嵌套使用，会先将 {...} 替换为它的返回内容
+                 *     若只需成功，则会被替换为其返回值**的字符串形式**
+                 *     若执行失败，会以 console.warn 报错，并输出 "" (空字符串)
+                 *     若该段 js 代码没有输出，则输出为 "" (空字符串)
                  */
                 function _getImage(listItem) {
                     if (page.thin_model || this.withImage) return ""
@@ -465,79 +445,79 @@ const page = {
                 }
             },
             loadToPage(data, container = listEle) {
+                container.innerHTML = ""
+                page.list.complete = false
                 if (window.IntersectionObserver) this.loadByIntersectionObserver(data, container)
                 else {
                     let items = document.createDocumentFragment()
-                    data.forEach(item => {
-                        items.appendChild(document.createRange().createContextualFragment(item))
-                    })
+                    data.forEach(item => items.appendChild(document.createRange().createContextualFragment(item)))
                     container.appendChild(items)
+                    page.list.complete = true
                 }
+                window.scrollTo({
+                    top: 0,
+                    left: 0,
+                    behavior: "smooth"
+                })
             },
             loadByIntersectionObserver(data, container = listEle) {
                 // https://www.xiabingbao.com/post/scroll/longlist-optimization.html
-                container.innerHTML += '<div id="observer"></div>'
+                let observerEle = document.createElement("div")
+                observerEle.id = "observer"
+                container.appendChild(observerEle)
                 let start = 0
                 let count = 20
                 loadList(start, count)
-                let io = new IntersectionObserver(entries => {
+                let observer = new IntersectionObserver(entries => {
                     let entry = entries[0]
                     if (entry.intersectionRatio <= 0 || !entry.isIntersecting) return false
                     start += count
-                    loadList(start, count)
+                    loadList(start, count, () => {
+                        observer.unobserve(entry.target)
+                        container.removeChild(entry.target)
+                        page.list.complete = true
+                    })
                 }, {
                     rootMargin: "400px 0px"
                 })
-                io.observe(container.querySelector(`#observer`))
-                function loadList(start, count) {
+                observer.observe(container.querySelector("#observer"))
+                function loadList(start, count, handler = () => {}) {
                     let div = document.createDocumentFragment()
                     for (let i = start, len = start + count; i < len && i < data.length; i++) {
                         let item = document.createRange().createContextualFragment(data[i])
                         div.appendChild(item)
+                        if (i === data.length - 1) handler()
                     }
                     container.insertBefore(div, container.querySelector(`#observer`))
                 }
-            },
-            /** 
-             * TODO
-             * 新的搜索方式，
-             * 需为将来穷举助手保留接口
-             */
-            searchByReload() {}
+            }
         },
         search() {
-            listEle.querySelectorAll("div:not([class])").forEach(list => {
-                list.style.display = ""
-                let query = page.input.getByLength("the_latest_command_parameter")
-                let listItem = list.querySelectorAll('.mdui-list-item')
-                if (/next/g.test(list.id) || /selector\.variable\[[0-9]+\]\.value/.test(list.id)) return
-                else if (list.id === "command") query = query.replace("/", "")
-                else if (list.id === "selector.variable") query = page.input.getByLength("the_latest_selector_variable")
-                if (query === "") {
-                    listItem.forEach(item => {
-                        item.style.display = ""
-                    })
+            let result = {
+                lists: {},
+                names: {}
+            }
+            Object.keys(this.names).forEach(listName => {
+                let list = {
+                    body: this.lists[listName],
+                    header: this.names[listName]
+                }
+                let query = page.input.getByLength(-1)
+                if (listName === "command") query = query.replace("/", "")
+                else if (listName === "selector.variable") query = page.input.getByLength("the_latest_selector_variable")
+                if (!list.header.option.searchable || !query) {
+                    result.lists[listName] = list.body
+                    result.names[listName] = list.header
                     return
                 }
-                let e = 0
-                for (let i = 0; i < listItem.length; i++) {
-                    listItem[i].style.display = "none"
-                    if (eval(`/${query.replace("?", "\\?")}/g.test(list.querySelectorAll('#name')[i].innerHTML)`)) {
-                        listItem[i].style.display = ""
-                        e++
-                    }
+                let _lists = list.body.filter(item => (new RegExp(query.replace("?", "\\?"))).test(item.name))
+                if (!_lists.length) _lists = list.body.filter(item => (new RegExp(query.replace("?", "\\?"))).test(item.info))
+                if (_lists.length) {
+                    result.lists[listName] = _lists
+                    result.names[listName] = list.header
                 }
-                if (e === 0) {
-                    for (let i = 0; i < listItem.length; i++) {
-                        listItem[i].style.display = "none"
-                        if (eval(`/${query.replace("?", "\\?")}/g.test(list.querySelectorAll('#info')[i].innerHTML)`)) {
-                            listItem[i].style.display = ""
-                            e++
-                        }
-                    }
-                }
-                if (e === 0) list.style.display = "none"
             })
+            this._module.renderToHTML(list => this._module.loadToPage(list), result.names, result.lists)
         }
     },
     grammar: {
@@ -688,7 +668,7 @@ const page = {
                 if (init.list !== undefined && init.list.constructor === Object) {
                     let list = init.list
                     list.forEach((listName, value) => {
-                        if (page.json[lang].list[listName] === undefined || page.json[lang].list[listName].length === 0) page.json[lang].list[listName] = [...value]
+                        if (page.json[lang].list[listName] === undefined || !page.json[lang].list[listName].length) page.json[lang].list[listName] = [...value]
                         else page.json[lang].list[listName].push(...value)
                     })
                 }

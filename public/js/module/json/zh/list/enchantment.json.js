@@ -6,6 +6,9 @@ export var json = [
                 "text": "{name} "
             }
         },
+        "option": {
+            "searchable": true
+        },
         "level": [
             {
                 "template": {

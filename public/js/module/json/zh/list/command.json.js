@@ -6,6 +6,9 @@ export let json = [
                 "replace": "all",
                 "text": "/{name} "
             }
+        },
+        "option": {
+            "searchable": true
         }
     },
     {
