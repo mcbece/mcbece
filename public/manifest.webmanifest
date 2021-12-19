@@ -1,0 +1,32 @@
+{
+   "name": "基岩版命令编写助手",
+   "short_name": "Command Editer",
+   "start_url": "/",
+   "display": "standalone",
+   "orientation": "any",
+   "prefer_related_applications": false,
+   "background_color": "white",
+   "icons": [
+      {
+         "src": "/favicon/64.png",
+         "sizes": "64x64",
+         "type": "image/png"
+      },
+      {
+         "src": "/favicon/144.png",
+         "sizes": "144x144",
+         "type": "image/png"
+      },
+      {
+         "src": "/favicon/512.png",
+         "sizes": "512x512",
+         "type": "image/png"
+      },
+      {
+         "src": "/favicon/1024.png",
+         "sizes": "1024x1024",
+         "type": "image/png"
+      }
+   ],
+   "scope": "/"
+}

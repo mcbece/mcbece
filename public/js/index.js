@@ -34,11 +34,11 @@ Object.prototype.forEach = function (callback) {
 
 const page = {
     json: {
-        getList(name, _return,  lang = LANG) {
+        getList(name, _return, lang = LANG) {
             try {
                 let result = eval(`page.json.${lang}.list.${name}`)
                 return result ?? _return
-            } catch (err) {
+            } catch {
                 if (lang !== "zh") return this.getList(name, _return, "zh")
                 return _return
             }
@@ -48,7 +48,7 @@ const page = {
                 return page.json[LANG].grammar.find(item => {
                     return eval(`${item[0].command.name}.test(name)`)
                 })
-            } catch (err) {
+            } catch {
                 if (lang !== "zh") return this.getGrammar(name, "zh")
                 return undefined
             }
@@ -57,7 +57,7 @@ const page = {
             try {
                 let result = eval(`page.json.${lang}.text.${name}`)
                 return result === undefined ? "" : result
-            } catch (err) {
+            } catch {
                 if (lang !== "zh") return this.getGlobal(name, "zh")
                 return ""
             }
@@ -380,7 +380,7 @@ const page = {
                 /**
                  * TODO
                  * {\s*(This:|Header:|Global:)?(.+)(\|(.+))?\s*}
-                 *     即 { <namespace>:<things>[|<return_if_notfound>] }
+                 *     即 { <namespace>:<thing>[|<returnedThingIfNotFound>] }
                  *     会被替换为该列表项中的对应内容**的字符串形式**
                  *     若在该列表项中没有找到，则使用列表头中的对应内容
                  *     若也没有，则会在 page.json.global 中查找并替换
