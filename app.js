@@ -29,13 +29,33 @@ app.get("/", (req, res) => {
 })
 Object.keys(AVAILABLE_LANGUAGES).forEach(LANG => {
     app.get(`/${LANG}`, (req, res) => {
+        let data = require(`./src/data/${LANG}/text.json`)
         res.render("index", {
             USE_CDN,
             MOBILE_DEV_MODEL, 
             AVAILABLE_LANGUAGES,
-            LANG
+            LANG,
+            data,
+            // TODO
+            BRANCH: "vanilla"
         })
     })
+    let BRANCHS = ["vanilla", "experiment", "education"]
+    BRANCHS.forEach(BRANCH => {
+        app.get(`/${LANG}/data.${BRANCH}.json`, (req, res) => {
+            try {
+                let data = require(`./src/data/${LANG}/${BRANCH}/index.js`)
+                res.status(200).send(data)
+            } catch (err) {
+                res.status(404).send({})
+                console.log(err)
+            }
+        })
+    })
+})
+
+app.use((req, res) => {
+    res.status(404).send("Page not found!");
 })
 
 const server = app.listen(8080, () => {

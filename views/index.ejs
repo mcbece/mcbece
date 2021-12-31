@@ -1,10 +1,10 @@
 <!DOCTYPE html>
-<html>
+<html lang="<%= LANG %>">
 
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>基岩版命令编写助手</title>
+    <title><%= data.title %></title>
     <meta name="theme-color" content="#3F51B5">
     <link rel="shortcut icon" type="image/png" href="./favicon/512.png">
     <!-- Manifest -->
@@ -64,21 +64,23 @@
             localStorage.setItem("customURL", "")
         }
         /** 
-         * 默认列表是否加载图片："true"
-         * Default The List Item Is With Image: "true"
+         * 默认列表是否加载图片：true
+         * Default The List Item Is With Image: true
          */
         if (localStorage.getItem("withImage") === null) {
-            localStorage.setItem("withImage", "true")
+            localStorage.setItem("withImage", true)
         }
     </script>
     <script src="/js/index.js"></script>
-    <script type="module" src="/js/module.esm.js"></script>
     <script>
-        const LANG = page.option.language.get()
-        page.list.withImage = page.option.withImage.get()
+        const LANG = "<%= LANG %>"
+        const BRANCH = "<%= BRANCH %>"
         page.option.mduiThemeColor.setFromStorage()
         window.onload = () => {
-            page.initialization()
+            page.data.getJsonData("/<%= LANG %>/data.<%= BRANCH %>.json").then(data => {
+                page.data = Object.assign({}, page.data, data)
+                page.initialize()
+            })
         }
     </script>
 </body>
