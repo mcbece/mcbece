@@ -81,7 +81,10 @@
         },
         {
             "name": "@initiator",
-            "info": "[仅NPC内部命令] 选择当前与该NPC交互的玩家。"
+            "info": "[仅NPC内部命令] 选择当前与该NPC交互的玩家。",
+            "input": {
+                "text": "{name} "
+            }
         }
     ],
     "variable": [
