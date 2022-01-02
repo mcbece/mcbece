@@ -1,1 +1,0 @@
-module.exports = require("../vanilla/index.js")

@@ -14,7 +14,7 @@
                 <div class="mdui-col-xs-4 mdui-p-b-1 mdui-text-right">
                     <select class="mdui-select" mdui-select>
                     <%_ Object.keys(AVAILABLE_LANGUAGES).forEach(lang => { -%>
-                        <option value="<%= lang %>"<%= (()=>{if(LANG===lang)return" selected"})() %>><%= AVAILABLE_LANGUAGES[lang] %></option>
+                        <option value="<%= lang %>"><%= AVAILABLE_LANGUAGES[lang] %></option>
                     <%_ }) -%>
                     </select>
                 </div>

@@ -3,7 +3,7 @@
     "version": "0.0.0",
     "author": "PFiS1737",
     "private": true,
-    "license":"GPL-3.0",
+    "license": "GPL-3.0",
     "homepage": "https://github.com/PFiS1737/mcbece#readme",
     "repository": {
         "type": "git",
@@ -18,7 +18,8 @@
         "ejs": "^3.1.6",
         "eruda": "^2.4.1",
         "express": "^4.17.1",
-        "mdui": "^1.0.2"
+        "mdui": "^1.0.2",
+        "web-option": "^0.0.4"
     },
     "devDependencies": {
         "morgan": "^1.10.0"

@@ -1,4 +1,4 @@
-const inputEle = document.querySelector('#edit')
+const inputEle = document.querySelector("#edit")
 const grammarEle = document.querySelector("#grammar")
 const noteEle = document.querySelector("#note")
 const listEle = document.querySelector("#list")
@@ -45,29 +45,29 @@ const page = {
         },
         getList(name, _return, lang = LANG) {
             try {
-                let result = eval(`page.data.list.${name}`)
+                let result = eval(`page.data["${lang}"].list.${name}`)
                 return result ?? _return
             } catch {
-                if (lang !== "zh") return this.getList(name, _return, "zh")
+                if (lang !== "zh-CN") return this.getList(name, _return, "zh-CN")
                 return _return
             }
         },
         getGrammar(name, lang = LANG) {
             try {
-                return page.data.grammar.find(item => {
+                return page.data[lang].grammar.find(item => {
                     return eval(`${item[0].command.name}.test(name)`)
                 })
             } catch {
-                if (lang !== "zh") return this.getGrammar(name, "zh")
+                if (lang !== "zh-CN") return this.getGrammar(name, "zh-CN")
                 return undefined
             }
         },
         getGlobal(name, lang = LANG) {
             try {
-                let result = eval(`page.data.text.${name}`)
+                let result = eval(`page.data["${lang}"].text.${name}`)
                 return result ?? ""
             } catch {
-                if (lang !== "zh") return this.getGlobal(name, "zh")
+                if (lang !== "zh-CN") return this.getGlobal(name, "zh-CN")
                 return ""
             }
         },
@@ -92,11 +92,8 @@ const page = {
                 else if (url.endsWith(".json")) page.data.getJsonData(url).then(json => this.load(json))
             },
             setURLFromStorage() {
-                document.querySelector("#customURL").value = this.getURL()
+                a = this.getURL()
                 this.setURL(false)
-            },
-            getURL() {
-                return localStorage.getItem("customURL")
             },
             load(json) {
                 if (customJson !== undefined) json = JSON.parse(JSON.stringify(customJson))
@@ -113,22 +110,37 @@ const page = {
             }
         }
     },
-    initialize() {
-        inputEle.placeholder = page.data.getGlobal("inputText")
-        
-        // TODO 这里不是很合理的样子，等再改改
-        if (screen.height < 800) {
-            document.body.classList.add("thin-model")
-            page.thin_model = true
-        }
-        
-        if (LANG === "en") grammarEle.classList.add("minecraft-font")
-        this.data.custom.setURLFromStorage()
-        inputEle.oninput = () => {
+    initialize({ lang = LANG, branch = BRANCH } = {}) {
+        this.data.getJsonData(`/api/mcbelist/${lang}.${branch}.json`).then(data => {
+            page.data[lang] = data
+            if (lang !== "zh-CN") return page.data.getJsonData(`/api/mcbelist/zh.${branch}.json`).then(dataZh => {
+                page.data.zh = dataZh
+            })
+        }).then(() => {
+            
+            // TODO i18n
+            loadText()
+            
+            // TODO 这里不是很合理的样子，等再改改
+            if (screen.height < 800) {
+                document.body.classList.add("thin-model")
+                page.thin_model = true
+            }
+            
+            if (LANG === "en") grammarEle.classList.add("minecraft-font")
+            inputEle.oninput = () => {
+                page.change()
+                page.list.search()
+            }
             page.change()
-            page.list.search()
+        })
+        
+        // TODO i18n
+        function loadText() {
+            let getText = page.data.getGlobal
+            document.title = getText("title")
+            inputEle.placeholder = getText("input")
         }
-        this.change()
     },
     change() {
         document.querySelector("#wiki").href = page.data.getGlobal("url.command_page") + inputEle.value.split(" ")[0]  // FIXME
@@ -137,14 +149,14 @@ const page = {
         if (inputEle.value.split(" ").length === 1) {
             page.list.load("command")
             grammarEle.innerHTML = ""
-            noteEle.innerHTML = page.data.getGlobal("beginText")
+            noteEle.innerHTML = page.data.getGlobal("edit.begin")
             return
         }
         let result = this.grammar.load()
         if (result.finish) {
             listEle.innerHTML = ""
             grammarEle.innerHTML = ""
-            noteEle.innerHTML = page.data.getGlobal("endText")
+            noteEle.innerHTML = page.data.getGlobal("edit.end")
             page.editEnd = true
             page.list.names = {}
             page.input.copy("display")
@@ -152,7 +164,6 @@ const page = {
             listEle.innerHTML = ""
             page.list.names = {}
             noteEle.innerHTML = "未知的命令"
-            console.warn("您需要在 page.data.grammar 中添加该命令的语法")
         }
         else this.list.load(result.list)
     },
@@ -253,8 +264,9 @@ const page = {
         complete: false,
         load(listGroup) {
             let { names, lists } = this._module.getFromJson(listGroup)
-            console.log({ names, lists })
+            // console.log({ names, lists })
             if (Object.keys(JSON.parse(JSON.stringify(this.names))).sort().toString() !== Object.keys(JSON.parse(JSON.stringify(names))).sort().toString()) {
+                console.log({ names, lists })
                 this.names = names
                 this.lists = lists
                 this._module.renderToHTML(list => this._module.loadToPage(list))
@@ -556,6 +568,7 @@ const page = {
                 if (listName === "command") query = query.replace("/", "")
                 else if (listName === "selector.variable") query = page.input.getByLength("the_latest_selector_variable")
                 if (!list.header.option.searchable || !query) {
+                    // TODO     ^^^^^^^^^^^^^^^^^^    这里会报错，以后再修
                     result.lists[listName] = list.body
                     result.names[listName] = list.header
                     return
@@ -630,53 +643,6 @@ const page = {
                     else return grammarGroup[1]
                 }
                 else return grammarGroup[1]
-            }
-        }
-    },
-    option: {
-        language: {
-            /*set(lang) {
-                localStorage.setItem("language", lang)
-                location.reload()
-            },*/
-            get() {
-                return document.documentElement.lang
-            }
-        },
-        mduiThemeColor: {
-            origin: {
-                primary: "indigo",
-                accent: "pink"
-            },
-            set(primary, accent) {
-                document.body.classList.remove(`mdui-theme-primary-${this.origin.primary}`)
-                document.body.classList.remove(`mdui-theme-accent-${this.origin.accent}`)
-                this.origin = {
-                    primary: primary,
-                    accent: accent
-                }
-                localStorage.setItem("mduiThemeColor", `{primary: "${primary}", accent: "${accent}"}`)
-                document.body.classList.add(`mdui-theme-primary-${primary}`)
-                document.body.classList.add(`mdui-theme-accent-${accent}`)
-            },
-            setFromStorage() {
-                let storage = eval(`(${localStorage.getItem("mduiThemeColor")})`)
-                this.set(storage.primary, storage.accent)
-            },
-            get() {
-                return {
-                    primary: this.origin.primary,
-                    accent: this.origin.accent
-                }
-            }
-        },
-        withImage: {
-            set(boolean) {
-                localStorage.setItem("withImage", boolean)
-                location.reload()
-            },
-            get() {
-                return localStorage.getItem("withImage")
             }
         }
     }
