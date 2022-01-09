@@ -19,7 +19,7 @@
         "eruda": "^2.4.1",
         "express": "^4.17.1",
         "mdui": "^1.0.2",
-        "web-option": "^0.0.4"
+        "web-option": "^0.0.5"
     },
     "devDependencies": {
         "morgan": "^1.10.0"

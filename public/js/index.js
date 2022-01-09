@@ -407,7 +407,8 @@ const page = {
                         name: header.name || name,
                         minecraft_version: header.minecraft_version || page.data?.MINECRAFT_VERSION,
                         option: Object.assign({
-                            searchable: false
+                            searchable: true,
+                            search_spaces: ["name", "info"]
                         }, header.option)
                     }
                 }
@@ -479,7 +480,7 @@ const page = {
                             let replace = input.replace
                             let text = input.text
                             if (replace !== undefined) output.input.replace = `, '${replace}'`
-                            if (text !== undefined) output.input.text = text.replace(/{name}/g, listItem.name).replace(/{info}/g, listItem.info.replace(/{color:\s?.+}/g, ""))
+                            if (text !== undefined) output.input.text = text.replace(/{name}/g, listItem.name.replace(/\<.+\>.*\<\/.+\>/g, "")).replace(/{info}/g, listItem.info.replace(/{color:\s?.+}/g, "").replace(/\<.+\>.*\<\/.+\>/g, ""))
                             output.input = `page.input.input('${output.input.text}'${output.input.replace})`
                         } else output.input = ""
                         if (auto_next_list !== undefined) output.auto_next_list = `; page.list.load('${auto_next_list}')`
@@ -501,7 +502,7 @@ const page = {
                     let url = listItem.url
                     if (url === undefined || url === "") return ""
                     else {
-                        let output = url.replace(/{name}/g, listItem.name).replace(/{info}/g, listItem.info.replace(/{color:\s?.+}/g, "").replace(/\[.*\]/g, "")).replace(/{command_page}/g, page.data.getGlobal("url.command_page")).replace(/{normal_page}/g, page.data.getGlobal("url.normal_page")).replace(/{search_page}/g, page.data.getGlobal("url.search_page"))
+                        let output = url.replace(/{name}/g, listItem.name.replace(/\<.+\>.*\<\/.+\>/g, "")).replace(/{info}/g, listItem.info.replace(/{color:\s?.+}/g, "").replace(/\[.*\]/g, "").replace(/\<.+\>.*\<\/.+\>/g, "")).replace(/{command_page}/g, page.data.getGlobal("url.command_page")).replace(/{normal_page}/g, page.data.getGlobal("url.normal_page")).replace(/{search_page}/g, page.data.getGlobal("url.search_page"))
                         return `<a class="mdui-btn mdui-btn-icon mdui-list-item-things-display-when-hover" href="${output}" target="_blank" id="url"><i class="mdui-icon material-icons mdui-text-color-black-icon">send</i></a>`
                     }
                 }
@@ -524,25 +525,28 @@ const page = {
             },
             loadByIntersectionObserver(data, container = listEle) {
                 // https://www.xiabingbao.com/post/scroll/longlist-optimization.html
-                let observerEle = document.createElement("div")
-                observerEle.id = "observer"
-                container.appendChild(observerEle)
                 let start = 0
                 let count = 20
                 loadList(start, count)
-                let observer = new IntersectionObserver(entries => {
-                    let entry = entries[0]
-                    if (entry.intersectionRatio <= 0 || !entry.isIntersecting) return false
-                    start += count
-                    loadList(start, count, () => {
-                        observer.unobserve(entry.target)
-                        container.removeChild(entry.target)
-                        page.list.complete = true
+                if (data.length >= 20) {
+                    let observerEle = document.createElement("div")
+                    observerEle.id = "observer"
+                    container.appendChild(observerEle)
+                    let observer = new IntersectionObserver(entries => {
+                        let entry = entries[0]
+                        if (entry.intersectionRatio <= 0 || !entry.isIntersecting) return false
+                        start += count
+                        loadList(start, count, () => {
+                            observer.unobserve(entry.target)
+                            container.removeChild(entry.target)
+                            page.list.complete = true
+                        })
+                    }, {
+                        rootMargin: "400px 0px"
                     })
-                }, {
-                    rootMargin: "400px 0px"
-                })
-                observer.observe(container.querySelector("#observer"))
+                    observer.observe(container.querySelector("#observer"))
+                }
+                
                 function loadList(start, count, handler = () => {}) {
                     let div = document.createDocumentFragment()
                     for (let i = start, len = start + count; i < len && i < data.length; i++) {
@@ -561,26 +565,38 @@ const page = {
             }
             Object.keys(this.names).forEach(listName => {
                 let list = {
-                    body: this.lists[listName],
+                    body: JSON.parse(JSON.stringify(this.lists[listName])),
                     header: this.names[listName]
                 }
-                let query = page.input.getByLength(-1)
-                if (listName === "command") query = query.replace("/", "")
-                else if (listName === "selector.variable") query = page.input.getByLength("the_latest_selector_variable")
-                if (!list.header.option.searchable || !query) {
-                    // TODO     ^^^^^^^^^^^^^^^^^^    这里会报错，以后再修
+                let _query = page.input.getByLength(-1)
+                if (listName === "command") _query = _query.replace("/", "")
+                else if (listName === "selector.variable") _query = page.input.getByLength("the_latest_selector_variable")
+                if (!list.header.option.searchable || !_query) {
+                    // FIXME     ^^^^^^^^^^^^^^^^^    这里会报错，以后再修
                     result.lists[listName] = list.body
                     result.names[listName] = list.header
                     return
                 }
-                let _lists = list.body.filter(item => (new RegExp(query.replace("?", "\\?"))).test(item.name))
-                if (!_lists.length) _lists = list.body.filter(item => (new RegExp(query.replace("?", "\\?"))).test(item.info))
+                let query = new RegExp(`(${_query})`.replace("?", "\\?"))
+                let _lists = []
+                for (searchSpace of list.header.option.search_spaces) {
+                    _lists = _search(list.body, query, searchSpace)
+                    if (_lists.length) break
+                }
                 if (_lists.length) {
                     result.lists[listName] = _lists
                     result.names[listName] = list.header
                 }
             })
             this._module.renderToHTML(list => this._module.loadToPage(list), result.names, result.lists)
+            
+            function _search(list, query, searchSpace = "name") {
+                let result = list.filter(item => query.test(item[searchSpace]))
+                return result.map(item => {
+                    item[searchSpace] = item[searchSpace].replace(query, '<span class="mdui-text-color-theme-accent">$1</span>')
+                    return item
+                })
+            }
         }
     },
     grammar: {

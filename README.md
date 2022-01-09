@@ -8,7 +8,7 @@
 ### 目前进度：以下为部分未完成任务
 
 - 主要html：
-    - 编写 div#setting 对应的设置列表
+    - 编写 div#option 对应的设置列表
     - 其他优化
 - 主要json：
     - 查看 [mcbelist-api](https://github.com/PFiS1737/mcbelist-api)
@@ -16,8 +16,9 @@
     - 桌面端tab键支持
     - 移动端布局优化
     - 多语言优化
-    - 长列表加载优化
+    - 长列表加载优化（暂时完成）
     - 穷举助手
+    - JSON 编辑器
     - ...
 - 后端
     - cookie

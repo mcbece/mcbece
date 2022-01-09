@@ -32,11 +32,11 @@ let BRANCHS = {
 
 let THEME_COLOR = {
     primary: {
-        "indigo": "#3F51B5",
         "red": "#F44336",
         "pink": "#E91E63",
         "purple": "#9C27B0",
         "deep-purple": "#673AB7",
+        "indigo": "#3F51B5",
         "blue": "#2196F3",
         "light-blue": "#03A9F4",
         "cyan": "#00BCD4",
@@ -53,8 +53,8 @@ let THEME_COLOR = {
         "blue-grey": "#607D8B"
     },
     accent: {
-        "pink": "#FF4081",
         "red": "#FF5252",
+        "pink": "#FF4081",
         "purple": "#E040FB",
         "deep-purple": "#7C4DFF",
         "indigo": "#536DFE",

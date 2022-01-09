@@ -50,11 +50,11 @@
             document.body.classList.add(`mdui-theme-primary-${selected}`)
             fetch(`/api/theme.color.${selected}`).then(text => text.text()).then(text => document.head.querySelector('meta[name="theme-color"]').content = text)
             console.log("themePrimaryColor -> from", original, "to", selected)
-        }).addItem("themeAccentColor", <%- JSON.stringify(Object.keys(THEME_COLOR.accent)) %>, (selected, original) => {
+        }, "indigo").addItem("themeAccentColor", <%- JSON.stringify(Object.keys(THEME_COLOR.accent)) %>, (selected, original) => {
             document.body.classList.remove(`mdui-theme-accent-${original}`)
             document.body.classList.add(`mdui-theme-accent-${selected}`)
             console.log("themeAccentColor -> from", original, "to", selected)
-        }).addItem("customURL", [], (selected, original) => {
+        }, "pink").addItem("customURL", [], (selected, original) => {
             document.querySelector("#customURL").value = selected
             console.log("customURL -> from", original, "to", selected)
         }).addItem("listWithImage", [true, false], (selected, original) => {
