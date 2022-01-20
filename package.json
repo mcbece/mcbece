@@ -10,18 +10,19 @@
         "url": "https://github.com/PFiS1737/mcbece.git"
     },
     "bugs": {
-        "url": "http://path/to/bug",
+        "url": "https://github.com/PFiS1737/mcbece/issues",
         "email": "pfis1737@qq.com"
     },
     "dependencies": {
+        "axios": "^0.25.0",
         "cookie-parser": "^1.4.6",
         "ejs": "^3.1.6",
-        "eruda": "^2.4.1",
         "express": "^4.17.1",
-        "mdui": "^1.0.2",
-        "web-option": "^0.0.5"
+        "github-markdown-css": "^5.1.0",
+        "mdui": "^1.0.2"
     },
     "devDependencies": {
+        "eruda": "^2.4.1",
         "morgan": "^1.10.0"
     },
     "scripts": {

@@ -6,7 +6,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <title></title>
     <meta name="theme-color" content="#3F51B5">
-    <link rel="shortcut icon" type="image/png" href="./favicon/512.png">
+    <link rel="shortcut icon" type="image/png" href="/favicon/512.png">
     <!-- Manifest -->
     <link rel="manifest" href="/manifest.webmanifest"/>
     <!-- CSS -->
@@ -16,7 +16,9 @@
     <%_ if (MOBILE_DEV_MODEL) { -%>
     <!-- Eruda.js -->
     <script src="<%= USE_CDN ? "\//cdn.jsdelivr.net/npm/eruda" : "/eruda/eruda.js" %>"></script>
-    <script>eruda.init()</script>
+    <script>
+        eruda.init()
+    </script>
     <%_ } -%>
 </head>
 
@@ -29,39 +31,53 @@
     <%- include("layout/tool", { AVAILABLE_LANGUAGES }) %>
     <!-- List -->
     <div class="mdui-container-fluid mdui-p-a-0">
-        <div class="mdui-list mdui-p-t-0" id="list"></div>
+        <div class="mdui-list mdui-p-t-0" id="list">
+            <div class="mdui-spinner mdui-center"></div>
+        </div>
     </div>
     <!-- MDUI JS -->
     <script src="<%= USE_CDN ? "\//cdn.jsdelivr.net/npm/mdui@latest/dist/js/mdui.min.js" : "/mdui/dist/js/mdui.min.js" %>"></script>
     <!-- JavaScript -->
-    <script src="/js/index.js"></script>
+    <script type="module" src="/js/index.js"></script>
     <script type="module">
-        import { WebOption } from "<%= USE_CDN ? "\//cdn.jsdelivr.net/npm/web-option" : "/web-option/index.js" %>"
-        let wo = new WebOption()
-        wo.addItem("lang", <%- JSON.stringify(Object.keys(AVAILABLE_LANGUAGES)) %>, (selected, original) => {
-            window.LANG = selected
-            document.documentElement.lang = selected
-            console.log("lang -> from", original, "to", selected)
-        }).addItem("branch", <%- JSON.stringify(Object.keys(BRANCHS)) %>, (selected, original) => {
-            window.BRANCH = selected
-            console.log("branch -> from", original, "to", selected)
-        }).addItem("themePrimaryColor", <%- JSON.stringify(Object.keys(THEME_COLOR.primary)) %>, (selected, original) => {
-            document.body.classList.remove(`mdui-theme-primary-${original}`)
-            document.body.classList.add(`mdui-theme-primary-${selected}`)
-            fetch(`/api/theme.color.${selected}`).then(text => text.text()).then(text => document.head.querySelector('meta[name="theme-color"]').content = text)
-            console.log("themePrimaryColor -> from", original, "to", selected)
-        }, "indigo").addItem("themeAccentColor", <%- JSON.stringify(Object.keys(THEME_COLOR.accent)) %>, (selected, original) => {
-            document.body.classList.remove(`mdui-theme-accent-${original}`)
-            document.body.classList.add(`mdui-theme-accent-${selected}`)
-            console.log("themeAccentColor -> from", original, "to", selected)
-        }, "pink").addItem("customURL", [], (selected, original) => {
-            document.querySelector("#customURL").value = selected
-            console.log("customURL -> from", original, "to", selected)
-        }).addItem("listWithImage", [true, false], (selected, original) => {
-            page.list.withImage = selected
-            console.log("listWithImage -> from", original, "to", selected)
-        }).init(() => page.initialize())
-        page.option = wo
+        import { WebOption } from "/js/core/lib/WebOption.class.js"
+        const webOption = new WebOption()
+        const {
+            DEFAULT_LANGUAGE,
+            DEFAULT_THEME_COLOR
+        } = app.config
+        
+        webOption
+            .addItem("lang", <%- JSON.stringify(Object.keys(AVAILABLE_LANGUAGES)) %>, (selected, original) => {
+                app.LANG = selected
+                document.documentElement.lang = selected
+                console.log("lang -> from", original, "to", selected)
+            }, DEFAULT_LANGUAGE)
+            .addItem("branch", <%- JSON.stringify(Object.keys(BRANCHS)) %>, (selected, original) => {
+                app.BRANCH = selected
+                console.log("branch -> from", original, "to", selected)
+            })
+            .addItem("themePrimaryColor", <%- JSON.stringify(Object.keys(THEME_COLOR.primary)) %>, (selected, original) => {
+                document.body.classList.remove(`mdui-theme-primary-${original}`)
+                document.body.classList.add(`mdui-theme-primary-${selected}`)
+                fetch(`/api/theme.color.${selected}`).then(text => text.text()).then(text => document.head.querySelector('meta[name="theme-color"]').content = text)
+                console.log("themePrimaryColor -> from", original, "to", selected)
+            }, DEFAULT_THEME_COLOR.primary)
+            .addItem("themeAccentColor", <%- JSON.stringify(Object.keys(THEME_COLOR.accent)) %>, (selected, original) => {
+                document.body.classList.remove(`mdui-theme-accent-${original}`)
+                document.body.classList.add(`mdui-theme-accent-${selected}`)
+                console.log("themeAccentColor -> from", original, "to", selected)
+            }, DEFAULT_THEME_COLOR.accent)
+            .addItem("customURL", [], (selected, original) => {
+                // TODO
+                document.querySelector("#customURL").value = selected
+                console.log("customURL -> from", original, "to", selected)
+            })
+            .addItem("listWithImage", [true, false], (selected, original) => {
+                app.list.withImage = selected
+                console.log("listWithImage -> from", original, "to", selected)
+            })
+        app.option = webOption.init(app.initialize)
     </script>
 </body>
 

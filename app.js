@@ -4,6 +4,8 @@ const logger = require("morgan")
 const cookieParser = require("cookie-parser")
 const app = express()
 
+const docsRouter = require("./router/docs.js")
+
 app.set("view engine", "ejs")
 app.set("views", __dirname + "/views")
 
@@ -12,6 +14,8 @@ app.use(express.json())
 app.use(cookieParser())
 app.use(express.static(__dirname + "/public"))
 
+app.use("/docs", docsRouter)
+
 let USE_CDN = false
 if (process.argv.includes("--use-cdn")) USE_CDN = true
 else app.use(express.static(__dirname + "/node_modules"))
@@ -19,18 +23,18 @@ else app.use(express.static(__dirname + "/node_modules"))
 let MOBILE_DEV_MODEL = false
 if (process.argv.includes("--mobile-dev")) MOBILE_DEV_MODEL = true
 
-let AVAILABLE_LANGUAGES = {
+const AVAILABLE_LANGUAGES = {
     "zh-CN": "中文（简体）",
     "en": "English"
 }
 
-let BRANCHS = {
+const BRANCHS = {
     "vanilla": "原版",
     "experiment": "实验性玩法",
     "education": "教育版"
 }
 
-let THEME_COLOR = {
+const THEME_COLOR = {
     primary: {
         "red": "#F44336",
         "pink": "#E91E63",
@@ -86,31 +90,29 @@ app.get("/api/theme.color.:color", (req, res) => {
     let color = req.params.color
     res.status(200).send(THEME_COLOR.primary[color])
 })
-Object.keys(AVAILABLE_LANGUAGES).forEach(LANG => {
-    Object.keys(BRANCHS).forEach(BRANCH => {
-        app.get(`/api/mcbelist/${LANG}.${BRANCH}.json`, (req, res) => {
-            /*
-               TODO
-               等 `mcbelist-api` 项目基本写完，
-               会直接调用该项目的 api
-             */
-            try {
-                let data = require(`./src/data/${LANG}/${BRANCH}/index.js`)
-                let text = require(`./src/languages/${LANG}.json`)
-                Object.assign(data.text, text)
-                res.status(200).send(data)
-            } catch (err) {
-                res.status(404).send({})
-                console.log(err)
-            }
-        })
-    })
+app.get("/api/mcbelist.:lang.:branch", (req, res) => {
+    let lang = req.params.lang
+    let branch = req.params.branch
+    /*
+       TODO
+       等 `mcbelist-api` 项目基本写完，
+       会直接调用该项目的 api
+     */
+    try {
+        let data = require(`./src/data/${lang}/${branch}/index.js`)
+        let text = require(`./src/languages/${lang}.json`)
+        Object.assign(data.text, text)
+        res.status(200).send(data)
+    } catch (err) {
+        res.status(404).send({})
+        console.log(err)
+    }
 })
 
 app.use((req, res) => {
     res.status(404).send("Page not found!")
 })
 
-const server = app.listen(8080, () => {
+app.listen(8080, () => {
     console.log("====================\nWeb server is running at 127.0.0.1:8080\n====================")
 })
