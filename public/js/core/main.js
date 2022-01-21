@@ -28,8 +28,8 @@ export default class {
             
             // TODO 这里不是很合理的样子，等再改改
             if (screen.height < 800) {
-                document.body.classList.add("thin-model")
-                this.thin_model = true
+                // document.body.classList.add("lite")
+                // this.thin_model = true
             }
             
             if (this.LANG === "en") this.config.$grammar.classList.add("minecraft-font")

@@ -1,0 +1,34 @@
+@import "./mdui.extension.scss";
+@import "./lite.scss";
+
+*::-webkit-scrollbar {
+    display: none;
+}
+
+#listName {
+    height: 20px;
+    overflow: hidden;
+}
+
+.minecraft-font {
+    font-family: Minecraft !important;
+}
+
+@font-face{
+    font-family: Minecraft;
+    src: url(/fonts/minecraft.ttf) format('truetype');
+      /* url(/fonts/minecraft.eot) formaqt('embedded-opentype'),
+         url(/fonts/minecraft.woff) format('woff'); */
+}
+
+@media (min-width: 600px) {
+    .mdui-row .retract {
+        width: 30px;
+    }
+}
+
+
+/* Lite 
+body.lite {
+    @include lite()
+}*/

@@ -51,11 +51,10 @@ const DEFAULT_CONFIG = {
             if (!app.thin_model) {
                 let url = item.url
                 if (url) {
-                    let output = url.replace(/{name}/g, item.name.replace(/\<.+\>.*\<\/.+\>/g, "")).replace(/{info}/g, item.info.replace(/{color:\s?.+}/g, "").replace(/\[.*\]/g, "").replace(/\<.+\>.*\<\/.+\>/g, "")).replace(/{command_page}/g, app.data.getGlobal("url.command_page")).replace(/{normal_page}/g, app.data.getGlobal("url.normal_page")).replace(/{search_page}/g, app.data.getGlobal("url.search_page"))
+                    let output = url.replace(/{name}/g, item.name.replace(/\<.+\>.*\<\/.+\>/g, "")).replace(/{info}/g, item.info.replace(/{color:\s?.+}/g, "").replace(/\[.*\]/g, "").replace(/\<.+\>.*\<\/.+\>/g, "")).replace(/{command_page}/g, app.data.getText("url.command_page")).replace(/{normal_page}/g, app.data.getText("url.normal_page")).replace(/{search_page}/g, app.data.getText("url.search_page"))
                     return output
                 }
             }
-            
         }
     }
 }

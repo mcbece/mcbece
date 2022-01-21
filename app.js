@@ -1,21 +1,20 @@
-const process = require("process")
 const express = require("express")
-const logger = require("morgan")
-const cookieParser = require("cookie-parser")
 const app = express()
 
+// Routers
 const docsRouter = require("./router/docs.js")
+app.use("/docs", docsRouter)
 
+// Settings
 app.set("view engine", "ejs")
 app.set("views", __dirname + "/views")
 
+// Middlewares
+const logger = require("morgan")
 app.use(logger("dev"))
-app.use(express.json())
-app.use(cookieParser())
 app.use(express.static(__dirname + "/public"))
 
-app.use("/docs", docsRouter)
-
+// Params
 let USE_CDN = false
 if (process.argv.includes("--use-cdn")) USE_CDN = true
 else app.use(express.static(__dirname + "/node_modules"))
@@ -76,6 +75,18 @@ const THEME_COLOR = {
     }
 }
 
+// SASS -> CSS
+const sass = require("sass")
+app.get("/css/index.css", (req, res) => {
+    sass.compileAsync("./src/scss/index.scss", {
+        style: "compressed"
+    }).then(({ css }) => {
+        res.type("css")
+        res.send(css)
+    }).catch(console.error)
+})
+
+// Main
 app.get("/", (req, res) => {
     res.render("index", {
         USE_CDN,
@@ -86,8 +97,10 @@ app.get("/", (req, res) => {
     })
 })
 
+// APIs
 app.get("/api/theme.color.:color", (req, res) => {
     let color = req.params.color
+    res.type(".txt")
     res.status(200).send(THEME_COLOR.primary[color])
 })
 app.get("/api/mcbelist.:lang.:branch", (req, res) => {
@@ -109,10 +122,12 @@ app.get("/api/mcbelist.:lang.:branch", (req, res) => {
     }
 })
 
+// 404 Not Found
 app.use((req, res) => {
     res.status(404).send("Page not found!")
 })
 
+// Create server
 app.listen(8080, () => {
     console.log("====================\nWeb server is running at 127.0.0.1:8080\n====================")
 })
