@@ -16,11 +16,11 @@ app.use(express.static(__dirname + "/public"))
 
 // Params
 let USE_CDN = false
-if (process.argv.includes("--use-cdn")) USE_CDN = true
+if (process.argv.includes("--use-cdn") || process.env.USE_CDN == true) USE_CDN = true
 else app.use(express.static(__dirname + "/node_modules"))
 
 let MOBILE_DEV_MODEL = false
-if (process.argv.includes("--mobile-dev")) MOBILE_DEV_MODEL = true
+if (process.argv.includes("--mobile-dev") || process.env.MOBILE_DEV_MODEL == true) MOBILE_DEV_MODEL = true
 
 const AVAILABLE_LANGUAGES = {
     "zh-CN": "中文（简体）",
