@@ -1,4 +1,4 @@
-import { replaceString, getJsonData } from "./util/common.js"
+import { replaceString, getJsonDataAsync } from "./util/common.js"
 import __data__ from "./src/data/index.js"
 import __input__ from "./src/input/index.js"
 import __list__ from "./src/list/index.js"
@@ -16,36 +16,20 @@ export default class {
         this.change = this.change.bind(this)
     }
     initialize({ lang, branch }) {
-        getJsonData(replaceString(this.config.data.url, {lang, branch})).then(data => {
+        getJsonDataAsync(replaceString(this.config.data.url, {lang, branch})).then(data => {
             this.data[lang] = data
-            if (lang !== this.config.DEFAULT_LANGUAGE) return getJsonData(replaceString(this.config.data.url, { lang: this.config.DEFAULT_LANGUAGE, branch })).then(dataDef => {
+            if (lang !== this.config.DEFAULT_LANGUAGE) return getJsonDataAsync(replaceString(this.config.data.url, { lang: this.config.DEFAULT_LANGUAGE, branch })).then(dataDef => {
                 this.data[this.config.DEFAULT_LANGUAGE] = dataDef
             })
         }).then(() => {
-            
-            // TODO i18n
-            loadText.call(this)
-            
-            // TODO 这里不是很合理的样子，等再改改
-            if (screen.height < 800) {
-                // document.body.classList.add("lite")
-                // this.thin_model = true
-            }
-            
-            if (this.LANG === "en") this.config.$grammar.classList.add("minecraft-font")
+            this.config.i18n(this.data.getText)
+            this.config.init(this)
             this.config.$input.oninput = () => {
                 this.change()
                 this.list.search()
             }
             this.change()
         })
-        
-        // TODO i18n
-        function loadText() {
-            let getText = this.data.getText
-            document.title = getText("title")
-            this.config.$input.placeholder = getText("input")
-        }
     }
     change() {
         document.querySelector("#wiki").href = this.data.getText("url.command_page") + this.config.$input.value.split(" ")[0]  // FIXME
@@ -62,13 +46,13 @@ export default class {
             this.config.$list.innerHTML = ""
             this.config.$grammar.innerHTML = ""
             this.config.$note.innerHTML = this.data.getText("edit.end")
-            this.editEnd = true
             this.list.names = {}
+            this.editEnd = true
             this.input.copy("display")
         } else if (result.undefined) {
             this.config.$list.innerHTML = ""
-            this.list.names = {}
             this.config.$note.innerHTML = "未知的命令"
+            this.list.names = {}
         }
         else this.list.load(result.list)
     }

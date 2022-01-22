@@ -7,10 +7,10 @@ export function catchInput(length) {
     
     // TODO  FIXME
     else if (length === "the_latest_selector_variable") {
-        all = catchInput(-1).split("[")[1].split(",")
+        all = this.input.catchInput(-1).split("[")[1].split(",")
         return all[all.length - 1]
     } else if (length === "selector_variable_value") {
-        return catchInput("the_latest_selector_variable").split("=")[1]
+        return this.input.catchInput("the_latest_selector_variable").split("=")[1]
         
     }
     

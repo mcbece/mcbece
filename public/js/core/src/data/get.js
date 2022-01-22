@@ -1,4 +1,4 @@
-import { toRegExp } from "../../util/common.js"
+import { testRegExp } from "../../util/common.js"
 
 export function getList(name, _return, lang) {
     try {
@@ -12,9 +12,7 @@ export function getList(name, _return, lang) {
 
 export function getGrammar(name, lang) {
     try {
-        return this.data[lang].grammar.find(item => {
-            return toRegExp(item[0].command.name).test(name)
-        })
+        return this.data[lang].grammar.find(item => testRegExp(item[0].command.name, name))
     } catch {
         if (lang !== this.config.DEFAULT_LANGUAGE) return this.getGrammar(name, this.config.DEFAULT_LANGUAGE)
         else return undefined

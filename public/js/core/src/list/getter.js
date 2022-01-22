@@ -3,7 +3,7 @@ import { forEachObject, getReturn, toString } from "../../util/common.js"
 const DEFAULT_CONFIG = {
     image: {
         handlerFun(item, util) {
-            if (app.thin_model || !app.list.withImage) return
+            if (app.lite || !app.list.withImage) return
             let image = item.image
             if (image) return image
         }
@@ -24,7 +24,7 @@ const DEFAULT_CONFIG = {
                     let replace = input.replace
                     let text = input.text
                     if (replace) output.input.replace = replace
-                    if (text) output.input.text = text.replace(/{name}/g, item.name.replace(/\<.+\>(.*)\<\/.+\>/g, "$1")).replace(/{info}/g, item.info.replace(/{color:\s?.+}/g, "").replace(/\<.+\>(.*)\<\/.+\>/g, "$1"))
+                    if (text) output.input.text = text.replace(/{name}/g, toString(item.name, "").replace(/\<.+\>(.*)\<\/.+\>/g, "$1")).replace(/{info}/g, toString(item.info, "").replace(/{color:\s?.+}/g, "").replace(/\<.+\>(.*)\<\/.+\>/g, "$1"))
                     output.input = `app.input.input('${Object.values(output.input).join("', '")}')`
                 } else output.input = ""
                 if (auto_next_list) output.auto_next_list = `app.list.load('${auto_next_list}')`
@@ -35,20 +35,20 @@ const DEFAULT_CONFIG = {
     },
     name: {
         handlerFun(item) {
-            let name = toString(item.name)
+            let name = toString(item.name, "")
             return name
         }
     },
     info: {
         handlerFun(item) {
-            let info = toString(item.info)
-            let regexp = /{color:\s?(#[0-9A-Za-z]{6}|rgb\([.0-9]+,\s?[.0-9]+,\s?[.0-9]+\)|rgba\([.0-9]+,\s?[.0-9]+,\s?[.0-9]+,\s?[.0-9]+\)|[a-z]+)}/g
-            return info?.replace(regexp, '<span style="background-color: $1; margin: 0 4px; border: 1px inset black">&emsp;</span>')
+            let info = toString(item.info, "")
+            let color = /{color:\s?(#[0-9A-Za-z]{6}|rgb\([.0-9]+,\s?[.0-9]+,\s?[.0-9]+\)|rgba\([.0-9]+,\s?[.0-9]+,\s?[.0-9]+,\s?[.0-9]+\)|[a-z]+)}/g
+            return info.replace(color, '<span style="background-color: $1; margin: 0 4px; border: 1px inset black">&emsp;</span>')
         }
     },
     url: {
         handlerFun(item) {
-            if (!app.thin_model) {
+            if (!app.lite) {
                 let url = item.url
                 if (url) {
                     let output = url.replace(/{name}/g, item.name.replace(/\<.+\>.*\<\/.+\>/g, "")).replace(/{info}/g, item.info.replace(/{color:\s?.+}/g, "").replace(/\[.*\]/g, "").replace(/\<.+\>.*\<\/.+\>/g, "")).replace(/{command_page}/g, app.data.getText("url.command_page")).replace(/{normal_page}/g, app.data.getText("url.normal_page")).replace(/{search_page}/g, app.data.getText("url.search_page"))

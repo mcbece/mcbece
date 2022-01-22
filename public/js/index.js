@@ -11,12 +11,26 @@ const app = new App({
     $note: document.querySelector("#note"),
     $list: document.querySelector("#list"),
     
+    init(app) {
+        // TODO 这里不是很合理的样子，等再改改
+        if (screen.height < 800) {
+            document.body.classList.add("lite")
+            app.lite = true
+        }
+        if (app.LANG === "en") this.$grammar.classList.add("minecraft-font")
+    },
+    
+    i18n(getText) {
+        document.title = getText("title")
+        this.$input.placeholder = getText("input")
+    },
+    
     data: {
         url: "/api/mcbelist.{lang}.{branch}"
     },
     
     list: {
-        template(_id, name, getter) {
+        item(_id, name, getter) {
             return `
                 <li class="mdui-list-item mdui-ripple" id="${_id}" data-list-name="${name}">
                     ${getter.get("image")}
@@ -25,6 +39,13 @@ const app = new App({
                         <div class="mdui-list-item-text mdui-list-item-one-line" id="info">${getter.get("info")}</div>
                     </div>
                     ${getter.get("url")}
+                </li>
+            `
+        },
+        divider(name, _name) {
+            return `
+                <li id="listName" data-list-name="${_name}">
+                    <div class="mdui-list-item-text">---------- ${name} ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------</div>
                 </li>
             `
         },
@@ -52,8 +73,8 @@ const app = new App({
     },
     
     custom: {
-        data(config) {
-            config.$input.classList.remove("minecraft-font")
+        data() {
+            this.$input.classList.remove("minecraft-font")
             return {
                 "zh-CN": {
                     list: {
@@ -105,7 +126,7 @@ window.app = app
                     document.body.appendChild(script)
                     script.onload = () => this.load()
                 }
-                else if (url.endsWith(".json")) page.data.getJsonData(url).then(json => this.load(json))
+                else if (url.endsWith(".json")) page.data.getJsonDataAsync(url).then(json => this.load(json))
             },
             setURLFromStorage() {
                 a = this.getURL()

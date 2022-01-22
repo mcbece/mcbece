@@ -10,9 +10,7 @@ export default class {
         this.complete = false
         
         this.load = this.load.bind(app)
-        // FIXME                  ^^^^^
         this.search = this.search.bind(app)
-        // FIXME                      ^^^^^
         this.getFromJson = this.getFromJson.bind(app)
         this.renderToHTML = this.renderToHTML.bind(app)
         this.loadToPage = this.loadToPage.bind(app)

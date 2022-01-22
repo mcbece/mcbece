@@ -1,18 +1,19 @@
-.mdui-drawer-always-wide.mdui-drawer {
-    width: 320px !important;
-    max-width: 320px !important;
+.mdui-drawer-always-wide {
+    &.mdui-drawer {
+        width: 320px !important;
+        max-width: 320px !important;
+    }
+    
+    &.mdui-drawer-close {
+        -webkit-transform: translateX(-330px) !important;
+        transform: translateX(-330px) !important;
+    }
+    
+    &.mdui-drawer-close.mdui-drawer-right {
+        -webkit-transform: translateX(330px) !important;
+        transform: translateX(330px) !important;
+    }
 }
-
-.mdui-drawer-always-wide.mdui-drawer-close {
-    -webkit-transform: translateX(-330px) !important;
-            transform: translateX(-330px) !important;
-}
-
-.mdui-drawer-always-wide.mdui-drawer-close.mdui-drawer-right {
-    -webkit-transform: translateX(330px) !important;
-            transform: translateX(330px) !important;
-}
-
 
 
 

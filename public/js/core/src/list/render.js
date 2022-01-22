@@ -7,13 +7,15 @@ export function renderToHTML(callback, _names, _lists) {
     let output = []
     lists.forEach((item, i) => {
         let name = names[i]
-        if (!this.thin_model) output.push(`
-            <li id="listName" data-list-name="${name}">
-                <div class="mdui-list-item-text">---------- ${_names[name].name} ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------</div>
-            </li>
-        `)
-        item.forEach((listItem, _id) => output.push(
-                this.config.list.template(
+        if (!this.lite && this.config.list.divider) output.push(
+            this.config.list.divider(
+                _names[name].name,
+                name
+            )
+        )
+        item.forEach((listItem, _id) =>
+            output.push(
+                this.config.list.item(
                     _id,
                     name,
                     getter.setListItem(listItem)

@@ -14,9 +14,10 @@ export function getReturn(target, ...args) {
     else return target
 }
 
-export function toString(target) {
+export function toString(target, _return) {
     if (typeof target === "object") return JSON.stringify(target)
     else if (target) return target.toString()
+    else return _return
 }
 
 export function arrayToSet(arr) {
@@ -38,13 +39,26 @@ export function replaceString(target, args) {
     return target.replace(/{([^}]+)}/g, (_, key) => args[key])
 }
 
+export function isRegExp(target) {
+    return Object.prototype.toString.call(target) === "[object RegExp]"
+}
+
 export function toRegExp(str) {
-    let regexp = /^\/(?<pattern>.*)\/(?<flags>.*)$/
+    let regexp = /^(!?)\/(?<pattern>.*)\/(?<flags>.*)$/
     let {groups: { pattern, flags }} = str.match(regexp)
     return new RegExp(pattern, flags)
 }
 
-export async function getJsonData(url) {
+export function testRegExp(regexp, str) {
+    if (typeof regexp === "string") {
+        if (regexp.startsWith("!/")) return !(toRegExp(regexp).test(str))
+        else return toRegExp(regexp).test(str)
+    } else if (isRegExp(regexp)) {
+        return regexp.test(str)
+    }
+}
+
+export async function getJsonDataAsync(url) {
     try {
         let data = await fetch(url)
         return await data.json()
