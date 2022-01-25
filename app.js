@@ -17,7 +17,7 @@ app.use(express.static(__dirname + "/public"))
 // Params
 let USE_CDN = false
 if (process.argv.includes("--use-cdn")) USE_CDN = true
-else app.use(express.static(__dirname + "/node_modules"))
+else app.use("/lib", express.static(__dirname + "/node_modules"))
 
 let MOBILE_DEV_MODEL = false
 if (process.argv.includes("--mobile-dev")) MOBILE_DEV_MODEL = true
@@ -99,21 +99,21 @@ app.get("/", (req, res) => {
 
 // APIs
 app.get("/api/theme.color.:color", (req, res) => {
-    let color = req.params.color
+    const color = req.params.color
     res.type(".txt")
     res.status(200).send(THEME_COLOR.primary[color])
 })
 app.get("/api/mcbelist.:lang.:branch", (req, res) => {
-    let lang = req.params.lang
-    let branch = req.params.branch
+    const lang = req.params.lang
+    const branch = req.params.branch
     /*
        TODO
        等 `mcbelist-api` 项目基本写完，
        会直接调用该项目的 api
      */
     try {
-        let data = require(`./src/data/${lang}/${branch}/index.js`)
-        let text = require(`./src/languages/${lang}.json`)
+        const data = require(`./src/data/${lang}/${branch}/index.js`)
+        const text = require(`./src/languages/${lang}.json`)
         Object.assign(data.text, text)
         res.status(200).send(data)
     } catch (err) {

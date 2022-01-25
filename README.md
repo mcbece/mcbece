@@ -4,7 +4,7 @@
 
 > 重要通知：**咕咕咕**
 
-### 目前进度：以下为部分未完成任务
+#### 目前进度：以下为部分未完成任务
 
 - 主要html：
     - 编写 `div#option` 对应的设置列表
@@ -24,6 +24,7 @@
         - 使用 `@option <option name> [value]` 快捷更改设置
         - 在语法提示层面
             - 通过语法控件可匹配到正在输入的指定命令变量，并在加载列表等动作中使用
+        - `execute` 命令还不能嵌套...（相当于不能用）
         - ...
     - 更多可由用户设置和在 `config` 中自定义的内容
         - 基于 `IndexedDB` 重新设计的 `WebOption` 类
@@ -39,8 +40,7 @@
 - 后端
     - ~~cookie~~
         - ~~使可以通过 GET 中的 cookie, 按需进行 SSR~~
-    - ES Module
-        - 由于 vercel 会将 esm 的文件自动编译成 commonjs, 导致 json 部分无法正常导入
-        - 正在研究解决方法
-        - 待 [mcbelist-api](https://github.com/PFiS1737/mcbelist-api) 制作完成，则可在服务器层面生成全部 json, 可解决此问题
-        - 此问题暂时搁置
+    - ~~ES Module~~
+        - ~~由于 vercel 会将 esm 的文件自动编译成 commonjs, 导致部分无法正常导入~~
+        - ~~正在研究解决方法~~
+        - 暂时取消对 vercel 的支持

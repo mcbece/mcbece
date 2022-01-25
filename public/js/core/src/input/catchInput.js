@@ -1,5 +1,7 @@
+import { readLine } from "../../util/common.js"
+
 export function catchInput(length) {
-    let all = this.config.$input.value.split(" ")
+    let all = readLine(this.config.$input.value, -1).split(" ")
     if (typeof length === "number") {
         if (length < 0) return all[all.length + length]
         else return all[length]

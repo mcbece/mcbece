@@ -3,7 +3,7 @@ import { getFromJson } from "./get.js"
 export default class {
     constructor(app) {
         this.load = this.load.bind(app)
-        this.getFromJson = this.getFromJson.bind(app)
+        this.getFromJson = getFromJson.bind(app)
     }
     load(commandName) {
         const { $input, $grammar, $note } = this.config
@@ -13,7 +13,7 @@ export default class {
         if (grammarGroup) {
             $note.innerHTML = `<span>${grammarGroup[0].command.info}</span>`
             let result = this.grammar.getFromJson(grammarGroup)
-            let inputLength = $input.value.split(" ").length
+            let inputLength = this.input.catchInput().length
             if (result.info.length < inputLength - 1) {
                 return {
                     finish: true
@@ -29,8 +29,5 @@ export default class {
         } else return {
             undefined: true
         }
-    }
-    getFromJson(grammarGroup) {
-        return getFromJson.call(this, grammarGroup)
     }
 }

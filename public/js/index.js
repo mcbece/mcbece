@@ -1,4 +1,5 @@
 import App from "./core/main.js"
+
 const app = new App({
     DEFAULT_LANGUAGE: "zh-CN",
     DEFAULT_THEME_COLOR: {
@@ -48,6 +49,9 @@ const app = new App({
                     <div class="mdui-list-item-text">---------- ${name} ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------</div>
                 </li>
             `
+        },
+        highlight(_, $1) {
+            return `<span class="mdui-text-color-theme-accent">${$1}</span>`
         },
         getter: {
             image: {
@@ -99,49 +103,3 @@ const app = new App({
 })
 
 window.app = app
-
-
-
-
-
-
-
-
-
-
-            /** 
-             * TODO
-             * 这个模块还需要改改，使其加载方式更合合理
-             *
-            setURL(isReload = true) {
-                let url = document.querySelector("#customURL").value
-                localStorage.setItem("customURL", url)
-                if (isReload) return location.reload()
-                if (url.endsWith(".js")) {
-                    let comment = document.createComment("Custom URL")
-                    document.body.appendChild(comment)
-                    let script = document.createElement("script")
-                    script.src = url
-                    script.id = "cutom-url"
-                    document.body.appendChild(script)
-                    script.onload = () => this.load()
-                }
-                else if (url.endsWith(".json")) page.data.getJsonDataAsync(url).then(json => this.load(json))
-            },
-            setURLFromStorage() {
-                a = this.getURL()
-                this.setURL(false)
-            },
-            load(json) {
-                if (customJson !== undefined) json = copyObject(customJson)
-                forEachObject(json, (lang, things) => {
-                    if (things.list !== undefined && things.list.constructor === Object) {
-                        let list = things.list
-                        forEachObject(list, (listName, value) => {
-                            if (page.data.list[listName] === undefined || !page.data.list[listName].length) page.data.list[listName] = [...value]
-                            else page.data.list[listName].push(...value)
-                        })
-                    }
-                    if (things.grammar !== undefined && things.grammar.constructor === Array) page.data.grammar.push(...things.grammar)
-                })
-            }*/

@@ -1,4 +1,4 @@
-import { copyObject } from "../../util/common.js"
+import { copyObject, toStringRegExp } from "../../util/common.js"
 import { getFromJson } from "./get.js"
 import { renderToHTML } from "./render.js"
 import { loadToPage } from "./load.js"
@@ -11,12 +11,12 @@ export default class {
         
         this.load = this.load.bind(app)
         this.search = this.search.bind(app)
-        this.getFromJson = this.getFromJson.bind(app)
-        this.renderToHTML = this.renderToHTML.bind(app)
-        this.loadToPage = this.loadToPage.bind(app)
+        this.getFromJson = getFromJson.bind(app)
+        this.renderToHTML = renderToHTML.bind(app)
+        this.loadToPage = loadToPage.bind(app)
     }
     load(listGroup) {
-        let { names, lists } = this.list.getFromJson(listGroup)
+        const { names, lists } = this.list.getFromJson(listGroup)
         // console.log({ names, lists })
         if (Object.keys(copyObject(this.list.names)).sort().toString() !== Object.keys(copyObject(names)).sort().toString()) {
             console.log({ names, lists })
@@ -26,12 +26,12 @@ export default class {
         }
     }
     search() {
+        const { input: { catchInput, typeFrom } } = this
         let result = {
             lists: {},
             names: {}
         }
         Object.keys(this.list.names).forEach(listName => {
-            const { input: { catchInput, typeFrom } } = this
             let list = {
                 body: copyObject(this.list.lists[listName]),
                 header: this.list.names[listName]
@@ -45,10 +45,10 @@ export default class {
                 result.names[listName] = list.header
                 return
             }
-            let query = new RegExp(`(${_query})`.replace("?", "\\?").replace("[", "\\[").replace("]", "\\]"))
+            let query = toStringRegExp(_query)
             let _lists = []
             for (let searchSpace of list.header.option.search_spaces) {
-                _lists = _search(list.body, query, searchSpace)
+                _lists = _search.call(this, list.body, query, searchSpace)
                 if (_lists.length) break
             }
             if (_lists.length) {
@@ -58,21 +58,12 @@ export default class {
         })
         this.list.renderToHTML(list => this.list.loadToPage(list, this.config.$list), result.names, result.lists)
         
-        function _search(list, query, searchSpace = "name") {
+        function _search(list, query, searchSpace) {
             let result = list.filter(item => query.test(item[searchSpace]))
             return result.map(item => {
-                item[searchSpace] = item[searchSpace].replace(query, '<span class="mdui-text-color-theme-accent">$1</span>')
+                item[searchSpace] = item[searchSpace].replace(query, this.config.list.highlight)
                 return item
             })
         }
-    }
-    getFromJson(listGroup) {
-        return getFromJson.call(this, listGroup)
-    }
-    renderToHTML(callback, _names, _lists) {
-        renderToHTML.call(this, callback, _names, _lists)
-    }
-    loadToPage(data, container) {
-        loadToPage.call(this, data, container)
     }
 }

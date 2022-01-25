@@ -11,6 +11,7 @@ export function copy(model) {
             closeOnOutsideClick: false
         })
     } else if (model === "display") {
+        // TODO
         if (this.editEnd === true) {
             document.querySelector("#wiki").style.display = "none"
             document.querySelector("#copy").style.display = ""

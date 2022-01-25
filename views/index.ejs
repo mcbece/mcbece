@@ -12,12 +12,18 @@
     <!-- CSS -->
     <link rel="stylesheet" href="/css/index.css"/>
     <!-- MDUI CSS -->
-    <link rel="stylesheet" href="<%= USE_CDN ? "\//cdn.jsdelivr.net/npm/mdui@latest/dist/css/mdui.min.css" : "/mdui/dist/css/mdui.min.css" %>"/>
+    <link rel="stylesheet" href="<%= USE_CDN ? "\//cdn.jsdelivr.net/npm/mdui@latest/dist/css/mdui.min.css" : "/lib/mdui/dist/css/mdui.min.css" %>"/>
     <%_ if (MOBILE_DEV_MODEL) { -%>
     <!-- Eruda.js -->
-    <script src="<%= USE_CDN ? "\//cdn.jsdelivr.net/npm/eruda" : "/eruda/eruda.js" %>"></script>
+    <script src="<%= USE_CDN ? "\//cdn.jsdelivr.net/npm/eruda" : "/lib/eruda/eruda.js" %>"></script>
+    <script src="<%= USE_CDN ? "\//cdn.jsdelivr.net/npm/eruda-dom" : "/lib/eruda-dom/eruda-dom.js" %>"></script>
+    <script src="<%= USE_CDN ? "\//cdn.jsdelivr.net/npm/eruda-fps" : "/lib/eruda-fps/eruda-fps.min.js" %>"></script>
+    <script src="<%= USE_CDN ? "\//cdn.jsdelivr.net/npm/eruda-timing" : "/lib/eruda-timing/eruda-timing.js" %>"></script>
     <script>
         eruda.init()
+        eruda.add(erudaDom)
+        eruda.add(erudaFps)
+        eruda.add(erudaTiming)
     </script>
     <%_ } -%>
 </head>
@@ -36,7 +42,7 @@
         </div>
     </div>
     <!-- MDUI JS -->
-    <script src="<%= USE_CDN ? "\//cdn.jsdelivr.net/npm/mdui@latest/dist/js/mdui.min.js" : "/mdui/dist/js/mdui.min.js" %>"></script>
+    <script src="<%= USE_CDN ? "\//cdn.jsdelivr.net/npm/mdui@latest/dist/js/mdui.min.js" : "/lib/mdui/dist/js/mdui.min.js" %>"></script>
     <!-- JavaScript -->
     <script type="module" src="/js/index.js"></script>
     <script type="module">

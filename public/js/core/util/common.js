@@ -1,12 +1,12 @@
 export function forEachObject(obj, callbackfn, thisArg) {
     Object.keys(obj).forEach((key, i) => {
-        let value = obj[key]
+        const value = obj[key]
         callbackfn.call(thisArg, key, value, i, obj)
     })
 }
 
 export function copyObject(obj) {
-    return JSON.parse(JSON.stringify(obj))
+    if (obj) return JSON.parse(JSON.stringify(obj))
 }
 
 export function getReturn(target, ...args) {
@@ -25,10 +25,10 @@ export function arrayToSet(arr) {
 }
 
 export function kvArrayToObject(kvArray) {
-    let obj = {}
+    const obj = {}
     kvArray.forEach((kv, i) => {
         if (Array.isArray(kv)) {
-            let [key, value] = kv
+            const [key, value] = kv
             obj[key] = value
         } else obj[i] = kv
     })
@@ -44,8 +44,8 @@ export function isRegExp(target) {
 }
 
 export function toRegExp(str) {
-    let regexp = /^(!?)\/(?<pattern>.*)\/(?<flags>.*)$/
-    let {groups: { pattern, flags }} = str.match(regexp)
+    const regexp = /^(!?)\/(?<pattern>.*)\/(?<flags>.*)$/
+    const {groups: { pattern, flags }} = str.match(regexp)
     return new RegExp(pattern, flags)
 }
 
@@ -60,9 +60,34 @@ export function testRegExp(regexp, str) {
 
 export async function getJsonDataAsync(url) {
     try {
-        let data = await fetch(url)
+        const data = await fetch(url)
         return await data.json()
     } catch (err) {
         console.error(err)
     }
+}
+
+export function readLine(text, len) {
+    const all = text.split("\n")
+    if (typeof len === "number") {
+        if (len < 0) return all[all.length + len]
+        else return all[len]
+    } else return all
+}
+
+export function toJSON(str) {
+    try {
+        return JSON.parse(str)
+    } catch {
+        return eval(`(${str})`)
+    }
+}
+
+export function toStringRegExp(str) {
+    if (/^\/.*\/.*$/.test(str)) return toRegExp(str)
+    else return new RegExp(`(${str})`
+        .replace("?", "\\?")
+        .replace("[", "\\[")
+        .replace("]", "\\]")
+    )
 }

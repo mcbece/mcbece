@@ -23,6 +23,9 @@
     },
     "devDependencies": {
         "eruda": "^2.4.1",
+        "eruda-dom": "^2.0.0",
+        "eruda-fps": "^2.0.0",
+        "eruda-timing": "^2.0.0",
         "morgan": "^1.10.0"
     },
     "scripts": {

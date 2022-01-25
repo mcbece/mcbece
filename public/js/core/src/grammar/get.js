@@ -1,7 +1,7 @@
 import { testRegExp } from "../../util/common.js"
 
 export function getFromJson(grammarGroup) {
-    let commandLength = this.config.$input.value.split(" ").length - 1
+    let commandLength = this.input.catchInput().length - 1
     if (grammarGroup.length > 2) {
         let output = []
         for (let i = 1; i < grammarGroup.length; i++) {

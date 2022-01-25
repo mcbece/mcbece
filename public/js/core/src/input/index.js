@@ -5,25 +5,13 @@ import { typeFrom } from "./type.js"
 
 export default class {
     constructor(app) {
-        this.catchInput = this.catchInput.bind(app)
-        this.input = this.input.bind(app)
-        this.copy = this.copy.bind(app)
-        this.typeFrom = this.typeFrom.bind(app)
-    }
-    catchInput(length) {
-        return catchInput.call(this, length)
+        this.catchInput = catchInput.bind(app)
+        this.input = input.bind(app)
+        this.copy = copy.bind(app)
+        this.typeFrom = typeFrom.bind(app)
     }
     catchName() {
         let commandName = this.catchInput(0)
         if (commandName) return commandName.replace("/", "")
-    }
-    input(text, replace) {
-        input.call(this, text, replace)
-    }
-    copy(model) {
-        copy.call(this, model)
-    }
-    typeFrom(target) {
-        return typeFrom.call(this, target)
     }
 }

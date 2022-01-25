@@ -32,16 +32,16 @@ export default class {
         })
     }
     change() {
-        document.querySelector("#wiki").href = this.data.getText("url.command_page") + this.config.$input.value.split(" ")[0]  // FIXME
+        document.querySelector("#wiki").href = this.data.getText("url.command_page") + this.input.catchName()
         this.editEnd = false
         this.input.copy("display")
-        if (this.config.$input.value.split(" ").length === 1) {
+        if (this.input.catchInput().length === 1) {
             this.list.load("command")
             this.config.$grammar.innerHTML = ""
             this.config.$note.innerHTML = this.data.getText("edit.begin")
             return
         }
-        let result = this.grammar.load(this.input.catchName())
+        const result = this.grammar.load(this.input.catchName())
         if (result.finish) {
             this.config.$list.innerHTML = ""
             this.config.$grammar.innerHTML = ""
@@ -55,5 +55,6 @@ export default class {
             this.list.names = {}
         }
         else this.list.load(result.list)
+        this.list.search()
     }
 }
