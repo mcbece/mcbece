@@ -1,4 +1,4 @@
-import { catchInput } from "./catchInput.js"
+import { catchInput } from "./catch.js"
 import { input } from "./input.js"
 import { copy } from "./copy.js"
 import { typeFrom } from "./type.js"
@@ -11,7 +11,7 @@ export default class {
         this.typeFrom = typeFrom.bind(app)
     }
     catchName() {
-        let commandName = this.catchInput(0)
+        const commandName = this.catchInput(0)
         if (commandName) return commandName.replace("/", "")
     }
 }

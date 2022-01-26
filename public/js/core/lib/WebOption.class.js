@@ -1,5 +1,5 @@
 import {
-    forEachObject,
+    each,
     arrayToSet,
     kvArrayToObject
 } from "../util/common.js"
@@ -46,7 +46,7 @@ export class WebOption {
     }
     getItemValMap() {
         let result = {}
-        forEachObject(this.items, key => result[key] = this.getItemVal(key))
+        each(this.items, key => result[key] = this.getItemVal(key))
         return result
     }
     setStorage() {
@@ -55,7 +55,7 @@ export class WebOption {
     }
     getStorage() {
         let storage = JSON.parse(localStorage.getItem(this._namespace + ":all") ?? "{}")
-        forEachObject(storage, (key, value) => this.setItemVal(key, value))
+        each(storage, (key, value) => this.setItemVal(key, value))
     }
 }
 

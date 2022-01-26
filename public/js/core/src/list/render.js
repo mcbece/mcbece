@@ -1,7 +1,7 @@
-import { ListItemGetter } from "./getter.js"
+import { ListItemRenderer } from "./renderer.js"
 
-export function renderToHTML(callback, _names, _lists) {
-    const getter = new ListItemGetter(this.config.list.getter ?? {})
+export function renderToHTML({ names: _names, lists: _lists }, callback) {
+    const renderer = new ListItemRenderer(this.config.list.renderer ?? {})
     const names = Object.keys(_names)
     const lists = Object.values(_lists)
     const output = []
@@ -18,11 +18,11 @@ export function renderToHTML(callback, _names, _lists) {
                 this.config.list.item(
                     _id,
                     name,
-                    getter.setListItem(listItem)
+                    renderer.setListItem(listItem)
                 )
             )
         )
-        getter.setListItem()
+        renderer.setListItem()
     })
     callback(output)
 }

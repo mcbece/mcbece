@@ -1,8 +1,12 @@
-export function forEachObject(obj, callbackfn, thisArg) {
-    Object.keys(obj).forEach((key, i) => {
-        const value = obj[key]
-        callbackfn.call(thisArg, key, value, i, obj)
+export function each(target, callbackfn, thisArg) {
+    if (Array.isArray(target)) target.forEach(callbackfn, thisArg)
+    else if (typeof target === "object") each(Object.keys(target), (key, i) => {
+        const value = target[key]
+        callbackfn.call(thisArg, key, value, i, target)
     })
+    else if (target[Symbol.iterator]) for (let item of target) {
+        callbackfn.call(thisArg, item, target)
+    }
 }
 
 export function copyObject(obj) {
@@ -40,30 +44,43 @@ export function replaceString(target, args) {
 }
 
 export function isRegExp(target) {
-    return Object.prototype.toString.call(target) === "[object RegExp]"
+    return target instanceof RegExp
 }
 
 export function toRegExp(str) {
-    const regexp = /^(!?)\/(?<pattern>.*)\/(?<flags>.*)$/
+    const regexp = /^(!?)\/(?<pattern>.*)\/(?<flags>[gimsuy]*)$/
     const {groups: { pattern, flags }} = str.match(regexp)
     return new RegExp(pattern, flags)
 }
 
 export function testRegExp(regexp, str) {
     if (typeof regexp === "string") {
-        if (regexp.startsWith("!/")) return !(toRegExp(regexp).test(str))
+        if (regexp.startsWith("!")) return !(toRegExp(regexp).test(str))
         else return toRegExp(regexp).test(str)
     } else if (isRegExp(regexp)) {
         return regexp.test(str)
     }
 }
 
-export async function getJsonDataAsync(url) {
+export async function getData(url) {
     try {
-        const data = await fetch(url)
-        return await data.json()
+        const json = await import(url)
+        return parse(json.default)
     } catch (err) {
         console.error(err)
+    }
+    
+    function parse(target) {
+        if (Array.isArray(target)) return target.map(e => parse(e))
+        else if (typeof target === "object") {
+            const output = {}
+            each(target, (key, value) => {
+                if (typeof value === "string" && value.startsWith("@function")) output[key] = eval(value.replace(/^@function \(/, "("))
+                else output[key] = parse(value)
+            })
+            return output
+        }
+        else return target
     }
 }
 
@@ -84,7 +101,7 @@ export function toJSON(str) {
 }
 
 export function toStringRegExp(str) {
-    if (/^\/.*\/.*$/.test(str)) return toRegExp(str)
+    if (/^\/.*\/[gimsuy]*$/.test(str)) return toRegExp(str)
     else return new RegExp(`(${str})`
         .replace("?", "\\?")
         .replace("[", "\\[")

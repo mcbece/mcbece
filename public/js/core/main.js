@@ -1,24 +1,24 @@
-import { replaceString, getJsonDataAsync } from "./util/common.js"
-import __data__ from "./src/data/index.js"
-import __input__ from "./src/input/index.js"
-import __list__ from "./src/list/index.js"
-import __grammar__ from "./src/grammar/index.js"
+import { replaceString, getData } from "./util/common.js"
+import __Data__ from "./src/data/index.js"
+import __Input__ from "./src/input/index.js"
+import __List__ from "./src/list/index.js"
+import __Grammar__ from "./src/grammar/index.js"
 
 export default class {
     constructor(config) {
         this.config = config
-        this.data = new __data__(this)
-        this.input = new __input__(this)
-        this.list = new __list__(this)
-        this.grammar = new __grammar__(this)
+        this.data = new __Data__(this)
+        this.input = new __Input__(this)
+        this.list = new __List__(this)
+        this.grammar = new __Grammar__(this)
         
         this.initialize = this.initialize.bind(this)
         this.change = this.change.bind(this)
     }
     initialize({ lang, branch }) {
-        getJsonDataAsync(replaceString(this.config.data.url, {lang, branch})).then(data => {
+        getData(replaceString(this.config.data.url, {lang, branch})).then(data => {
             this.data[lang] = data
-            if (lang !== this.config.DEFAULT_LANGUAGE) return getJsonDataAsync(replaceString(this.config.data.url, { lang: this.config.DEFAULT_LANGUAGE, branch })).then(dataDef => {
+            if (lang !== this.config.DEFAULT_LANGUAGE) return getData(replaceString(this.config.data.url, { lang: this.config.DEFAULT_LANGUAGE, branch })).then(dataDef => {
                 this.data[this.config.DEFAULT_LANGUAGE] = dataDef
             })
         }).then(() => {
@@ -54,7 +54,7 @@ export default class {
             this.config.$note.innerHTML = "未知的命令"
             this.list.names = {}
         }
-        else this.list.load(result.list)
+        else this.list.load(result.list ?? "")
         this.list.search()
     }
 }

@@ -3,7 +3,7 @@ export function loadToPage(data, container) {
     this.list.complete = false
     if (window.IntersectionObserver) loadByIntersectionObserver.call(this, data, container)
     else {
-        let items = document.createDocumentFragment()
+        const items = document.createDocumentFragment()
         data.forEach(item => items.appendChild(document.createRange().createContextualFragment(item)))
         container.appendChild(items)
         this.list.complete = true
@@ -17,15 +17,15 @@ export function loadToPage(data, container) {
 
 function loadByIntersectionObserver(data, container) {
     // https://www.xiabingbao.com/post/scroll/longlist-optimization.html
-    let start = 0
-    let count = 20
+    const start = 0
+    const count = 20
     loadList(start, count)
     if (data.length >= 20) {
-        let observerEle = document.createElement("div")
+        const observerEle = document.createElement("div")
         observerEle.id = "observer"
         container.appendChild(observerEle)
-        let observer = new IntersectionObserver(entries => {
-            let entry = entries[0]
+        const observer = new IntersectionObserver(entries => {
+            const entry = entries[0]
             if (entry.intersectionRatio <= 0 || !entry.isIntersecting) return false
             start += count
             loadList(start, count, () => {
@@ -41,9 +41,9 @@ function loadByIntersectionObserver(data, container) {
     }
     
     function loadList(start, count, handler = () => {}) {
-        let div = document.createDocumentFragment()
+        const div = document.createDocumentFragment()
         for (let i = start, len = start + count; i < len && i < data.length; i++) {
-            let item = document.createRange().createContextualFragment(data[i])
+            const item = document.createRange().createContextualFragment(data[i])
             div.appendChild(item)
             if (i === data.length - 1) handler()
         }

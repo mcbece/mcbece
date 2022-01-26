@@ -6,7 +6,7 @@ export function getList(name, _return, lang) {
         const result = eval(`this.data[lang].list.${name}`)
         return result ?? _return
     } catch {
-        if (lang !== this.config.DEFAULT_LANGUAGE) return this.getList(name, _return, this.config.DEFAULT_LANGUAGE)
+        if (lang !== this.config.DEFAULT_LANGUAGE) return this.data.getList(name, _return, this.config.DEFAULT_LANGUAGE)
         else return _return
     }
 }
@@ -16,8 +16,7 @@ export function getGrammar(name, lang) {
     try {
         return this.data[lang].grammar.find(item => testRegExp(item[0].command.name, name))
     } catch {
-        if (lang !== this.config.DEFAULT_LANGUAGE) return this.getGrammar(name, this.config.DEFAULT_LANGUAGE)
-        else return undefined
+        if (lang !== this.config.DEFAULT_LANGUAGE) return this.dsta.getGrammar(name, this.config.DEFAULT_LANGUAGE)
     }
 }
 
@@ -27,7 +26,7 @@ export function getText(name, lang) {
         const result = eval(`this.data[lang].text.${name}`)
         return result ?? ""
     } catch {
-        if (lang !== this.config.DEFAULT_LANGUAGE) return this.getText(name, this.config.DEFAULT_LANGUAGE)
+        if (lang !== this.config.DEFAULT_LANGUAGE) return this.data.getText(name, this.config.DEFAULT_LANGUAGE)
         else return ""
     }
 }

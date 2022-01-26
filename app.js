@@ -1,3 +1,4 @@
+const { toObjectString } = require("./src/util.js")
 const express = require("express")
 const app = express()
 
@@ -115,7 +116,8 @@ app.get("/api/mcbelist.:lang.:branch", (req, res) => {
         const data = require(`./src/data/${lang}/${branch}/index.js`)
         const text = require(`./src/languages/${lang}.json`)
         Object.assign(data.text, text)
-        res.status(200).send(data)
+        res.type(".js")
+        res.status(200).send("export default " + JSON.stringify(toObjectString(data)))
     } catch (err) {
         res.status(404).send({})
         console.log(err)

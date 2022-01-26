@@ -40,25 +40,5 @@ export function rename(listName) {
         if (rotation.length < 1) return listName
         else if (rotation === "~") return `${listName}[0].value`
         else return "next"
-    } else if (listName === "enchantment.level") {
-        const enchantment = catchInput(inputLength - 2)
-        const index = this.data.getList("enchantment", [{}]).findIndex(_item => _item.name === enchantment)
-        if (index !== -1) return `enchantment[${index}].level`
-        else return "enchantment[0].level"
-    } else if (listName === "entity.event") {
-        const entity = catchInput(inputLength - 2)
-        const index = this.data.getList("entity", [{}]).findIndex(_item => _item.name === entity)
-        if (index !== -1) return `entity[${index}].event`
-        else return "entity[0].event"
-    } else if (listName === "block.data") {
-        const block = catchInput(inputLength - 2)
-        const index = this.data.getList("block", [{}]).findIndex(_item => _item.name === block)
-        if (index !== -1) return `block[${index}].data`
-        else return "block[0].data"
-    } else if (listName === "item.data") {
-        const item = catchInput(inputLength - 2)
-        const index = this.data.getList("item", [{}]).findIndex(_item => _item.name === item)
-        if (index !== -1) return `item[${index}].data`
-        else return "item[0].data"
     } else return listName
 }

@@ -3,7 +3,7 @@ import { copyObject, toJSON } from "../../util/common.js"
 
 export function getFromJson(listGroup) {
     if (listGroup === undefined) return {}
-    listGroup = [...new Set(listGroup.replace(/\s?;\s?/g, ";").split(";"))]
+    listGroup = [...new Set(split(listGroup))]
     const output = {
         names: {},
         lists: {}
@@ -53,7 +53,7 @@ export function getFromJson(listGroup) {
         const { input = {}, url } = header.template ?? {}
         if (replace !== undefined) input.replace = replace
         if (text !== undefined) input.text = text
-        let list = {
+        const list = {
             header: reeditHeader.call(this, name, header),
             body: []
         }
@@ -77,4 +77,9 @@ function reeditHeader(name, header) {
             search_spaces: ["name", "info"]
         }, header?.option)
     }
+}
+
+function split(target) {
+    if (Array.isArray(target)) return target
+    else return target.split(/\s*;\s*/)
 }

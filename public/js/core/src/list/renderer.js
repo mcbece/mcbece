@@ -1,19 +1,19 @@
-import { forEachObject, getReturn, toString } from "../../util/common.js"
+import { each, getReturn, toString } from "../../util/common.js"
 
 const DEFAULT_CONFIG = {
     image: {
         handlerFun(item, util) {
             if (app.lite || !app.list.withImage) return
-            let image = item.image
+            const image = item.image
             if (image) return image
         }
     },
     onclick: {
         handlerFun(item) {
-            let input = item.input
-            let auto_next_list = item.auto_next_list
+            const input = item.input
+            const auto_next_list = item.auto_next_list
             if (input || auto_next_list) {
-                let output = {
+                const output = {
                     input: {
                         text: "",
                         replace: ""
@@ -21,10 +21,17 @@ const DEFAULT_CONFIG = {
                     auto_next_list: ""
                 }
                 if (input) {
-                    let replace = input.replace
-                    let text = input.text
+                    const replace = input.replace
+                    const text = input.text
                     if (replace) output.input.replace = replace
-                    if (text) output.input.text = text.replace(/{name}/g, toString(item.name, "").replace(/\<.+\>(.*)\<\/.+\>/g, "$1")).replace(/{info}/g, toString(item.info, "").replace(/{color:\s?.+}/g, "").replace(/\<.+\>(.*)\<\/.+\>/g, "$1"))
+                    if (text) output.input.text = text
+                        .replace(/{name}/g, toString(item.name, "")
+                            .replace(/\<.+\>(.*)\<\/.+\>/g, "$1")
+                        )
+                        .replace(/{info}/g, toString(item.info, "")
+                            .replace(/{color:\s?.+}/g, "")
+                            .replace(/\<.+\>(.*)\<\/.+\>/g, "$1")
+                        )
                     output.input = `app.input.input('${Object.values(output.input).join("', '")}')`
                 } else output.input = ""
                 if (auto_next_list) output.auto_next_list = `app.list.load('${auto_next_list}')`
@@ -35,37 +42,45 @@ const DEFAULT_CONFIG = {
     },
     name: {
         handlerFun(item) {
-            let name = toString(item.name, "")
+            const name = toString(item.name, "")
             return name
         }
     },
     info: {
         handlerFun(item) {
-            let info = toString(item.info, "")
-            let color = /{color:\s?(#[0-9A-Za-z]{6}|rgb\([.0-9]+,\s?[.0-9]+,\s?[.0-9]+\)|rgba\([.0-9]+,\s?[.0-9]+,\s?[.0-9]+,\s?[.0-9]+\)|[a-z]+)}/g
-            return info.replace(color, '<span style="background-color: $1; margin: 0 4px; border: 1px inset black">&emsp;</span>')
+            const info = toString(item.info, "")
+            const colorReg = /{color:\s?(#[0-9A-Za-z]{6}|rgb\([.0-9]+,\s?[.0-9]+,\s?[.0-9]+\)|rgba\([.0-9]+,\s?[.0-9]+,\s?[.0-9]+,\s?[.0-9]+\)|[a-z]+)}/g
+            return info.replace(colorReg, '<span style="background-color: $1; margin: 0 4px; border: 1px inset black">&emsp;</span>')
         }
     },
     url: {
         handlerFun(item) {
             if (!app.lite) {
-                let url = item.url
-                if (url) {
-                    let output = url.replace(/{name}/g, item.name.replace(/\<.+\>.*\<\/.+\>/g, "")).replace(/{info}/g, item.info.replace(/{color:\s?.+}/g, "").replace(/\[.*\]/g, "").replace(/\<.+\>.*\<\/.+\>/g, "")).replace(/{command_page}/g, app.data.getText("url.command_page")).replace(/{normal_page}/g, app.data.getText("url.normal_page")).replace(/{search_page}/g, app.data.getText("url.search_page"))
-                    return output
-                }
+                const url = item.url
+                if (url) return url
+                    .replace(/{name}/g, item.name
+                        .replace(/\<.+\>.*\<\/.+\>/g, "")
+                    )
+                    .replace(/{info}/g, item.info
+                        .replace(/{color:\s?.+}/g, "")
+                        .replace(/\[.*\]/g, "")
+                        .replace(/\<.+\>.*\<\/.+\>/g, "")
+                    )
+                    .replace(/{command_page}/g, app.data.getText("url.command_page"))
+                    .replace(/{normal_page}/g, app.data.getText("url.normal_page"))
+                    .replace(/{search_page}/g, app.data.getText("url.search_page"))
             }
         }
     }
 }
 
-export class ListItemGetter {
+export class ListItemRenderer {
     constructor(target, listItem) {
-        this.getters = {}
+        this.renderers = {}
         if (listItem) this.setListItem(listItem)
         
-        forEachObject(DEFAULT_CONFIG, (name, { handlerFun, callbackFun, defaultVal }) => this.addItem(name, handlerFun, callbackFun, defaultVal))
-        forEachObject(target, (name, { handlerFun, callbackFun, defaultVal }) => {
+        each(DEFAULT_CONFIG, (name, { handlerFun, callbackFun, defaultVal }) => this.addItem(name, handlerFun, callbackFun, defaultVal))
+        each(target, (name, { handlerFun, callbackFun, defaultVal }) => {
             if (name in DEFAULT_CONFIG) {
                 if (handlerFun) this.getItem(name).setHandlerFun(handlerFun)
                 if (callbackFun) this.getItem(name).setCallbackFun(callbackFun)
@@ -79,14 +94,14 @@ export class ListItemGetter {
         return this
     }
     addItem(name, handler, callbackFun, defaultVal) {
-        this.getters[name] = new ListItemGetterItem(handler, callbackFun, defaultVal)
+        this.renderers[name] = new ListItemRendererItem(handler, callbackFun, defaultVal)
         return this
     }
     getItem(name) {
-        return this.getters[name]
+        return this.renderers[name]
     }
     hasItem(name) {
-        if (this.getters[name]) return true
+        if (this.renderers[name]) return true
         else return false
     }
     get(name) {
@@ -94,7 +109,7 @@ export class ListItemGetter {
     }
 }
 
-class ListItemGetterItem {
+class ListItemRendererItem {
     constructor(handlerFun, callbackFun = s => s, defaultVal = "") {
         this.handlerFun = handlerFun
         this.callbackFun = callbackFun
@@ -113,11 +128,10 @@ class ListItemGetterItem {
         return this
     }
     run(item) {
-        let result = this.handlerFun(item)
+        const result = this.handlerFun(item)
         if (result) {
             if (Array.isArray(result)) return getReturn(this.callbackFun, ...result)
             else return getReturn(this.callbackFun, result)
-        }
-        else return getReturn(this.defaultVal)
+        } else return getReturn(this.defaultVal)
     }
 }

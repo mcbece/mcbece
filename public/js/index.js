@@ -31,15 +31,15 @@ const app = new App({
     },
     
     list: {
-        item(_id, name, getter) {
+        item(_id, name, renderer) {
             return `
                 <li class="mdui-list-item mdui-ripple" id="${_id}" data-list-name="${name}">
-                    ${getter.get("image")}
-                    <div class="mdui-list-item-content"${(() => { if (getter.get("onclick")) return ` onclick="${getter.get("onclick")}"` })()}>
-                        <div class="mdui-list-item-title minecraft-font" id="name">${getter.get("name")}</div>
-                        <div class="mdui-list-item-text mdui-list-item-one-line" id="info">${getter.get("info")}</div>
+                    ${renderer.get("image")}
+                    <div class="mdui-list-item-content"${(() => { if (renderer.get("onclick")) return ` onclick="${renderer.get("onclick")}"` })()}>
+                        <div class="mdui-list-item-title minecraft-font" id="name">${renderer.get("name")}</div>
+                        <div class="mdui-list-item-text mdui-list-item-one-line" id="info">${renderer.get("info")}</div>
                     </div>
-                    ${getter.get("url")}
+                    ${renderer.get("url")}
                 </li>
             `
         },
@@ -53,7 +53,7 @@ const app = new App({
         highlight(_, $1) {
             return `<span class="mdui-text-color-theme-accent">${$1}</span>`
         },
-        getter: {
+        renderer: {
             image: {
                 callbackFun(url) {
                     return `<div class="mdui-list-item-avatar" id="image"><img src="${url}" /></div>`

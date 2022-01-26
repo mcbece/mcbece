@@ -16,23 +16,23 @@ export default class {
         this.loadToPage = loadToPage.bind(app)
     }
     load(listGroup) {
-        const { names, lists } = this.list.getFromJson(listGroup)
-        // console.log({ names, lists })
-        if (Object.keys(copyObject(this.list.names)).sort().toString() !== Object.keys(copyObject(names)).sort().toString()) {
-            console.log({ names, lists })
-            this.list.names = names
-            this.list.lists = lists
-            this.list.renderToHTML(list => this.list.loadToPage(list, this.config.$list), names, lists)
+        const result = this.list.getFromJson(listGroup)
+        console.log({_listResult: result})
+        if (Object.keys(copyObject(this.list.names)).sort().toString() !== Object.keys(copyObject(result.names)).sort().toString()) {
+            // console.log({result})
+            this.list.names = result.names
+            this.list.lists = result.lists
+            this.list.renderToHTML(result, list => this.list.loadToPage(list, this.config.$list))
         }
     }
     search() {
         const { input: { catchInput, typeFrom } } = this
-        let result = {
+        const result = {
             lists: {},
             names: {}
         }
         Object.keys(this.list.names).forEach(listName => {
-            let list = {
+            const list = {
                 body: copyObject(this.list.lists[listName]),
                 header: this.list.names[listName]
             }
@@ -45,7 +45,7 @@ export default class {
                 result.names[listName] = list.header
                 return
             }
-            let query = toStringRegExp(_query)
+            const query = toStringRegExp(_query)
             let _lists = []
             for (let searchSpace of list.header.option.search_spaces) {
                 _lists = _search.call(this, list.body, query, searchSpace)
@@ -56,12 +56,28 @@ export default class {
                 result.names[listName] = list.header
             }
         })
-        this.list.renderToHTML(list => this.list.loadToPage(list, this.config.$list), result.names, result.lists)
+        if (Object.keys(result.lists).length) this.list.renderToHTML(result, list => this.list.loadToPage(list, this.config.$list))
+        else this.list.renderToHTML({
+            lists: {
+                _: [
+                    {
+                        info: "没有搜索到任何东西"
+                    }
+                ]
+            },
+            names: {
+                _: {
+                    option: {
+                        searchable: false
+                    }
+                }
+            }
+        }, list => this.list.loadToPage(list, this.config.$list))
         
         function _search(list, query, searchSpace) {
-            let result = list.filter(item => query.test(item[searchSpace]))
+            const result = list.filter(item => query.test(item[searchSpace]))
             return result.map(item => {
-                item[searchSpace] = item[searchSpace].replace(query, this.config.list.highlight)
+                item[searchSpace] = item[searchSpace]?.replace(query, this.config.list.highlight)
                 return item
             })
         }

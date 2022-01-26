@@ -30,7 +30,6 @@
     },
     "scripts": {
         "start": "node app",
-        "dev:start": "nodemon app",
-        "vercel:start": "node app --use-cdn"
+        "dev:start": "nodemon app"
     }
 }
