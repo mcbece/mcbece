@@ -66,9 +66,9 @@ const DEFAULT_CONFIG = {
                         .replace(/\[.*\]/g, "")
                         .replace(/\<.+\>.*\<\/.+\>/g, "")
                     )
-                    .replace(/{command_page}/g, app.data.getText("url.command_page"))
-                    .replace(/{normal_page}/g, app.data.getText("url.normal_page"))
-                    .replace(/{search_page}/g, app.data.getText("url.search_page"))
+                    .replace(/{command_page}/g, app.data.get("text", "url.command_page"))
+                    .replace(/{normal_page}/g, app.data.get("text", "url.normal_page"))
+                    .replace(/{search_page}/g, app.data.get("text", "url.search_page"))
             }
         }
     }

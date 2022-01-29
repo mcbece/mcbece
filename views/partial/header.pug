@@ -1,0 +1,13 @@
+.mdui-appbar.mdui-appbar-fixed
+    .mdui-toolbar.mdui-color-theme(style="height: 60px;")
+        i.mdui-icon.material-icons.mdui-text-color-white-icon.mdui-m-r-0(style="width: 32px !important;") edit
+        .mdui-textfield.mdui-textfield-white(style="padding: 18px 0; width: 100%")
+            input#edit.mdui-textfield-input.mdui-text-color-white-text.mdui-p-t-0.minecraft-font(style="height: 24px; width: 100%; padding-bottom: 4px" type="text")
+    .mdui-toolbar.mdui-color-white(style="height: 60px;")
+        .mdui-list-item-content
+            #grammar.mdui-list-item-title(style="overflow-x: scroll;")
+            #note.mdui-list-item-text.mdui-list-item-one-line(style="overflow-x: scroll;")
+        a#wiki.mdui-btn.mdui-btn-icon(style="min-width: 24px; width: 24px; margin-left: 0; margin-right: 12px" target="_blank" mdui-tooltip="{content: 'WIKI'}")
+            i.mdui-icon.material-icons.mdui-text-color-theme-icon send
+        button#copy.mdui-btn.mdui-btn-icon(style="display: none; min-width: 24px; width: 24px; margin-left: 0; margin-right: 12px" mdui-tooltip="{content: 'COPY'}" onclick="app.input.copy('copy')")
+            i.mdui-icon.material-icons.mdui-text-color-theme-icon content_copy

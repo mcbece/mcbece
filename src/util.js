@@ -1,8 +1,11 @@
-function each(obj, callbackfn, thisArg) {
-    Object.keys(obj).forEach((key, i) => {
-        const value = obj[key]
-        callbackfn.call(thisArg, key, value, i, obj)
-    })
+function each(target, callbackfn, thisArg) {
+    if (Array.isArray(target)) target.forEach(callbackfn, thisArg)
+    else if (typeof target === "object") each(Object.keys(target), (key, i) => callbackfn.call(thisArg, key, target[key], i, target))
+    else if (target[Symbol.iterator]) for (let item of target) callbackfn.call(thisArg, item, target)
+}
+
+function lib(url) {
+    return (process.argv.includes("--use-cdn") ? "//cdn.jsdelivr.net/npm/" : "/lib/") + url
 }
 
 function funStrToArrowFunStr(funStr) {
@@ -29,5 +32,6 @@ function toObjectString(target) {
 
 module.exports = {
     each,
+    lib,
     toObjectString
 }

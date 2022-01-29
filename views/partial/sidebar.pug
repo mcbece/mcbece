@@ -1,0 +1,21 @@
+button.mdui-fab.mdui-fab-fixed.mdui-ripple.mdui-color-theme-accent.mdui-hidden-sm-down(mdui-drawer="{target: '#drawer', overlay: true, swipe: true}" style="z-index: 100")
+    i.mdui-icon.material-icons apps
+#drawer.mdui-drawer.mdui-drawer-right.mdui-drawer-always-wide.mdui-drawer-full-height.mdui-color-white.mdui-drawer-close.mdui-p-t-2.mdui-p-x-2
+    #option-card.mdui-card.mdui-shadow-6.mdui-m-b-2(style="border-radius: 6px;")
+        .mdui-card-primary.mdui-p-t-2
+            .mdui-card-primary-title 设置
+            .mdui-card-primary-subtitle 你可以通过这个工具修改网站设置
+        .mdui-card-actions
+            button.mdui-btn.mdui-text-color-theme-accent.mdui-ripple.mdui-float-right.mdui-m-r-0(mdui-dialog="{target: '#option-tool', history: false, modal: true}") 打开
+    #custom-card.mdui-card.mdui-shadow-6.mdui-m-b-2(style="border-radius: 6px;")
+        .mdui-card-primary.mdui-p-t-2
+            .mdui-card-primary-title 自定义
+            .mdui-card-primary-subtitle 您可以通过这个工具对本站进行自定义
+        .mdui-card-actions
+            button.mdui-btn.mdui-text-color-theme-accent.mdui-ripple.mdui-float-right.mdui-m-r-0(mdui-dialog="{target: '#custom-tool', history: false, modal: true}") 打开
+    #enumerate-card.mdui-card.mdui-shadow-6.mdui-m-b-2(style="border-radius: 6px; display: none;")
+        .mdui-card-primary
+            .mdui-card-primary-title 穷举助手
+            .mdui-card-primary-subtitle 您可以通过这个工具输入穷举的内容
+        .mdui-card-actions
+            button.mdui-btn.mdui-text-color-theme-accent.mdui-ripple.mdui-float-right.mdui-m-r-0(mdui-dialog="{target: '#enumerate-tool', history: false, modal: true}") 打开

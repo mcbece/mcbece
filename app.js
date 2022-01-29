@@ -1,4 +1,4 @@
-const { toObjectString } = require("./src/util.js")
+const { lib, toObjectString } = require("./src/util.js")
 const express = require("express")
 const app = express()
 
@@ -7,33 +7,25 @@ const docsRouter = require("./router/docs.js")
 app.use("/docs", docsRouter)
 
 // Settings
-app.set("view engine", "ejs")
+app.set("view engine", "pug")
 app.set("views", __dirname + "/views")
 
 // Middlewares
 const logger = require("morgan")
 app.use(logger("dev"))
 app.use(express.static(__dirname + "/public"))
+if (!process.argv.includes("--use-cdn")) app.use("/lib", express.static(__dirname + "/node_modules"))
 
 // Params
-let USE_CDN = false
-if (process.argv.includes("--use-cdn")) USE_CDN = true
-else app.use("/lib", express.static(__dirname + "/node_modules"))
-
-let MOBILE_DEV_MODEL = false
-if (process.argv.includes("--mobile-dev")) MOBILE_DEV_MODEL = true
-
-const AVAILABLE_LANGUAGES = {
+const LANGUAGES = {
     "zh-CN": "中文（简体）",
-    "en": "English"
+    // "en": "English"
 }
-
 const BRANCHS = {
     "vanilla": "原版",
     "experiment": "实验性玩法",
     "education": "教育版"
 }
-
 const THEME_COLOR = {
     primary: {
         "red": "#F44336",
@@ -82,27 +74,26 @@ app.get("/css/index.css", (req, res) => {
     sass.compileAsync("./src/scss/index.scss", {
         style: "compressed"
     }).then(({ css }) => {
-        res.type("css")
-        res.send(css)
+        res.status(200).type(".css").send(css)
     }).catch(console.error)
 })
 
 // Main
 app.get("/", (req, res) => {
-    res.render("index", {
-        USE_CDN,
-        MOBILE_DEV_MODEL,
-        AVAILABLE_LANGUAGES,
-        THEME_COLOR,
+    res.render("index.pug", {lib,
+        // USE_CDN,
+        MOBILE_DEV_MODEL: process.argv.includes("--mobile-dev"),
+        
+        LANGUAGES,
         BRANCHS,
+        THEME_COLOR
     })
 })
 
 // APIs
 app.get("/api/theme.color.:color", (req, res) => {
     const color = req.params.color
-    res.type(".txt")
-    res.status(200).send(THEME_COLOR.primary[color])
+    res.status(200).type(".txt").send(THEME_COLOR.primary[color])
 })
 app.get("/api/mcbelist.:lang.:branch", (req, res) => {
     const lang = req.params.lang
@@ -116,11 +107,10 @@ app.get("/api/mcbelist.:lang.:branch", (req, res) => {
         const data = require(`./src/data/${lang}/${branch}/index.js`)
         const text = require(`./src/languages/${lang}.json`)
         Object.assign(data.text, text)
-        res.type(".js")
-        res.status(200).send("export default " + JSON.stringify(toObjectString(data)))
+        res.status(200).type(".js").send("export default " + JSON.stringify(toObjectString(data)))
     } catch (err) {
-        res.status(404).send({})
-        console.log(err)
+        console.warn(err, "Sending `{}` with 404.")
+        res.status(404).send("export default {}")
     }
 })
 

@@ -1,13 +1,20 @@
-import {
-    getList,
-    getGrammar,
-    getText
-} from "./get.js"
+import { getFromURL } from "./get.js"
 
 export default class {
     constructor(app) {
-        this.getList = getList.bind(app)
-        this.getGrammar = getGrammar.bind(app)
-        this.getText = getText.bind(app)
+        this.init = this.init.bind(app)
+        this.get = this.get.bind(app)
+    }
+    async init(url, lang, branch) {
+        await getFromURL.call(this, url, lang, branch)
+    }
+    get(space, name, _return, lang) {
+        if (!lang) lang = this.LANG
+        try {
+            return this.data[lang][space].get(name, _return)
+        } catch (err) {
+            console.warn(err, "Returning with default language.")
+            if (lang !== this.config.DEFAULT_LANGUAGE) return this.data.get(space, name, _return, this.config.DEFAULT_LANGUAGE)
+        }
     }
 }

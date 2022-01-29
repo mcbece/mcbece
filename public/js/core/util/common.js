@@ -1,16 +1,25 @@
+import deepCopy from "/lib/fast-copy/dist/fast-copy.esm.js"
+export { deepCopy }
+
 export function each(target, callbackfn, thisArg) {
     if (Array.isArray(target)) target.forEach(callbackfn, thisArg)
-    else if (typeof target === "object") each(Object.keys(target), (key, i) => {
-        const value = target[key]
-        callbackfn.call(thisArg, key, value, i, target)
-    })
-    else if (target[Symbol.iterator]) for (let item of target) {
-        callbackfn.call(thisArg, item, target)
+    else if (typeof target === "object") each(Object.keys(target), (key, i) => callbackfn.call(thisArg, key, target[key], i, target))
+    else if (target[Symbol.iterator]) for (let item of target) callbackfn.call(thisArg, item, target)
+}
+
+export function objectGet(obj, key, _return, handler = s => s) {
+    if (objectHas(obj, key)) return obj[key]
+    else try {
+        return eval(`obj.${handler(key)}`)
+    } catch (err) {
+        console.warn(err, "Returning `_return`.")
+        return _return
     }
 }
 
-export function copyObject(obj) {
-    if (obj) return JSON.parse(JSON.stringify(obj))
+export function objectHas(obj, key) {
+    if (key in obj && obj.hasOwnProperty(key)) return true
+    else return false
 }
 
 export function getReturn(target, ...args) {
@@ -62,28 +71,6 @@ export function testRegExp(regexp, str) {
     }
 }
 
-export async function getData(url) {
-    try {
-        const json = await import(url)
-        return parse(json.default)
-    } catch (err) {
-        console.error(err)
-    }
-    
-    function parse(target) {
-        if (Array.isArray(target)) return target.map(e => parse(e))
-        else if (typeof target === "object") {
-            const output = {}
-            each(target, (key, value) => {
-                if (typeof value === "string" && value.startsWith("@function")) output[key] = eval(value.replace(/^@function \(/, "("))
-                else output[key] = parse(value)
-            })
-            return output
-        }
-        else return target
-    }
-}
-
 export function readLine(text, len) {
     const all = text.split("\n")
     if (typeof len === "number") {
@@ -95,7 +82,8 @@ export function readLine(text, len) {
 export function toJSON(str) {
     try {
         return JSON.parse(str)
-    } catch {
+    } catch (err) {
+        console.warn(err, "Returning trying `eval()`.")
         return eval(`(${str})`)
     }
 }
@@ -107,4 +95,13 @@ export function toStringRegExp(str) {
         .replace("[", "\\[")
         .replace("]", "\\]")
     )
+}
+
+export async function importDefault(url) {
+    try {
+        const data = await import(url)
+        return data.default
+    } catch (err) {
+        console.error(err)
+    }
 }

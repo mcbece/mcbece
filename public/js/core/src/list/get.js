@@ -1,5 +1,5 @@
 import { rename } from "./rename.js"
-import { copyObject, toJSON } from "../../util/common.js"
+import { deepCopy, toJSON } from "../../util/common.js"
 
 export function getFromJson(listGroup) {
     if (listGroup === undefined) return {}
@@ -19,37 +19,38 @@ export function getFromJson(listGroup) {
             Object.assign(output.names, result.names)
             continue
         }
-        const item = copyObject(this.data.getList(name))
-        if (item === undefined) {
+        const _list = deepCopy(this.data.get("list", name))
+        const header = _list?.getHeader()
+        const body = _list?.getBody()
+        if (_list === undefined) {
             output.lists[_name] = [
                 {
                     "info": "未知的列表"
                 }
             ]
-            output.names[_name] = reeditHeader.call(this, _name)
+            output.names[_name] = reeditHeader.call(this, _name, header)
             continue
-        } else if (!item.length || (item.length === 1 && !("extend" in item[0]))) {
+        } else if (!header || (!body.length && !("extend" in header))) {
             output.lists[_name] = [
                 {
                     "info": "空列表"
                 }
             ]
-            output.names[_name] = reeditHeader.call(this, _name)
+            output.names[_name] = reeditHeader.call(this, _name, header)
             continue
-        } else if ("extend" in item[0]) {
-            const result = this.list.getFromJson(item[0].extend)
+        } else if ("extend" in header) {
+            const result = this.list.getFromJson(header.extend)
             Object.assign(output.lists, result.lists)
             Object.assign(output.names, result.names)
-            if (item.length === 1) continue
+            if (!body) continue
         }
-        let { length: { max: maxLength = item.length - 1, min: minLength = 1 } = {}, input: { replace, text } = {} } = option && toJSON(option)
+        let { length: { max: maxLength = body.length - 1, min: minLength = 0 } = {}, input: { replace, text } = {} } = option && toJSON(option)
         ~~maxLength
         ~~minLength
-        if (maxLength > item.length - 1) maxLength = item.length - 1
-        if (minLength < 1) minLength = 1
-        if (maxLength < 1) maxLength = 1
+        if (maxLength > body.length - 1) maxLength = body.length - 1
+        if (minLength < 0) minLength = 0
+        if (maxLength < 0) maxLength = 0
         if (minLength > maxLength) minLength = maxLength - 1
-        const header = item[0]
         const { input = {}, url } = header.template ?? {}
         if (replace !== undefined) input.replace = replace
         if (text !== undefined) input.text = text
@@ -58,9 +59,9 @@ export function getFromJson(listGroup) {
             body: []
         }
         for (let i = minLength; i < maxLength + 1; i++) {
-            if (!item[i].input) item[i].input = input
-            if (!item[i].url) item[i].url = url
-            list.body.push(item[i])
+            if (!body[i].input) body[i].input = input
+            if (!body[i].url) body[i].url = url
+            list.body.push(body[i])
         }
         output.lists[name] = list.body
         output.names[name] = list.header
@@ -71,7 +72,7 @@ export function getFromJson(listGroup) {
 function reeditHeader(name, header) {
     return {
         name: header?.name || name,
-        minecraft_version: header?.minecraft_version || this.data[this.LANG].MINECRAFT_VERSION,
+        minecraft_version: header?.minecraft_version || this.data[this.LANG]?.MINECRAFT_VERSION,
         option: Object.assign({
             searchable: true,
             search_spaces: ["name", "info"]

@@ -26,32 +26,30 @@ const app = new App({
         this.$input.placeholder = getText("input")
     },
     
-    data: {
-        url: "/api/mcbelist.{lang}.{branch}"
-    },
-    
     list: {
-        item(_id, name, renderer) {
-            return `
-                <li class="mdui-list-item mdui-ripple" id="${_id}" data-list-name="${name}">
-                    ${renderer.get("image")}
-                    <div class="mdui-list-item-content"${(() => { if (renderer.get("onclick")) return ` onclick="${renderer.get("onclick")}"` })()}>
-                        <div class="mdui-list-item-title minecraft-font" id="name">${renderer.get("name")}</div>
-                        <div class="mdui-list-item-text mdui-list-item-one-line" id="info">${renderer.get("info")}</div>
-                    </div>
-                    ${renderer.get("url")}
-                </li>
-            `
-        },
-        divider(name, _name) {
-            return `
-                <li id="listName" data-list-name="${_name}">
-                    <div class="mdui-list-item-text">---------- ${name} ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------</div>
-                </li>
-            `
-        },
-        highlight(_, $1) {
-            return `<span class="mdui-text-color-theme-accent">${$1}</span>`
+        template: {
+            item(_id, name, renderer) {
+                return `
+                    <li class="mdui-list-item mdui-ripple" id="${_id}" data-list-name="${name}">
+                        ${renderer.get("image")}
+                        <div class="mdui-list-item-content"${(() => { if (renderer.get("onclick")) return ` onclick="${renderer.get("onclick")}"` })()}>
+                            <div class="mdui-list-item-title minecraft-font" id="name">${renderer.get("name")}</div>
+                            <div class="mdui-list-item-text mdui-list-item-one-line" id="info">${renderer.get("info")}</div>
+                        </div>
+                        ${renderer.get("url")}
+                    </li>
+                `
+            },
+            divider(name, _name) {
+                return `
+                    <li id="listName" data-list-name="${_name}">
+                        <div class="mdui-list-item-text">---------- ${name} ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------</div>
+                    </li>
+                `
+            },
+            highlight(_, $1) {
+                return `<span class="mdui-text-color-theme-accent">${$1}</span>`
+            }
         },
         renderer: {
             image: {
@@ -64,7 +62,10 @@ const app = new App({
                     return `<a class="mdui-btn mdui-btn-icon mdui-list-item-things-display-when-hover" href="${url}" target="_blank" id="url"><i class="mdui-icon material-icons mdui-text-color-black-icon">send</i></a>`
                 }
             }
-        }
+        },
+        // shortcut: {
+        //     "": ""
+        // }
     },
     
     grammar: {
@@ -76,25 +77,33 @@ const app = new App({
         }
     },
     
-    custom: {
-        data() {
-            this.$input.classList.remove("minecraft-font")
-            return {
-                "zh-CN": {
-                    list: {
-                        player: [
-                            {
-                                template: {
-                                    input: {
-                                        text: "{name} "
-                                    }
+    data: {
+        url: "/api/mcbelist.{lang}.{branch}",
+        custom: {
+            url: "",
+            data() {
+                this.$input.classList.remove("minecraft-font")
+                return {
+                    "zh-CN": {
+                        list: {
+                            data() {
+                                return {
+                                    player: [
+                                        {
+                                            template: {
+                                                input: {
+                                                    text: "{name} "
+                                                }
+                                            }
+                                        },
+                                        {
+                                            name: "PFiS1737",
+                                            info: "作者名称 :-)"
+                                        }
+                                    ]
                                 }
-                            },
-                            {
-                                name: "PFiS1737",
-                                info: "作者名称 :-)"
                             }
-                        ]
+                        }
                     }
                 }
             }

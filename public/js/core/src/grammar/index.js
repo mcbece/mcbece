@@ -50,9 +50,9 @@ function handle(target, thisArg) {
     } else return target
     
     function fix(item, getter, target) {
-        const fixReg = /^(?<name>.+)\.(?<subname>.+)/
-        const { groups: { name, subname } } = item.match(fixReg)
-        const result = getter.searchFrom(name, getter.catchInput(-2), i => `${name}[${i}].${subname}`)
+        const fixReg = /^(?<name>.+)\.(?<subname>.+)(?<option>\{.*\})$/
+        const { groups: { name, subname, option } } = item.match(fixReg)
+        const result = getter.searchFrom(name, getter.catchInput(-2), i => `${name}{${i}}.${subname}${option || ""}`)
         if (target) return target.replace(item, result)
         else return result
     }

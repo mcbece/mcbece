@@ -15,9 +15,9 @@ export function loadToPage(data, container) {
     })
 }
 
+// https://www.xiabingbao.com/post/scroll/longlist-optimization.html
 function loadByIntersectionObserver(data, container) {
-    // https://www.xiabingbao.com/post/scroll/longlist-optimization.html
-    const start = 0
+    let start = 0
     const count = 20
     loadList(start, count)
     if (data.length >= 20) {

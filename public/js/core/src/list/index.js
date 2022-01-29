@@ -1,4 +1,4 @@
-import { copyObject, toStringRegExp } from "../../util/common.js"
+import { deepCopy, toStringRegExp } from "../../util/common.js"
 import { getFromJson } from "./get.js"
 import { renderToHTML } from "./render.js"
 import { loadToPage } from "./load.js"
@@ -17,9 +17,9 @@ export default class {
     }
     load(listGroup) {
         const result = this.list.getFromJson(listGroup)
-        console.log({_listResult: result})
-        if (Object.keys(copyObject(this.list.names)).sort().toString() !== Object.keys(copyObject(result.names)).sort().toString()) {
-            // console.log({result})
+        // console.log({_listResult: result})
+        if (Object.keys(deepCopy(this.list.names)).sort().toString() !== Object.keys(deepCopy(result.names)).sort().toString()) {
+            console.log({result})
             this.list.names = result.names
             this.list.lists = result.lists
             this.list.renderToHTML(result, list => this.list.loadToPage(list, this.config.$list))
@@ -33,7 +33,7 @@ export default class {
         }
         Object.keys(this.list.names).forEach(listName => {
             const list = {
-                body: copyObject(this.list.lists[listName]),
+                body: deepCopy(this.list.lists[listName]),
                 header: this.list.names[listName]
             }
             let _query = catchInput(-1)
@@ -77,7 +77,7 @@ export default class {
         function _search(list, query, searchSpace) {
             const result = list.filter(item => query.test(item[searchSpace]))
             return result.map(item => {
-                item[searchSpace] = item[searchSpace]?.replace(query, this.config.list.highlight)
+                item[searchSpace] = item[searchSpace]?.replace(query, this.config.list.template.highlight)
                 return item
             })
         }
