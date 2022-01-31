@@ -1,6 +1,6 @@
 import App from "./core/main.js"
 
-const app = new App({
+window.app = new App({
     DEFAULT_LANGUAGE: "zh-CN",
     DEFAULT_THEME_COLOR: {
         primary: "indigo",
@@ -15,8 +15,8 @@ const app = new App({
     init(app) {
         // TODO 这里不是很合理的样子，等再改改
         if (screen.height < 800) {
-            // document.body.classList.add("lite")
-            // app.lite = true
+            document.body.classList.add("lite")
+            app.lite = true
         }
         if (app.LANG === "en") this.$grammar.classList.add("minecraft-font")
     },
@@ -60,12 +60,10 @@ const app = new App({
             }
         },
         shortcut: {
-            "enchantment.level": getter => {
-                return 
-            },
-            "entity.event": "",
-            "block.data": "",
-            "item.data": ""
+            "enchantment.level": handler,
+            "entity.event": handler,
+            "block.data": handler,
+            "item.data": handler
         }
     },
     
@@ -81,28 +79,28 @@ const app = new App({
     data: {
         url: "/api/mcbelist.{lang}.{branch}",
         custom: {
-            url: "",
+            urls: [
+                "/js/custom.dev.js"
+            ],
             data() {
-                this.$input.classList.remove("minecraft-font")
                 return {
                     "zh-CN": {
                         list: {
-                            data() {
-                                return {
-                                    player: [
-                                        {
-                                            template: {
-                                                input: {
-                                                    text: "{name} "
-                                                }
+                            __new: {
+                                player: [
+                                    {
+                                        template: {
+                                            input: {
+                                                text: "{name} "
                                             }
                                         },
-                                        {
-                                            name: "PFiS1737",
-                                            info: "作者名称 :-)"
-                                        }
-                                    ]
-                                }
+                                        __app_list__: true
+                                    },
+                                    {
+                                        name: "PFiS1737",
+                                        info: "作者名称 :-)"
+                                    }
+                                ]
                             }
                         }
                     }
@@ -112,4 +110,12 @@ const app = new App({
     }
 })
 
-window.app = app
+
+
+
+function handler(getter, item) {
+    const fixReg = /^(?<name>.+)\.(?<subname>.+)$/
+    const { groups: { name, subname, option } } = item.match(fixReg)
+    const result = getter.searchFrom(name, getter.catchInput(-2), i => `${name}{${i}}.${subname}`)
+    return result
+}

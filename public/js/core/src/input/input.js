@@ -9,6 +9,8 @@ export function input(text, replace) {
         const selector_variable = lastLine.split("[")[lastLine.split("[").length - 1]
         if (/,/.test(selector_variable)) output = lastLine.split(",", lastLine.split(",").length - 1).join(",") + ","
         else output = lastLine.split("[", lastLine.split("[").length - 1).join("[") + "["
+    } else if (replace === "the_latest_selector_value") {
+        output = lastLine.split("=", lastLine.split("=").length - 1).join("=") + "="
     } else if (replace === "none") {
         output = lastLine
     } else if (replace !== "all") {

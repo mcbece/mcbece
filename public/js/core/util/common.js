@@ -7,7 +7,13 @@ export function each(target, callbackfn, thisArg) {
     else if (target[Symbol.iterator]) for (let item of target) callbackfn.call(thisArg, item, target)
 }
 
-export function objectGet(obj, key, _return, handler = s => s) {
+export async function eachAsync(target, asyncfn, thisArg) {
+    if (Array.isArray(target)) for (let i = 0; i < target.length; i++) await asyncfn.call(thisArg, target[i], i, target)
+    else if (typeof target === "object") await eachAsync(Object.keys(target), async (key, i) => await asyncfn.call(thisArg, key, target[key], i, target))
+    else if (target[Symbol.iterator]) for (let item of target) await asyncfn.call(thisArg, item, target)
+}
+
+export function objectGet(obj, key, handler = s => s, _return, ) {
     if (objectHas(obj, key)) return obj[key]
     else try {
         return eval(`obj.${handler(key)}`)
@@ -52,10 +58,6 @@ export function replaceString(target, args) {
     return target.replace(/{([^}]+)}/g, (_, key) => args[key])
 }
 
-export function isRegExp(target) {
-    return target instanceof RegExp
-}
-
 export function toRegExp(str) {
     const regexp = /^(!?)\/(?<pattern>.*)\/(?<flags>[gimsuy]*)$/
     const {groups: { pattern, flags }} = str.match(regexp)
@@ -66,7 +68,7 @@ export function testRegExp(regexp, str) {
     if (typeof regexp === "string") {
         if (regexp.startsWith("!")) return !(toRegExp(regexp).test(str))
         else return toRegExp(regexp).test(str)
-    } else if (isRegExp(regexp)) {
+    } else if (regexp instanceof RegExp) {
         return regexp.test(str)
     }
 }

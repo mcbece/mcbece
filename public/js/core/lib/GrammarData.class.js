@@ -1,47 +1,49 @@
-import { each, objectGet, testRegExp } from "../util/common.js"
+import { each, testRegExp } from "../util/common.js"
 
 export class GrammarData {
     constructor(data) {
-        this.data = parse(data)
+        this._data = parse(data)
     }
     get(name) {
-        return this.data.find(item => testRegExp(item.getHeader().command.name, name)) ?? new Grammar()
+        return this._data.find(item => testRegExp(item.header.command.name, name)) ?? new Grammar()
+    }
+    add(item) {
+        this._data.push(item)
+        return this
     }
 }
 
 function parse(data) {
-    if (Array.isArray(data)) {
-        const output = []
-        each(data, grammar => output.push(new Grammar(grammar)))
-        return output
-    } else return data
+    if (Array.isArray(data)) return data.map(grammar => new Grammar(grammar))
+    else return data
 }
 
 export class Grammar {
     constructor(grammar) {
-        this.header = {}
-        this.body = []
+        this._header = {}
+        this._body = []
         if (grammar) {
             this.setHeader(grammar[0])
             for (let i = 1; i < grammar.length; i++) this.setItem(grammar[i])
         }
     }
     setHeader(header) {
-        this.header = header
+        this._header = header
         return this
     }
     setItem(item) {
-        this.body.push(item)
+        this._body.push(item)
         return this
     }
-    getHeader() {
-        return this.header
-    }
     getItem(index) {
-        if (index) return this.body[index]
-        else return this.body
+        if (index >= 0) return this._body[index]
+        else if (index < 0) return this._header
+        else return this._body
     }
-    getBody() {
+    get header() {
+        return this.getItem(-1)
+    }
+    get body() {
         return this.getItem()
     }
 }

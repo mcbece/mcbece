@@ -1,5 +1,5 @@
 import { rename } from "./rename.js"
-import { deepCopy, toJSON } from "../../util/common.js"
+import { deepCopy, objectHas, toJSON } from "../../util/common.js"
 
 export function getFromJson(listGroup) {
     if (listGroup === undefined) return {}
@@ -20,8 +20,8 @@ export function getFromJson(listGroup) {
             continue
         }
         const _list = deepCopy(this.data.get("list", name))
-        const header = _list?.getHeader()
-        const body = _list?.getBody()
+        const header = _list?.header
+        const body = _list?.body
         if (_list === undefined) {
             output.lists[_name] = [
                 {
@@ -30,7 +30,7 @@ export function getFromJson(listGroup) {
             ]
             output.names[_name] = reeditHeader.call(this, _name, header)
             continue
-        } else if (!header || (!body.length && !("extend" in header))) {
+        } else if (!header || (!body.length && !objectHas(header, "extend"))) {
             output.lists[_name] = [
                 {
                     "info": "空列表"
@@ -38,11 +38,11 @@ export function getFromJson(listGroup) {
             ]
             output.names[_name] = reeditHeader.call(this, _name, header)
             continue
-        } else if ("extend" in header) {
+        } else if (objectHas(header, "extend")) {
             const result = this.list.getFromJson(header.extend)
             Object.assign(output.lists, result.lists)
             Object.assign(output.names, result.names)
-            if (!body) continue
+            if (!body.length) continue
         }
         let { length: { max: maxLength = body.length - 1, min: minLength = 0 } = {}, input: { replace, text } = {} } = option && toJSON(option)
         ~~maxLength

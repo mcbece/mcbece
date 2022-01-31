@@ -1,4 +1,4 @@
-import { each, getReturn, toString } from "../../util/common.js"
+import { each, objectHas, getReturn, toString } from "../../util/common.js"
 
 const DEFAULT_CONFIG = {
     image: {
@@ -81,7 +81,7 @@ export class ListItemRenderer {
         
         each(DEFAULT_CONFIG, (name, { handlerFun, callbackFun, defaultVal }) => this.addItem(name, handlerFun, callbackFun, defaultVal))
         each(target, (name, { handlerFun, callbackFun, defaultVal }) => {
-            if (name in DEFAULT_CONFIG) {
+            if (objectHas(DEFAULT_CONFIG, name)) {
                 if (handlerFun) this.getItem(name).setHandlerFun(handlerFun)
                 if (callbackFun) this.getItem(name).setCallbackFun(callbackFun)
                 if (defaultVal) this.getItem(name).setDefaultVal(defaultVal)

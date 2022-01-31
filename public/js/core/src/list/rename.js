@@ -1,5 +1,8 @@
+import { objectHas } from "../../util/common.js"
+import { InputGetter } from "../../lib/InputGetter.class.js"
+
 export function rename(listName) {
-    const { input: { catchInput }, config: { $input } } = this
+    const { input: { catchInput }, config: { $input, list: { shortcut: listShortcut } } } = this
     const inputLength = catchInput().length
     if (listName === "selector") {
         const selector = catchInput(-1)
@@ -11,7 +14,7 @@ export function rename(listName) {
             const variable_item = selector.split("[")[1].split("]")[0].split(",")[selector.split("[")[1].split("]")[0].split(",").length - 1]
             const key = variable_item.split("=")[0]
             const value = variable_item.split("=")[1]
-            const index = this.data.get("list", "selector.variable").getBody().findIndex(_item => _item.name === key)
+            const index = this.data.get("list", "selector.variable").body.findIndex(_item => _item.name === key)
             if (key !== undefined && key !== "" && value !== undefined && value !== "" && !selector.endsWith("]")) {
                 
                 // TODO 逻辑有问题，等再改
@@ -40,5 +43,9 @@ export function rename(listName) {
         if (rotation.length < 1) return listName
         else if (rotation === "~") return `${listName}[0].value`
         else return "next"
+    } else if (objectHas(listShortcut, listName)) {
+        const handler = listShortcut[listName]
+        if (typeof handler === "function") return handler(new InputGetter(this), listName)
+        else return handler ?? listName
     } else return listName
 }

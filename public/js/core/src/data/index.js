@@ -1,4 +1,5 @@
 import { getFromURL } from "./get.js"
+import { setCustom } from "./custom.js"
 
 export default class {
     constructor(app) {
@@ -7,6 +8,7 @@ export default class {
     }
     async init(url, lang, branch) {
         await getFromURL.call(this, url, lang, branch)
+        await setCustom.call(this)
     }
     get(space, name, _return, lang) {
         if (!lang) lang = this.LANG
