@@ -1,5 +1,5 @@
 import { getFromJson } from "./get.js"
-import { ListNameGetter } from "./getter.js"
+import { InputGetter } from "../../lib/InputGetter.class.js"
 
 export default class {
     constructor(app) {
@@ -39,7 +39,7 @@ function replace(grammar) {
 }
 
 function handle(target, thisArg) {
-    const getter = new ListNameGetter(this)
+    const getter = new InputGetter(this)
     const regexp = /(enchantment.level|entity.event|block.data|item.data)/g
     if (typeof target === "function") return target.call(thisArg, getter)
     else if (Array.isArray(target)) {

@@ -2,15 +2,15 @@
     padding-top: 45px !important;
     padding-bottom: 40px !important;
     
-    & .minecraft-font {
+    .minecraft-font {
         font-family: Roboto, Noto, Helvetica, Arial, sans-serif !important;
     }
     
-    & .mdui-fab {
+    .mdui-fab {
         bottom: 56px;
     }
     
-    & .mdui-toolbar {
+    .mdui-toolbar {
         &:nth-child(1) {
             height: 40px !important;
             bottom: 0 !important;
@@ -48,23 +48,23 @@
         }
     }
     
-    & #grammar {
+    #grammar {
         font-size: 13px;
     }
     
-    & #note {
+    #note {
         font-size: 11px;
         margin-top: 0;
     }
     
-    & #list {
+    #list {
         .mdui-list-item {
             padding-right: 8px;
             padding-left: 8px;
             min-height: 24px;
             max-height: 36px;
             height: calc(100vh / 16);
-            height: calc(var(--vh, 1vh) * 100 / 16);
+            // height: calc(var(--vh, 1vh) * 100 / 16);
             /* transition: height .3s; */
             /* 因为在加载长列表时会比较卡，所以这行先注释掉了 */
             /* 建议开启输入法的 不挤压页面 等类似功能 */
@@ -86,11 +86,15 @@
         }
     }
     
-    & .mdui-dialog-full-screen {
+    .mdui-dialog-full-screen {
         max-height: 100% !important;
         max-width: 100% !important;
         height: 100% !important;
         width: 100% !important;
         margin: 0 !important;
     }
+}
+
+body.lite {
+    @include lite()
 }

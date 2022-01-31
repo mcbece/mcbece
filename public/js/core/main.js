@@ -14,6 +14,9 @@ export default class {
         this.initialize = this.initialize.bind(this)
         this.change = this.change.bind(this)
     }
+    get useVirtualScroll() {
+        return !!(document.querySelector(".virtual-scroll"))
+    }
     initialize({ lang, branch }) {
         this.data.init(this.config.data.url, lang, branch).then(() => {
             this.config.i18n(this.data.get.bind(this, "text"))

@@ -105,3 +105,18 @@ export async function importDefault(url) {
         console.error(err)
     }
 }
+
+export function stringToNode(str, useFragment) {
+    if (useFragment) return document.createRange().createContextualFragment(str)
+    else {
+        const div = document.createElement("div")
+        div.innerHTML = str
+        return div.querySelector("*")
+    }
+}
+
+export function nodeToString(node) {
+    const div = document.createElement("div")
+    div.appendChild(node)
+    return div.innerHTML
+}

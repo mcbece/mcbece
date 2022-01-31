@@ -1,18 +1,8 @@
 @import "./mdui.extension.scss";
+@import "./virtualScroll.scss";
 @import "./lite.scss";
 
-*::-webkit-scrollbar {
-    display: none;
-}
-
-#listName {
-    height: 20px;
-    overflow: hidden;
-}
-
-.minecraft-font {
-    font-family: Minecraft !important;
-}
+// ==========
 
 @font-face{
     font-family: Minecraft;
@@ -21,14 +11,24 @@
          url(/fonts/minecraft.woff) format('woff'); */
 }
 
+.minecraft-font {
+    font-family: Minecraft !important;
+}
+
+// ==========
+
 @media (min-width: 600px) {
     .mdui-row .retract {
         width: 30px;
     }
 }
 
+// ==========
 
-/* Lite */
-body.lite {
-    @include lite()
+*::-webkit-scrollbar {
+    display: none;
+}
+
+body {
+    padding-top: 128px;
 }

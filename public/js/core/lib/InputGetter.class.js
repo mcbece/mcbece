@@ -1,4 +1,4 @@
-export class ListNameGetter {
+export class InputGetter {
     constructor(app) {
         this._app = app
     }
@@ -8,8 +8,8 @@ export class ListNameGetter {
     catchName() {
         return this._app.input.catchName()
     }
-    searchFrom(list, query, template = i => i) {
-        const index = this._app.data.get("list", list).getBody().findIndex(_item => _item.name === query)
+    searchFrom(listName, query, template = i => i) {
+        const index = this._app.data.get("list", listName).getBody().findIndex(_item => _item.name === query)
         if (index !== -1) return template(index)
         else return template(0)
     }

@@ -15,8 +15,8 @@ const app = new App({
     init(app) {
         // TODO 这里不是很合理的样子，等再改改
         if (screen.height < 800) {
-            document.body.classList.add("lite")
-            app.lite = true
+            // document.body.classList.add("lite")
+            // app.lite = true
         }
         if (app.LANG === "en") this.$grammar.classList.add("minecraft-font")
     },
@@ -41,11 +41,7 @@ const app = new App({
                 `
             },
             divider(name, _name) {
-                return `
-                    <li id="listName" data-list-name="${_name}">
-                        <div class="mdui-list-item-text">---------- ${name} ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------</div>
-                    </li>
-                `
+                return `<li class="mdui-subheader" data-list-name="${_name}">${name}</li>`
             },
             highlight(_, $1) {
                 return `<span class="mdui-text-color-theme-accent">${$1}</span>`
@@ -63,9 +59,14 @@ const app = new App({
                 }
             }
         },
-        // shortcut: {
-        //     "": ""
-        // }
+        shortcut: {
+            "enchantment.level": getter => {
+                return 
+            },
+            "entity.event": "",
+            "block.data": "",
+            "item.data": ""
+        }
     },
     
     grammar: {

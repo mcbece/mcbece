@@ -24,16 +24,16 @@ html
                 eruda.add(erudaDom)
                 eruda.add(erudaFps)
                 eruda.add(erudaTiming)
-    body.mdui-theme-primary-indigo.mdui-theme-accent-pink(style="padding-top: 120px;")
+    body.mdui-theme-primary-indigo.mdui-theme-accent-pink
         // Header 
         include partial/header.pug
         // Sidebar 
         include partial/sidebar.pug
         // Tools 
-        //- includes 
+        //- includes partial/tools.pug
         // List 
-        .mdui-container-fluid.mdui-p-a-0
-            #list.mdui-list.mdui-p-t-0
+        .virtual-scroll
+            #list.virtual-scroll__container.mdui-list.mdui-p-y-0
                 .mdui-spinner.mdui-center
         // MDUI JS 
         script(src=lib("mdui/dist/js/mdui.min.js"))

@@ -1,0 +1,19 @@
+.virtual-scroll {
+    display: block;
+    flex: 1 1 auto;
+    height: 100%;
+    max-width: 100%;
+    overflow: auto;
+    position: relative;
+    
+    &__container {
+        display: block;
+        position: relative;
+    }
+    
+    &__item {
+        left: 0;
+        position: absolute !important;
+        right: 0;
+    }
+}
