@@ -1,4 +1,4 @@
-import deepCopy from "/lib/fast-copy/dist/fast-copy.esm.js"
+import deepCopy from "./fast-copy.esm.js"
 export { deepCopy }
 
 export function each(target, callbackfn, thisArg) {
@@ -13,7 +13,13 @@ export async function eachAsync(target, asyncfn, thisArg) {
     else if (target[Symbol.iterator]) for (let item of target) await asyncfn.call(thisArg, item, target)
 }
 
-export function objectGet(obj, key, handler = s => s, _return, ) {
+export function mapObject(obj, callbackfn, thisArg) {
+    const newObj = {}
+    each(obj, (key, value, i, _obj) => newObj[key] = callbackfn.call(thisArg, value, i, _obj))
+    return newObj
+}
+
+export function objectGet(obj, key, handler = s => s, _return) {
     if (objectHas(obj, key)) return obj[key]
     else try {
         return eval(`obj.${handler(key)}`)
@@ -39,13 +45,9 @@ export function toString(target, _return) {
     else return _return
 }
 
-export function arrayToSet(arr) {
-    return new Set(arr)
-}
-
 export function kvArrayToObject(kvArray) {
     const obj = {}
-    kvArray.forEach((kv, i) => {
+    each(kvArray, (kv, i) => {
         if (Array.isArray(kv)) {
             const [key, value] = kv
             obj[key] = value
@@ -55,7 +57,7 @@ export function kvArrayToObject(kvArray) {
 }
 
 export function replaceString(target, args) {
-    return target.replace(/{([^}]+)}/g, (_, key) => args[key])
+    return target.replace(/{([^}]+)}/g, (_, key) => objectGet(args, key))
 }
 
 export function toRegExp(str) {

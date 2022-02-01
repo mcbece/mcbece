@@ -1,4 +1,4 @@
-{
+export default {
     "title": "基岩版命令编写助手",
     "input": "开始编写",
     "edit": {

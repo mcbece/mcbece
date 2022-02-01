@@ -1,16 +1,16 @@
-const express = require("express")
-const markdown = require("../src/markdown.js")
-const { lib } = require("../src/util.js")
-const app = express.Router()
+import express from "express"
+import markdown from "../src/markdown.js"
 
-app.get("/", (req, res) => {
+const docs = express.Router()
+
+docs.get("/", (req, res) => {
     res.redirect(307, `${req.baseUrl}/readme`)
 })
-app.get("/readme", (req, res) => {
-    markdown("./README.md", html => res.render("docs.pug", {lib,
+docs.get("/readme", (req, res) => {
+    markdown("./README.md", html => res.render("docs.pug", {
         title: "REAFME.md",
         body: html
     }))
 })
 
-module.exports = app
+export default docs

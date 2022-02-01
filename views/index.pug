@@ -12,72 +12,38 @@ html
         // CSS 
         link(rel="stylesheet" href="/css/index.css")
         // MDUI CSS 
-        link(rel="stylesheet" href=lib("mdui/dist/css/mdui.min.css"))
+        link(rel="stylesheet" href="/lib/mdui/dist/css/mdui.min.css")
         if MOBILE_DEV_MODEL
             // Eruda.js 
-            script(src=lib("eruda/eruda.js"))
-            script(src=lib("eruda-dom/eruda-dom.js"))
-            script(src=lib("eruda-fps/eruda-fps.min.js"))
-            script(src=lib("eruda-timing/eruda-timing.js"))
+            script(src="/lib/eruda/eruda.js")
+            script(src="/lib/eruda-dom/eruda-dom.js")
+            script(src="/lib/eruda-fps/eruda-fps.min.js")
+            script(src="/lib/eruda-timing/eruda-timing.js")
             script.
-                eruda.init()
+                eruda.init({
+                    defaults: {
+                        displaySize: 50,
+                        transparency: 1,
+                        theme: "Light"
+                    }
+                })
                 eruda.add(erudaDom)
                 eruda.add(erudaFps)
                 eruda.add(erudaTiming)
-    body.mdui-theme-primary-indigo.mdui-theme-accent-pink
+                eruda.show()
+    body.loading
+        .loading-box.mdui-valign
+            .mdui-spinner.mdui-center
         // Header 
         include partial/header.pug
         // Sidebar 
         include partial/sidebar.pug
-        // Tools 
-        //- includes partial/tools.pug
+        // Dialogs 
+        include partial/dialogs.pug
         // List 
         .virtual-scroll
             #list.virtual-scroll__container.mdui-list.mdui-p-y-0
-                .mdui-spinner.mdui-center
         // MDUI JS 
-        script(src=lib("mdui/dist/js/mdui.min.js"))
+        script(src="/lib/mdui/dist/js/mdui.min.js")
         // JavaScript 
-        script(type="module" src="/js/index.js")
-        script(type="module").
-            import { WebOption } from "/js/core/lib/WebOption.class.js"
-            const webOption = new WebOption()
-            const {
-                DEFAULT_LANGUAGE,
-                DEFAULT_THEME_COLOR
-            } = app.config
-            
-           webOption
-                .addItem("lang", [], (selected, original) => {
-                    app.LANG = selected
-                    document.documentElement.lang = selected
-                    console.log("lang -> from", original, "to", selected)
-                }, DEFAULT_LANGUAGE)
-                .addItem("branch", [], (selected, original) => {
-                    app.BRANCH = selected
-                    console.log("branch -> from", original, "to", selected)
-                })
-                .addItem("themePrimaryColor", [], (selected, original) => {
-                    document.body.classList.remove(`mdui-theme-primary-${original}`)
-                    document.body.classList.add(`mdui-theme-primary-${selected}`)
-                    fetch(`/api/theme.color.${selected}`)
-                        .then(text => text.text())
-                        .then(text => document.head.querySelector('meta[name="theme-color"]').content = text)
-                        .catch(console.error)
-                    console.log("themePrimaryColor -> from", original, "to", selected)
-                }, DEFAULT_THEME_COLOR.primary)
-                .addItem("themeAccentColor", [], (selected, original) => {
-                    document.body.classList.remove(`mdui-theme-accent-${original}`)
-                    document.body.classList.add(`mdui-theme-accent-${selected}`)
-                    console.log("themeAccentColor -> from", original, "to", selected)
-                }, DEFAULT_THEME_COLOR.accent)
-                .addItem("customURL", [], (selected, original) => {
-                    // TODO
-                    // document.querySelector("#customURL").value = selected
-                    console.log("customURL -> from", original, "to", selected)
-                })
-                .addItem("listWithImage", [true, false], (selected, original) => {
-                    app.list.withImage = selected
-                    console.log("listWithImage -> from", original, "to", selected)
-                })
-            app.option = webOption.init(app.initialize)
+        script(src="/js/index.js" type="module")

@@ -1,4 +1,5 @@
-import { each, replaceString, importDefault } from "../../util/common.js"
+import { each, mapObject, replaceString, importDefault } from "../../util/common.js"
+import { parse } from "../../util/JSONWithFun.js"
 import { ListData } from "../../lib/ListData.class.js"
 import { GrammarData } from "../../lib/GrammarData.class.js"
 import { TextData } from "../../lib/TextData.class.js"
@@ -18,14 +19,4 @@ export async function getFromURL(url, lang, branch) {
             text: new TextData(dataDef.text)
         }
     }
-}
-
-function parse(target) {
-    if (Array.isArray(target)) return target.map(e => parse(e))
-    else if (typeof target === "object") {
-        const output = {}
-        each(target, (key, value) => output[key] = parse(value))
-        return output
-    } else if (typeof target === "string" && target.startsWith("@function")) return eval(target.replace(/^@function /, ""))
-    else return target
 }

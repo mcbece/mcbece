@@ -17,8 +17,8 @@ export default class {
     get useVirtualScroll() {
         return !!(document.querySelector(".virtual-scroll"))
     }
-    initialize({ lang, branch }) {
-        this.data.init(this.config.data.url, lang, branch).then(() => {
+    initialize({ lang, branch, customURL }) {
+        this.data.init(this.config.data.url, lang, branch, customURL).then(() => {
             this.config.i18n(this.data.get.bind(this, "text"))
             this.config.init(this)
             this.config.$input.oninput = () => {
@@ -26,12 +26,11 @@ export default class {
                 this.list.search()
             }
             this.change()
+            document.body.classList.remove("loading")
         }).catch(console.error)
     }
     change() {
-        document.querySelector("#wiki").href = this.data.get("text", "url.command_page") + this.input.catchName()
-        this.editEnd = false
-        this.input.copy("display")
+        this.toggleFunIcon(false, this.data.get("text", "url.command_page") + this.input.catchName())
         if (this.input.catchInput().length === 1) {
             this.list.load("command")
             this.config.$grammar.innerHTML = ""
@@ -44,8 +43,7 @@ export default class {
             this.config.$grammar.innerHTML = ""
             this.config.$note.innerHTML = this.data.get("text", "edit.end")
             this.list.names = {}
-            this.editEnd = true
-            this.input.copy("display")
+            this.toggleFunIcon(true)
         } else if (result.undefined) {
             this.config.$list.innerHTML = ""
             this.config.$note.innerHTML = "未知的命令"
@@ -53,5 +51,24 @@ export default class {
         }
         else this.list.load(result.list ?? "")
         this.list.search()
+    }
+    clear() {
+        console.log(true)
+        this.config.$list.innerHTML = ""
+        this.config.$grammar.innerHTML = ""
+        this.config.$note.innerHTML = ""
+        this.config.$function.innerHTML = ""
+    }
+    toggleFunIcon(editEnd, url) {
+        const { $function, _funIcon } = this.config
+        if (editEnd) {
+            $function.innerHTML = _funIcon.copy
+            $function.setAttribute("mdui-tooltip", `{content: "COPY"}`)
+            $function.onclick = this.input.copy
+        } else {
+            $function.innerHTML = _funIcon.wiki
+            $function.setAttribute("mdui-tooltip", `{content: "WIKI"}`)
+            $function.onclick = () => window.open(url, "_blank")
+        }
     }
 }

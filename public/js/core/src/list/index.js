@@ -1,4 +1,4 @@
-import { deepCopy, toStringRegExp } from "../../util/common.js"
+import { each, deepCopy, toStringRegExp } from "../../util/common.js"
 import { getFromJson } from "./get.js"
 import { renderToHTML } from "./render.js"
 import { loadToPage } from "./load.js"
@@ -31,10 +31,10 @@ export default class {
             lists: {},
             names: {}
         }
-        Object.keys(this.list.names).forEach(listName => {
+        each(this.list.names, (listName, _header) => {
             const list = {
                 body: deepCopy(this.list.lists[listName]),
-                header: this.list.names[listName]
+                header: _header
             }
             let _query = catchInput(-1)
             if (listName === "command") _query = _query.replace("/", "")

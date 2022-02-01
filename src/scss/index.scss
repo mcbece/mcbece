@@ -29,6 +29,22 @@
     display: none;
 }
 
+body.loading {
+    .mdui-appbar {
+        -webkit-box-shadow: none !important;
+                box-shadow: none !important;
+    }
+    
+    .loading-box {
+        display: block;
+        width: 100%;
+    }
+}
+
 body {
     padding-top: 128px;
+    
+    &:not(.loading) .loading-box {
+        display: none !important;
+    }
 }

@@ -6,9 +6,9 @@ export default class {
         this.init = this.init.bind(app)
         this.get = this.get.bind(app)
     }
-    async init(url, lang, branch) {
+    async init(url, lang, branch, customURL) {
         await getFromURL.call(this, url, lang, branch)
-        await setCustom.call(this)
+        await setCustom.call(this, customURL)
     }
     get(space, name, _return, lang) {
         if (!lang) lang = this.LANG

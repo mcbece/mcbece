@@ -1,8 +1,4 @@
-import {
-    each,
-    arrayToSet,
-    kvArrayToObject
-} from "../util/common.js"
+import { each } from "../core/util/common.js"
 
 export class WebOption {
     constructor(namespace = "WebOption") {
@@ -12,8 +8,7 @@ export class WebOption {
     init(...handlers) {
         this.getStorage()
         this.setStorage()
-        let initResult = this.getItemValMap()
-        handlers.forEach(handler => handler(initResult))
+        each(handlers, handler => handler(this.getItemValMap()))
         this.addItem = undefined
         this.getStorage = undefined
         this.init = undefined
@@ -24,25 +19,27 @@ export class WebOption {
         return this
     }
     hasItem(name) {
-        return this.getItem(name) ? true : false
+        return this._getItem(name) ? true : false
     }
-    getItem(name) {
+    _getItem(name) {
         return this.items[name]
     }
     setItemVal(name, value, handler = () => {}) {
-        let item = this.getItem(name)
-        let result = item?.select(value)
-        if (result) handler(item.selected, item.original)
+        const item = this._getItem(name)
+        const result = item?.select(value)
+        if (result) handler(item.selected, item.original, this.getItemValMap())
         this.setStorage()
         return this
     }
-    toggleItemVal(name) {
-        this.getItem(name)?.toggle()
+    toggleItemVal(name, handler = () => {}) {
+        const item = this._getItem(name)
+        item?.toggle()
+        handler(item.selected, item.original, this.getItemValMap())
         this.setStorage()
         return this
     }
     getItemVal(name) {
-        return this.getItem(name)?.selected
+        return this._getItem(name)?.selected
     }
     getItemValMap() {
         let result = {}
@@ -62,20 +59,21 @@ export class WebOption {
 class WebOptionItem {
     constructor(name, values = [], handler = () => {}, defaultValue) {
         this.name = name
-        this.values = arrayToSet(values)
-        this.handler = handler
+        this.values = new Set(values)
+        this.handler = (...args) => {
+            if (this.selected) handler(...args)
+        }
         this.selected = this.hasVal(defaultValue) ? defaultValue : values[0]
         this.original = undefined
-        handler(this.selected)
+        this.handler(this.selected)
     }
     select(value) {
-        if (this.selected !== value && (this.hasVal(value) || !this.values.size)) {
+        if (this.selected !== value && this.hasVal(value)) {
             this.original = this.selected
             this.selected = value
             this.handler(this.selected, this.original)
             return true
-        }
-        else return false
+        } else return false
     }
     toggle() {
         let _values = [...this.values]
@@ -97,6 +95,6 @@ class WebOptionItem {
         return this
     }
     hasVal(value) {
-        return this.values.has(value)
+        return this.values.has(value) || !this.values.size
     }
 }

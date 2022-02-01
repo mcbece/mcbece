@@ -1,6 +1,7 @@
 import App from "./core/main.js"
+import option from "./option.js"
 
-window.app = new App({
+const app = new App({
     DEFAULT_LANGUAGE: "zh-CN",
     DEFAULT_THEME_COLOR: {
         primary: "indigo",
@@ -8,9 +9,14 @@ window.app = new App({
     },
     
     $input: document.querySelector("#edit"),
+    $function: document.querySelector("#function"),
     $grammar: document.querySelector("#grammar"),
     $note: document.querySelector("#note"),
     $list: document.querySelector("#list"),
+    _funIcon: {
+        wiki: `<i class="mdui-icon material-icons mdui-text-color-theme-icon">send</i>`,
+        copy: `<i class="mdui-icon material-icons mdui-text-color-theme-icon">content_copy</i>`
+    },
     
     init(app) {
         // TODO 这里不是很合理的样子，等再改改
@@ -81,37 +87,13 @@ window.app = new App({
         custom: {
             urls: [
                 "/js/custom.dev.js"
-            ],
-            data() {
-                return {
-                    "zh-CN": {
-                        list: {
-                            __new: {
-                                player: [
-                                    {
-                                        template: {
-                                            input: {
-                                                text: "{name} "
-                                            }
-                                        },
-                                        __app_list__: true
-                                    },
-                                    {
-                                        name: "PFiS1737",
-                                        info: "作者名称 :-)"
-                                    }
-                                ]
-                            }
-                        }
-                    }
-                }
-            }
+            ]
         }
     }
 })
 
-
-
+option(app).then(webOption => app.option = webOption.init(app.initialize))
+window.app = app
 
 function handler(getter, item) {
     const fixReg = /^(?<name>.+)\.(?<subname>.+)$/

@@ -74,7 +74,27 @@ export default {
                         "info": [
                             {
                                 "length": 1,
-                                "list": "block; item; location; entity; enchantment",
+                                "list": [
+                                    "entity",
+                                    "block",
+                                    "item",
+                                    "particle_emitter",
+                                    "sound",
+                                    "music",
+                                    "animation",
+                                    "effect",
+                                    "enchantment",
+                                    "fog",
+                                    "entity_family",
+                                    "location",
+                                    "command",
+                                    "selector.variable",
+                                    "selector.parameter",
+                                    "difficulty",
+                                    "boolean",
+                                    "ability",
+                                    // "_other1000"
+                                ],
                             }
                         ]
                     }

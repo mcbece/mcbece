@@ -2,9 +2,10 @@ import { each, eachAsync, importDefault } from "../../util/common.js"
 import { ListData, List } from "../../lib/ListData.class.js"
 import { Grammar } from "../../lib/GrammarData.class.js"
 
-export async function setCustom() {
+export async function setCustom(url) {
     const { urls, data: dataFun } = this.config.data.custom
-    if (urls) await eachAsync(urls, async url => handle.call(this, await importDefault(url)))
+    if (url) handle.call(this, await importDefault(url))
+    if (urls) await eachAsync(urls, async _url => handle.call(this, await importDefault(_url)))
     if (dataFun) handle.call(this, dataFun())
 }
 

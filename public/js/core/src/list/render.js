@@ -1,3 +1,4 @@
+import { each } from "../../util/common.js"
 import { ListItemRenderer } from "./renderer.js"
 
 export function renderToHTML({ names: _names, lists: _lists }, callback) {
@@ -5,7 +6,7 @@ export function renderToHTML({ names: _names, lists: _lists }, callback) {
     const names = Object.keys(_names)
     const lists = Object.values(_lists)
     const output = []
-    lists.forEach((item, i) => {
+    each(lists, (item, i) => {
         const name = names[i]
         if (!this.lite && this.config.list.template.divider) output.push(
             this.config.list.template.divider(
@@ -13,7 +14,7 @@ export function renderToHTML({ names: _names, lists: _lists }, callback) {
                 name
             )
         )
-        item.forEach((listItem, _id) =>
+        each(item, (listItem, _id) =>
             output.push(
                 this.config.list.template.item(
                     _id,
@@ -22,7 +23,6 @@ export function renderToHTML({ names: _names, lists: _lists }, callback) {
                 )
             )
         )
-        renderer.setListItem()
     })
     callback(output)
 }

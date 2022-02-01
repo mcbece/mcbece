@@ -1,13 +1,13 @@
 mixin dialog({id, title, subtitle, tab, content, onsave})
-    .mdui-dialog.mdui-dialog-full-screen(id=id)
+    .mdui-dialog.mdui-dialog-full-screen(id=`${id}-dialog`)
         .mdui-dialog-title.mdui-color-theme
             span.mdui-typo-headline= title
             .mdui-typo-caption-opacity= subtitle
-        .mdui-ider-dark(style="height: 2px;")
+        .mdui-divider(style="height: 2px;")
         if tab
             .mdui-tab.mdui-tab-full-width(mdui-tab)
-                each e in tab
-                    a.mdui-ripple(id=e.id)= e.name
+                each item in tab
+                    a.mdui-ripple(id=e.id)= item.name
         .mdui-dialog-content
             .mdui-row
             each item in content
@@ -15,7 +15,7 @@ mixin dialog({id, title, subtitle, tab, content, onsave})
                     .mdui-typo-title= item.title
                 if item.content
                     .mdui-col-xs-1.mdui-p-b-1.retract
-                    .mdui-col-xs-10.mdui-col-sm-11.mdui-p-b-1.= item.content
+                    .mdui-col-xs-10.mdui-col-sm-11.mdui-p-b-1!= item.content
         .mdui-dialog-actions
             button.mdui-btn.mdui-ripple(onclick=onsave) 保存
             button.mdui-btn.mdui-ripple(mdui-dialog-close) 关闭

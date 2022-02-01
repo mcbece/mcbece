@@ -1,7 +1,7 @@
-const fs = require("fs")
-const axios = require("axios")
+import fs from "fs"
+import axios from "axios"
 
-module.exports = (url, callback) => {
+export default function (url, callback) {
     const content = fs.readFileSync(url).toString()
     axios.post("https://api.github.com/markdown", {
         text: content

@@ -4,6 +4,7 @@
     "author": "PFiS1737",
     "private": true,
     "license": "GPL-3.0",
+    "type": "module",
     "homepage": "https://github.com/PFiS1737/mcbece#readme",
     "repository": {
         "type": "git",
@@ -16,7 +17,6 @@
     "dependencies": {
         "axios": "^0.25.0",
         "express": "^4.17.1",
-        "fast-copy": "^2.1.1",
         "github-markdown-css": "^5.1.0",
         "mdui": "^1.0.2",
         "pug": "^3.0.2",

@@ -1,4 +1,4 @@
-import { each, objectGet } from "../util/common.js"
+import { each, objectGet, mapObject } from "../util/common.js"
 
 export class ListData {
     constructor(data) {
@@ -21,14 +21,22 @@ function parse(data) {
         each(data.header, (key, value) => data.setHeader(key, parse(value)))
         each(data.body, (item, i) => data.setItem(i, parse(item)))
         return data
-    } else if (typeof data === "object") {
-        const output = {}
-        each(data, (key, value) => output[key] = parse(value))
-        return output
-    } else return data
+    }
+    else if (typeof data === "object") return mapObject(data, item => parse(item))
+    else return data
 }
 
 export class List {
+    static stringify(list) {
+        
+    }
+    static parse(listStr) {
+        
+    }
+    static minify(list) {
+        if (typeof list === "string") return List.minify(List.parse(list))
+        else return List.minify(list)
+    }
     constructor(list) {
         this._header = {}
         this._body = []

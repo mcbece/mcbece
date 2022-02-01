@@ -1,0 +1,29 @@
+include ../mixin/dialog.pug
+
++dialog({
+    id: "custom",
+    title: "自定义",
+    subtitle: "你可以通过这个工具引入自己的自定义项",
+    content: [
+        {
+            title: "说明：",
+            content: `
+                <span class="mdui-typo">
+                    文件格式为 <code>.js</code><br />
+                    有关如何编写，请见<a href="./docs/how-to-custom.md" target="_blank">此处</a><br />
+                    您添加的所有信息都将保存在 <code>localStorage</code> 中
+                </span>
+            `
+        },
+        {
+            title: "输入：",
+            content: `
+                <div class="mdui-textfield mdui-textfield-black mdui-p-a-0">
+                    <input class="mdui-textfield-input" placeholder="请输入文件链接" id="customURL" />
+                </div>
+            `
+        }
+    ],
+    onsave: "app.option.setItem('customURL', document.querySelector('#customURL').value)"
+})
+//- +dialog({})
