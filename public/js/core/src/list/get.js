@@ -1,27 +1,37 @@
-import { rename } from "./rename.js"
 import { deepCopy, objectHas, toJSON } from "../../util/common.js"
+import { rename } from "./rename.js"
+import { List } from "../../lib/ListData.class.js"
 
 export function getFromJson(listGroup) {
-    if (listGroup === undefined) return {}
-    listGroup = [...new Set(split(listGroup))]
     const output = {
         names: {},
         lists: {}
     }
-    for (let i = 0; i < listGroup.length; i++) {
-        const part = listGroup[i].match(/^([.A-Za-z0-9\[\]\(\)_@#$&*%=^~]+)({.*})?$/) ?? []
-        const name = rename.call(this, part[1])
-        const option = part[2] ?? ""
-        const _name = name + option
-        if (/\s*;\s*/.test(name)) {
-            const result = this.list.getFromJson(name)
-            Object.assign(output.lists, result.lists)
-            Object.assign(output.names, result.names)
-            continue
+    if (typeof listGroup === "object" || typeof listGroup === "string") {
+        if (Array.isArray(listGroup) || typeof listGroup === "string") {
+            listGroup = [...new Set(split(listGroup))]
+            for (let _listName of listGroup) {
+                const _part = _listName.match(/^([.A-Za-z0-9\[\]\(\)_@#$&*%=^~]+)({.*})?$/) ?? []
+                const _name = rename.call(this, _part[1])
+                const option = _part[2] ?? ""
+                const name = _name + option
+                if (/\s*;\s*/.test(_name)) {
+                    const result = this.list.getFromJson(name)
+                    Object.assign(output.lists, result.lists)
+                    Object.assign(output.names, result.names)
+                    continue
+                }
+                handleGet.call(this, name, option, this.data.get("list", _name))
+            }
         }
-        const _list = deepCopy(this.data.get("list", name))
-        const header = _list?.header
-        const body = _list?.body
+        else if (listGroup instanceof List) handleGet.call(this, listGroup.header._indexName || "__anonymous", "", listGroup)
+        else each(listGroup, (name, list) => handleGet.call(this, name, "", list))
+    }
+    return output
+    
+    function handleGet(_name, _option, _list) {
+        const header = deepCopy(_list?.header)
+        const body = deepCopy(_list?.body)
         if (_list === undefined) {
             output.lists[_name] = [
                 {
@@ -29,7 +39,7 @@ export function getFromJson(listGroup) {
                 }
             ]
             output.names[_name] = reeditHeader.call(this, _name, header)
-            continue
+            return
         } else if (!header || (!body.length && !objectHas(header, "extend"))) {
             output.lists[_name] = [
                 {
@@ -37,14 +47,14 @@ export function getFromJson(listGroup) {
                 }
             ]
             output.names[_name] = reeditHeader.call(this, _name, header)
-            continue
+            return
         } else if (objectHas(header, "extend")) {
             const result = this.list.getFromJson(header.extend)
             Object.assign(output.lists, result.lists)
             Object.assign(output.names, result.names)
-            if (!body.length) continue
+            if (!body.length) return
         }
-        let { length: { max: maxLength = body.length - 1, min: minLength = 0 } = {}, input: { replace, text } = {} } = option && toJSON(option)
+        let { length: { max: maxLength = body.length - 1, min: minLength = 0 } = {}, input: { replace, text } = {} } = _option && toJSON(_option)
         ~~maxLength
         ~~minLength
         if (maxLength > body.length - 1) maxLength = body.length - 1
@@ -55,7 +65,7 @@ export function getFromJson(listGroup) {
         if (replace !== undefined) input.replace = replace
         if (text !== undefined) input.text = text
         const list = {
-            header: reeditHeader.call(this, name, header),
+            header: reeditHeader.call(this, _name, header),
             body: []
         }
         for (let i = minLength; i < maxLength + 1; i++) {
@@ -63,10 +73,9 @@ export function getFromJson(listGroup) {
             if (!body[i].url) body[i].url = url
             list.body.push(body[i])
         }
-        output.lists[name] = list.body
-        output.names[name] = list.header
+        output.lists[_name] = list.body
+        output.names[_name] = list.header
     }
-    return output
 }
 
 function reeditHeader(name, header) {

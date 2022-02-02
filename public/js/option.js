@@ -12,6 +12,12 @@ class __Option__ extends WebOption {
     getItem(key) {
         return this.getItemVal(key)
     }
+    keys() {
+        return Object.keys(this.items)
+    }
+    values(key) {
+        return [...this._getItem(key).values]
+    }
 }
 
 export default async function (app) {
@@ -42,9 +48,7 @@ export default async function (app) {
     option.addItem("themePrimaryColor", Object.keys(themeColor.primary), (selected, original) => {
         document.body.classList.remove(`mdui-theme-primary-${original}`)
         document.body.classList.add(`mdui-theme-primary-${selected}`)
-        importDefault(`/api/data.THEME_COLOR.primary.${selected}`)
-            .then(color => document.head.querySelector('meta[name="theme-color"]').content = color)
-            .catch(console.error)
+        document.head.querySelector('meta[name="theme-color"]').content = themeColor.primary[selected]
         console.log("themePrimaryColor -> from", original, "to", selected)
     }, DEFAULT_THEME_COLOR.primary)
     .addItem("themeAccentColor", Object.keys(themeColor.accent), (selected, original) => {

@@ -1,6 +1,23 @@
 include ../mixin/dialog.pug
 
 +dialog({
+    id: "option",
+    title: "设置",
+    subtitle: "你可以通过这个工具修改网站设置",
+    content: [
+        {
+            title: "说明：",
+            content: `
+                <span class="mdui-typo">
+                    该工具暂时不能使用，请尝试使用 <code>@option</code> 命令<br />
+                    请确保加载了 <code>/js/custom.example.js</code> 扩展（默认加载）
+                </span>
+            `
+        }
+    ],
+    onsave: ""
+})
++dialog({
     id: "custom",
     title: "自定义",
     subtitle: "你可以通过这个工具引入自己的自定义项",

@@ -38,13 +38,13 @@ export default class {
             return
         }
         const result = this.grammar.load(this.input.catchName())
-        if (result.finish) {
+        if (result._finish) {
             this.config.$list.innerHTML = ""
             this.config.$grammar.innerHTML = ""
-            this.config.$note.innerHTML = this.data.get("text", "edit.end")
+            this.config.$note.innerHTML = result.note || this.data.get("text", "edit.end")
             this.list.names = {}
             this.toggleFunIcon(true)
-        } else if (result.undefined) {
+        } else if (result._undefined) {
             this.config.$list.innerHTML = ""
             this.config.$note.innerHTML = "未知的命令"
             this.list.names = {}

@@ -27,16 +27,6 @@ function parse(data) {
 }
 
 export class List {
-    static stringify(list) {
-        
-    }
-    static parse(listStr) {
-        
-    }
-    static minify(list) {
-        if (typeof list === "string") return List.minify(List.parse(list))
-        else return List.minify(list)
-    }
     constructor(list) {
         this._header = {}
         this._body = []

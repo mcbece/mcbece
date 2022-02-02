@@ -14,9 +14,9 @@ export default class {
             $grammar.innerHTML = `<span>${commandName} </span>`
             $note.innerHTML = `<span>${result.header.command.info}</span>`
             if (result.body.info.length < commandLength) {
-                return {
-                    finish: true
-                }
+                return Object.assign({}, {
+                    _finish: true
+                }, handle.call(this, result.body.endFun))
             } else {
                 $grammar.innerHTML += `<span>${replace(result.body.grammar)}</span>`
                 $grammar.querySelectorAll("span")[commandLength].style.fontWeight = "bold"
@@ -26,7 +26,7 @@ export default class {
                 }
             }
         } else return {
-            undefined: true
+            _undefined: true
         }
     }
 }
