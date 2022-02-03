@@ -14,11 +14,17 @@ export default class {
         this.initialize = this.initialize.bind(this)
         this.change = this.change.bind(this)
     }
-    get useVirtualScroll() {
+    get _useVirtualScroll() {
         return !!(document.querySelector(".virtual-scroll"))
     }
-    initialize({ lang, branch, customURL }) {
+    get _snackbarPosition() {
+        return this.lite ? "bottom" : "left-top"
+    }
+    initialize({ lang, branch, customURL, listWithImage }) {
         this.data.init(this.config.data.url, lang, branch, customURL).then(() => {
+            this.LANG = lang
+            this.BRANCH = branch
+            this.list.withImage = listWithImage
             this.config.i18n(this.data.get.bind(this, "text"))
             this.config.init(this)
             this.config.$input.oninput = () => {
@@ -51,13 +57,6 @@ export default class {
         }
         else this.list.load(result.list ?? "")
         this.list.search()
-    }
-    clear() {
-        console.log(true)
-        this.config.$list.innerHTML = ""
-        this.config.$grammar.innerHTML = ""
-        this.config.$note.innerHTML = ""
-        this.config.$function.innerHTML = ""
     }
     toggleFunIcon(editEnd, url) {
         const { $function, _funIcon } = this.config

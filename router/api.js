@@ -10,7 +10,11 @@ api.get(/^\/data\.(.+)$/, (req, res) => {
     if (result) res.status(200).type(".js").send("export default " + stringify(result))
     else res.status(404).end()
 })
-
+api.get("/processEnv.:name", (req, res) => {
+    const result = process.env[req.params.name]
+    if (result) res.status(200).type(".js").send("export default " + stringify(result))
+    else res.status(404).end()
+})
 api.get("/mcbelist.:lang.:branch", (req, res) => {
     const lang = req.params.lang
     const branch = req.params.branch
@@ -26,7 +30,7 @@ api.get("/mcbelist.:lang.:branch", (req, res) => {
         Object.assign(data.text, text)
         res.status(200).type(".js").send("export default " + stringify(data))
     }).catch(err => {
-        console.warn(err, "Sending `{}` with 404.")
+        console.warn("Could not find content by incoming language and branch, sending `{}` with 404.", err)
         res.status(404).send("export default {}")
     })
 })

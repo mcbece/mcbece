@@ -1,6 +1,8 @@
 import deepCopy from "./fast-copy.esm.js"
 export { deepCopy }
 
+export const sleepAsync = ms => new Promise(resolve => setTimeout(resolve, ms))
+
 export function each(target, callbackfn, thisArg) {
     if (Array.isArray(target)) target.forEach(callbackfn, thisArg)
     else if (typeof target === "object") each(Object.keys(target), (key, i) => callbackfn.call(thisArg, key, target[key], i, target))
@@ -24,7 +26,7 @@ export function objectGet(obj, key, handler = s => s, _return) {
     else try {
         return eval(`obj.${handler(key)}`)
     } catch (err) {
-        console.warn(err, "Returning `_return`.")
+        console.warn(`Could not get "${key}" in \`obj\`, returning \`_return\`: ${_return}.`, {obj}, err)
         return _return
     }
 }
@@ -87,7 +89,7 @@ export function toJSON(str) {
     try {
         return JSON.parse(str)
     } catch (err) {
-        console.warn(err, "Returning trying `eval()`.")
+        console.warn(`Could not use \`JSON.parse()\`, returning with trying \`eval()\`.`, err)
         return eval(`(${str})`)
     }
 }
@@ -106,7 +108,7 @@ export async function importDefault(url) {
         const data = await import(url)
         return data.default
     } catch (err) {
-        console.error(err)
+        throw err
     }
 }
 

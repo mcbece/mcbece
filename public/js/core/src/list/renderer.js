@@ -58,10 +58,10 @@ const DEFAULT_CONFIG = {
             if (!app.lite) {
                 const url = item.url
                 if (url) return url
-                    .replace(/{name}/g, item.name
+                    .replace(/{name}/g, toString(item.name, "")
                         .replace(/\<.+\>.*\<\/.+\>/g, "")
                     )
-                    .replace(/{info}/g, item.info
+                    .replace(/{info}/g, toString(item.info, "")
                         .replace(/{color:\s?.+}/g, "")
                         .replace(/\[.*\]/g, "")
                         .replace(/\<.+\>.*\<\/.+\>/g, "")

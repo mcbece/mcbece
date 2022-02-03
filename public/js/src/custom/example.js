@@ -1,5 +1,5 @@
-import { each, replaceString } from "./core/util/common.js"
-import { List } from "./core/lib/ListData.class.js"
+import { each, replaceString } from "../../core/util/common.js"
+import { List } from "../../core/lib/ListData.class.js"
 
 export default {
     "zh-CN": {
@@ -22,6 +22,14 @@ export default {
             },
             command: [
                 {
+                    name: "@list",
+                    info: "加载任意列表",
+                    input: {
+                        replace: "all",
+                        text: "{name} "
+                    }
+                },
+                {
                     name: "@option",
                     info: "切换页面设置",
                     input: {
@@ -34,6 +42,32 @@ export default {
         },
         grammar: {
             __new: [
+                [
+                    {
+                        command: {
+                            name: "/^@list$/",
+                            info: "加载任意列表"
+                        }
+                    },
+                    {
+                        grammar: "<列表名> [列表内容]",
+                        info: [
+                            {
+                                length: 1,
+                                note: "指定要加载的列表的名称",
+                            },
+                            {
+                                length: 2,
+                                note(getter) {
+                                    return `当前加载：${getter.catchInput(1)}`
+                                },
+                                list(getter) {
+                                    return getter.catchInput(1)
+                                }
+                            }
+                        ]
+                    }
+                ],
                 [
                     {
                         command: {

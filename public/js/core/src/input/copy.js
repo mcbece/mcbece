@@ -5,7 +5,7 @@ export function copy() {
     document.execCommand("copy")
     mdui.snackbar({
         message: "已复制",
-        position: "left-top",
+        position: this._snackbarPosition,
         timeout: 2000,
         closeOnOutsideClick: false
     })

@@ -14,8 +14,7 @@ include ../mixin/dialog.pug
                 </span>
             `
         }
-    ],
-    onsave: ""
+    ]
 })
 +dialog({
     id: "custom",
@@ -42,5 +41,36 @@ include ../mixin/dialog.pug
         }
     ],
     onsave: "app.option.setItem('customURL', document.querySelector('#customURL').value)"
+})
++dialog({
+    id: "pwa",
+    title: "PWA",
+    subtitle: "你可以通过这个工具使用 PWA 的相关功能",
+    content: [
+        {
+            title: "安装：",
+            content: `
+                <div class="mdui-typo">
+                    如果你是第一次访问该网站，你可以选择安装该 PWA <a class="mdui-float-right" onclick="app.pwa.install()">点击安装</a>
+                </div>
+            `
+        },
+        {
+            title: "检查更新：",
+            content: `
+                <div class="mdui-typo">
+                    检查是否有新的版本<a class="mdui-float-right" onclick="app.pwa.check()">点击检查</a>
+                </div>
+            `
+        },
+        {
+            title: "立即更新：",
+            content: `
+                <div class="mdui-typo">
+                    立即更新至最新版（如果有）<a class="mdui-float-right" onclick="app.pwa.update()">点击更新</a>
+                </div>
+            `
+        }
+    ]
 })
 //- +dialog({})

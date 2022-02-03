@@ -1,7 +1,9 @@
 import App from "./core/main.js"
-import option from "./option.js"
+import createWebOptionManager from "./src/plugins/option.js"
+import createPWAManager from "./src/plugins/pwa.js"
 
-const app = new App({
+// App
+window.app = new App({
     DEFAULT_LANGUAGE: "zh-CN",
     DEFAULT_THEME_COLOR: {
         primary: "indigo",
@@ -69,7 +71,8 @@ const app = new App({
             "enchantment.level": handler,
             "entity.event": handler,
             "block.data": handler,
-            "item.data": handler
+            "item.data": handler,
+            "entity.family": "entity_family"
         }
     },
     
@@ -86,15 +89,22 @@ const app = new App({
         url: "/api/mcbelist.{lang}.{branch}",
         custom: {
             urls: [
-                "/js/custom.dev.js"
+                "/js/src/custom/dev.js"
             ]
         }
     }
 })
 
-option(app).then(webOption => app.option = webOption.init(app.initialize))
-window.app = app
+// Plugins
+Promise.all([
+    createWebOptionManager(app),
+    createPWAManager(app)
+]).then(([webOption, pwa]) => {
+    if (webOption) app.option = webOption.init(app.initialize)
+    if (pwa && !pwa._noServiceWorker) app.pwa = pwa
+}).catch(console.error)
 
+// Scripts
 function handler(getter, item) {
     const fixReg = /^(?<name>.+)\.(?<subname>.+)$/
     const { groups: { name, subname, option } } = item.match(fixReg)

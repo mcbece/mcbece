@@ -21,14 +21,14 @@ export function rename(listName) {
                 //if (/^coordinate.(x|y|z)$/.test(listName)) return `selector.next_variable; coordinate.${key}[0].value`
                 //else 
                 
-                return `selector.next_variable; selector.variable.getItem(${index}).value`
+                return `selector.next_variable; selector.variable{${index}}.value`
                 
                 //return "selector.next_variable"
                 
             } else if (key !== undefined && key !== "" && value !== undefined && value !== "" && selector.endsWith("]")) {
                 return "next"
             } else if (key !== undefined && key !== "" && value === "") {
-                return `selector.variable.getItem(${index}).value`
+                return `selector.variable{${index}}.value`
             } else if ((key === "" && value === undefined) || (key !== undefined && key !== "" && value === undefined)) {
                 return "selector.variable"
             }
@@ -36,12 +36,12 @@ export function rename(listName) {
     } else if (/^coordinate.(x|y|z)$/.test(listName)) {
         const coordinate = catchInput(-1)
         if (coordinate.length < 1) return listName
-        else if (coordinate === "~" || coordinate === "^") return `${listName}[0].value`
+        else if (coordinate === "~" || coordinate === "^") return `${listName}.header.value`
         else return "next"
     } else if (/^rotation.(x|y)$/.test(listName)) {
         const rotation = catchInput(-1)
         if (rotation.length < 1) return listName
-        else if (rotation === "~") return `${listName}[0].value`
+        else if (rotation === "~") return `${listName}.header.value`
         else return "next"
     } else if (objectHas(listShortcut, listName)) {
         const handler = listShortcut[listName]

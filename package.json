@@ -20,6 +20,7 @@
         "github-markdown-css": "^5.1.0",
         "mdui": "^1.0.2",
         "pug": "^3.0.2",
+        "register-service-worker": "^1.7.2",
         "sass": "^1.49.0"
     },
     "devDependencies": {
