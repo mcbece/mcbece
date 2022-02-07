@@ -13,5 +13,6 @@ export default class {
     catchName() {
         const commandName = this.catchInput(0)
         if (commandName) return commandName.replace("/", "")
+        else return ""
     }
 }

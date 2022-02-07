@@ -1,42 +1,31 @@
-import { each, objectHas, getReturn, toString } from "../../util/common.js"
+import { each, objectHas, objectGet, replaceString, getReturn, toString } from "../../util/common.js"
 
 const DEFAULT_CONFIG = {
     image: {
         handlerFun(item, util) {
-            if (app.lite || !app.list.withImage) return
+            if (!app.list.withImage) return
             const image = item.image
             if (image) return image
         }
     },
-    onclick: {
+    input: {
         handlerFun(item) {
             const input = item.input
-            const auto_next_list = item.auto_next_list
-            if (input || auto_next_list) {
+            if (input && toString(input) !== "{}") {
+                const { text, replace } = input
                 const output = {
-                    input: {
-                        text: "",
-                        replace: ""
-                    },
-                    auto_next_list: ""
+                    text: "",
+                    replace: ""
                 }
-                if (input) {
-                    const replace = input.replace
-                    const text = input.text
-                    if (replace) output.input.replace = replace
-                    if (text) output.input.text = text
-                        .replace(/{name}/g, toString(item.name, "")
-                            .replace(/\<.+\>(.*)\<\/.+\>/g, "$1")
-                        )
-                        .replace(/{info}/g, toString(item.info, "")
-                            .replace(/{color:\s?.+}/g, "")
-                            .replace(/\<.+\>(.*)\<\/.+\>/g, "$1")
-                        )
-                    output.input = `app.input.input('${Object.values(output.input).join("', '")}')`
-                } else output.input = ""
-                if (auto_next_list) output.auto_next_list = `app.list.load('${auto_next_list}')`
-                else output.auto_next_list = "app.change()"
-                return Object.values(output).join("; ")
+                if (replace) output.replace = replace
+                if (text) output.text = replaceString(text, {
+                    name: toString(item.name, "")
+                        .replace(/\<.+\>(.*)\<\/.+\>/g, "$1"),
+                    info: toString(item.info, "")
+                        .replace(/{color:\s?.+}/g, "")
+                        .replace(/\<.+\>(.*)\<\/.+\>/g, "$1")
+                })
+                return output
             }
         }
     },
@@ -55,21 +44,18 @@ const DEFAULT_CONFIG = {
     },
     url: {
         handlerFun(item) {
-            if (!app.lite) {
-                const url = item.url
-                if (url) return url
-                    .replace(/{name}/g, toString(item.name, "")
-                        .replace(/\<.+\>.*\<\/.+\>/g, "")
-                    )
-                    .replace(/{info}/g, toString(item.info, "")
-                        .replace(/{color:\s?.+}/g, "")
-                        .replace(/\[.*\]/g, "")
-                        .replace(/\<.+\>.*\<\/.+\>/g, "")
-                    )
-                    .replace(/{command_page}/g, app.data.get("text", "url.command_page"))
-                    .replace(/{normal_page}/g, app.data.get("text", "url.normal_page"))
-                    .replace(/{search_page}/g, app.data.get("text", "url.search_page"))
-            }
+            const url = item.url
+            if (url) return replaceString(url, {
+                name: toString(item.name, "")
+                    .replace(/\<.+\>.*\<\/.+\>/g, ""),
+                info: toString(item.info, "")
+                    .replace(/{color:\s?.+}/g, "")
+                    .replace(/\[.*\]/g, "")
+                    .replace(/\<.+\>.*\<\/.+\>/g, ""),
+                command_page: app.data.get("text", "url.command_page"),
+                normal_page: app.data.get("text", "url.normal_page"),
+                search_page: app.data.get("text", "url.search_page")
+            })
         }
     }
 }
@@ -101,11 +87,14 @@ export class ListItemRenderer {
         return this.renderers[name]
     }
     hasItem(name) {
-        if (this.renderers[name]) return true
+        if (this.getItem(name)) return true
         else return false
     }
     get(name) {
-        return this.getItem(name).run(this.listItem)
+        let target
+        if (this.hasItem(name)) target = this.getItem(name)
+        else target =  (new ListItemRendererItem(item => objectGet(item, name)))
+        return target.run(this.listItem)
     }
 }
 

@@ -27,7 +27,7 @@ class __PWA__ extends PWAManager {
                 console.log("SW: on updatefound")
             }
         })
-        this._app = app
+        this.__app = app
     }
     install() {
         if (this.installReady) this.promptInstall()
@@ -50,19 +50,12 @@ class __PWA__ extends PWAManager {
         })
     }
     _haveNewVersion() {
-        mdui.snackbar({
-            message: "检测到新版本，立即更新？",
-            position: this._app._snackbarPosition,
-            timeout: 2000,
+        this.__app._components.snackbar("检测到新版本，立即更新？", {
             buttonText: "yes",
             onButtonClick: () => this.update()
         })
     }
     _alreadyLatest() {
-        mdui.snackbar({
-            message: "已是最新版",
-            position: this._app._snackbarPosition,
-            timeout: 2000
-        })
+        this.__app._components.snackbar("已是最新版")
     }
 }

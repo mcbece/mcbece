@@ -33,7 +33,7 @@ export function stringify(obj) {
 }
 
 export function parse(str) {
-    if (str === "string") str = JSON.parse(str)
+    if (typeof str === "string") str = JSON.parse(str)
     return handle(str)
     
     function handle(target) {

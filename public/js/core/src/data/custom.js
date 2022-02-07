@@ -1,20 +1,22 @@
-import { each, eachAsync, importDefault } from "../../util/common.js"
+import { each, eachAsync, importDefault, objectHas } from "../../util/common.js"
 import { ListData, List } from "../../lib/ListData.class.js"
 import { Grammar } from "../../lib/GrammarData.class.js"
 
-export async function setCustom(url) {
-    const { urls, data: dataFun } = this.config.data.custom
-    if (url) handle.call(this, await importDefault(url))
-    if (urls) await eachAsync(urls, async _url => handle.call(this, await importDefault(_url)))
-    if (dataFun) handle.call(this, dataFun())
+export async function setCustom(urlsInput) {
+    const _custom = this.config.data.custom
+    if (_custom) await eachAsync(_custom, async item => {
+        if (item) setFrom.call(this, await _get(item))
+    })
+    if (urlsInput) await eachAsync(urlsInput, async url => {
+        if (url) setFrom.call(this, await _get(url))
+    })
 }
 
-function handle(data) {
-    const { data: appData, LANG, config: { DEFAULT_LANGUAGE } } = this
-    if (data[LANG]) parseAll(LANG, data[LANG])
-    if (LANG !== DEFAULT_LANGUAGE && data[DEFAULT_LANGUAGE]) parseAll(DEFAULT_LANGUAGE, data[DEFAULT_LANGUAGE])
-    
-    function parseAll(lang, _data) {
+function setFrom(data) {
+    const { data: appData, LANG, BRANCH, config: { DEFAULT_LANGUAGE } } = this
+    if (objectHas(data, LANG) && objectHas(data[LANG], BRANCH)) parse(LANG, data[LANG][BRANCH] || {})
+    if (LANG !== DEFAULT_LANGUAGE && objectHas(data, DEFAULT_LANGUAGE) && objectHas(data[DEFAULT_LANGUAGE], BRANCH)) parse(DEFAULT_LANGUAGE, data[DEFAULT_LANGUAGE][BRANCH] || {})
+    function parse(lang, _data) {
         if (_data.list) parseList(_data.list)
         if (_data.grammar) parseGrammar(_data.grammar)
         if (_data.text) parseList(_data.text)
@@ -45,4 +47,13 @@ function handle(data) {
             each(_text, (key, value) => appData[lang].text.set(key, value))
         }
     }
+}
+
+async function _get(sth) {
+    if (typeof sth === "function") return sth()
+    else if (typeof sth === "string") return await importDefault(sth)
+    else if (typeof sth === "object" && sth.type && sth.url) {
+        if (sth.type === "esm") return await importDefault(sth.url)
+        else if (sth.type === "json") return await (await fetch(sth.url)).json()
+    } else return sth
 }

@@ -4,7 +4,8 @@ import { ListData } from "../../lib/ListData.class.js"
 import { GrammarData } from "../../lib/GrammarData.class.js"
 import { TextData } from "../../lib/TextData.class.js"
 
-export async function getFromURL(url, lang, branch) {
+export async function getFromURL(url) {
+    const { LANG: lang, BRANCH: branch } = this
     const data = parse(await importDefault(replaceString(url, {lang, branch})))
     this.data[lang] = {
         list: new ListData(data.list),

@@ -1,21 +1,22 @@
 import { each } from "../core/util/common.js"
+import { stringify, parse } from "../core/util/JSONWithFun.js"
 
 export class WebOption {
     constructor(namespace = "WebOption") {
         this._namespace = namespace
         this.items = {}
     }
-    init(...handlers) {
+    init(...callbacks) {
         this.getStorage()
         this.setStorage()
-        each(handlers, handler => handler(this.getItemValMap()))
+        each(callbacks, callback => callback(this.getItemValMap()))
         this.addItem = undefined
         this.getStorage = undefined
         this.init = undefined
         return this
     }
-    addItem(name, values, handler, defaultValue) {
-        this.items[name] = new WebOptionItem(name, values, handler, defaultValue)
+    addItem({ name, values, callback, handler, defaultValue }) {
+        this.items[name] = new WebOptionItem({ name, values, callback, handler, defaultValue })
         return this
     }
     hasItem(name) {
@@ -24,17 +25,17 @@ export class WebOption {
     _getItem(name) {
         return this.items[name]
     }
-    setItemVal(name, value, handler = () => {}) {
+    setItemVal(name, value, callback = () => {}) {
         const item = this._getItem(name)
         const result = item?.select(value)
-        if (result) handler(item.selected, item.original, this.getItemValMap())
+        if (result) callback(item.selected, item.original, this.getItemValMap())
         this.setStorage()
         return this
     }
-    toggleItemVal(name, handler = () => {}) {
+    toggleItemVal(name, callback = () => {}) {
         const item = this._getItem(name)
         item?.toggle()
-        handler(item.selected, item.original, this.getItemValMap())
+        callback(item.selected, item.original, this.getItemValMap())
         this.setStorage()
         return this
     }
@@ -48,30 +49,31 @@ export class WebOption {
     }
     setStorage() {
         let storage = this.getItemValMap()
-        localStorage.setItem(this._namespace + ":all", JSON.stringify(storage))
+        localStorage.setItem(this._namespace + ":all", stringify(storage))
     }
     getStorage() {
-        let storage = JSON.parse(localStorage.getItem(this._namespace + ":all") ?? "{}")
+        let storage = parse(localStorage.getItem(this._namespace + ":all") ?? "{}")
         each(storage, (key, value) => this.setItemVal(key, value))
     }
 }
 
 class WebOptionItem {
-    constructor(name, values = [], handler = () => {}, defaultValue) {
+    constructor({ name, values = [], callback = () => {}, handler = s => s, defaultValue }) {
         this.name = name
         this.values = new Set(values)
-        this.handler = (...args) => {
-            if (this.selected) handler(...args)
+        this.callback = (...args) => {
+            if (this.selected) callback(...args)
         }
+        this.handler = handler
         this.selected = this.hasVal(defaultValue) ? defaultValue : values[0]
         this.original = undefined
-        this.handler(this.selected)
+        this.callback(this.selected)
     }
-    select(value) {
+    select(value, withoutcallback) {
         if (this.selected !== value && this.hasVal(value)) {
             this.original = this.selected
-            this.selected = value
-            this.handler(this.selected, this.original)
+            this.selected = /* this.handler(value) */ value
+            if (!withoutcallback) this.callback(this.selected, this.original)
             return true
         } else return false
     }

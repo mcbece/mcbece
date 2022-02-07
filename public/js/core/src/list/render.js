@@ -8,7 +8,7 @@ export function renderToHTML({ names: _names, lists: _lists }, callback) {
     const output = []
     each(lists, (item, i) => {
         const name = names[i]
-        if (!this.lite && this.config.list.template.divider && !this._useVirtualScroll) output.push(
+        if (this.list._useDivider()) output.push(
             this.config.list.template.divider(
                 _names[name].name,
                 name

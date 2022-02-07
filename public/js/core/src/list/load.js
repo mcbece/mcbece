@@ -3,13 +3,12 @@ import { VirtualScroll } from "../../lib/VirtualScroll.class.js"
 
 export function loadToPage(data, container) {
     container.innerHTML = ""
-    if (this._useVirtualScroll) loadByVirtualScroll.call(this, data)
+    if (this.list._useVirtualScroll()) loadByVirtualScroll.call(this, data)
     else if (window.IntersectionObserver) loadByIntersectionObserver.call(this, data, container)
     else {
         const items = document.createDocumentFragment()
         each(data, item => items.appendChild(stringToNode(item, true)))
         container.appendChild(items)
-        this.list.complete = true
         window.scrollTo({
             top: 0,
             left: 0,
@@ -19,12 +18,22 @@ export function loadToPage(data, container) {
 }
 
 function loadByVirtualScroll(data) {
-    new VirtualScroll(this, data, 1)
+    const vs = new VirtualScroll(this, data, {
+        bench: 1,
+        // raw: true,
+        onScroll(items) {
+            
+        }
+    })
+    vs.rootEle.scrollTo({
+        top: 0,
+        left: 0,
+        behavior: "smooth"
+    })
 }
 
 // https://www.xiabingbao.com/post/scroll/longlist-optimization.html
 function loadByIntersectionObserver(data, container) {
-    this.list.__complete = false
     let start = 0
     const COUNT = 20
     loadList(start)
@@ -40,7 +49,6 @@ function loadByIntersectionObserver(data, container) {
                 observer.unobserve(entry.target)
                 container.removeChild(entry.target)
                 // FIXME  ^^^^^^^^^^^
-                this.list.__complete = true
             })
         }, {
             rootMargin: "400px 0px"

@@ -2,18 +2,13 @@ import { each, stringToNode, nodeToString } from "../util/common.js"
 
 // https://github.com/vuetifyjs/vuetify/blob/master/packages/vuetify/src/components/VVirtualScroll/VVirtualScroll.ts
 export class VirtualScroll {
-    constructor(app, data, bench = 0) {
+    constructor(app, data, option = {}) {
         this.__app = app
         this.data = data
-        this.bench = bench
+        this.option = option
         this.rootEle = document.querySelector(".virtual-scroll")
         this.container = this.rootEle.querySelector(".virtual-scroll__container")
         this.init()
-        this.rootEle.scrollTo({
-            top: 0,
-            left: 0,
-            behavior: "smooth"
-        })
     }
     
     first = 0
@@ -30,22 +25,16 @@ export class VirtualScroll {
         this.rootEle.dispatchEvent(new Event("scroll"))
     }
     get height() {
-        const _fix = this.__app.lite ? 85 : 120
-        return document.documentElement.clientHeight - _fix
+        return this.__app.config.list._height
     }
     get itemHeight() {
-        if (this.__app.lite) {
-            const height = window.innerHeight / 16
-            if (height > 36) return 36
-            else if (height < 24) return 24
-            else return Math.round(height)
-        } else return 72
+        return this.__app.config.list._itemHeight
     }
     get firstToRender() {
-      return Math.max(0, this.first - this.bench)
+      return Math.max(0, this.first - this.option.bench ?? 0)
     }
     get lastToRender() {
-      return Math.min(this.data.length, this.last + this.bench)
+      return Math.min(this.data.length, this.last + this.option.bench ?? 0)
     }
     getFirst() {
         return Math.floor(this.scrollTop / this.itemHeight)
@@ -59,7 +48,8 @@ export class VirtualScroll {
         this.scrollTop = this.rootEle.scrollTop
         this.first = this.getFirst()
         this.last = this.getLast()
-        this.render()
+        const items = this.render()
+        if (this.option.onScroll) this.option.onScroll(items)
     }
     getChildren() {
         return this.data.slice(
@@ -77,6 +67,7 @@ export class VirtualScroll {
     }
     render() {
         const items = this.getChildren()
+        if (this.option.raw) return items
         let list = ""
         each(items, e => list += e)
         this.container.innerHTML = list

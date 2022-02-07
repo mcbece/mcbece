@@ -5,14 +5,14 @@ export const sleepAsync = ms => new Promise(resolve => setTimeout(resolve, ms))
 
 export function each(target, callbackfn, thisArg) {
     if (Array.isArray(target)) target.forEach(callbackfn, thisArg)
+    else if (target && target[Symbol.iterator]) for (let item of target) callbackfn.call(thisArg, item, target)
     else if (typeof target === "object") each(Object.keys(target), (key, i) => callbackfn.call(thisArg, key, target[key], i, target))
-    else if (target[Symbol.iterator]) for (let item of target) callbackfn.call(thisArg, item, target)
 }
 
 export async function eachAsync(target, asyncfn, thisArg) {
     if (Array.isArray(target)) for (let i = 0; i < target.length; i++) await asyncfn.call(thisArg, target[i], i, target)
+    else if (target && target[Symbol.iterator]) for (let item of target) await asyncfn.call(thisArg, item, target)
     else if (typeof target === "object") await eachAsync(Object.keys(target), async (key, i) => await asyncfn.call(thisArg, key, target[key], i, target))
-    else if (target[Symbol.iterator]) for (let item of target) await asyncfn.call(thisArg, item, target)
 }
 
 export function mapObject(obj, callbackfn, thisArg) {
@@ -26,7 +26,7 @@ export function objectGet(obj, key, handler = s => s, _return) {
     else try {
         return eval(`obj.${handler(key)}`)
     } catch (err) {
-        console.warn(`Could not get "${key}" in \`obj\`, returning \`_return\`: ${_return}.`, {obj}, err)
+        console.warn(`Could not get "${key}" in \`obj\`, returning \`_return\`.`, {obj, _return}, err)
         return _return
     }
 }
@@ -43,7 +43,7 @@ export function getReturn(target, ...args) {
 
 export function toString(target, _return) {
     if (typeof target === "object") return JSON.stringify(target)
-    else if (target) return target.toString()
+    else if (target?.toString) return target.toString()
     else return _return
 }
 
@@ -125,4 +125,30 @@ export function nodeToString(node) {
     const div = document.createElement("div")
     div.appendChild(node)
     return div.innerHTML
+}
+
+export function addValueChangedListener(inputEle, listener, withEventListener) {
+    if (!(inputEle.__valueChangedListener instanceof Set)) {
+        inputEle.__valueChangedListener = new Set()
+        const valueDes = Object.getOwnPropertyDescriptor(inputEle.constructor.prototype, "value")
+        Object.defineProperty(inputEle, "value", {
+            set: function (value) {
+                valueDes.set.apply(this, arguments)
+                each(inputEle.__valueChangedListener, _listener => _listener.call(this, withEventListener ? undefined : value))
+            },
+            get: function () {
+                return valueDes.get.apply(this, arguments)
+            }
+        })
+    }
+    inputEle.__valueChangedListener.add(listener)
+    if (withEventListener) inputEle.addEventListener("input", listener)
+    return inputEle
+}
+
+export function removeValueChangedListener(inputEle, listener, withEventListener) {
+    if (inputEle.__valueChangedListener && inputEle.__valueChangedListener instanceof Set) {
+        inputEle.__valueChangedListener.delete(listener)
+        if (withEventListener) inputEle.removeEventListener("input", listener)
+    }
 }

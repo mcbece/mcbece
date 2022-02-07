@@ -1,6 +1,6 @@
 import { readLine } from "../../util/common.js"
 
-export function input(text, replace) {
+export function input({ text, replace }) {
     const { $input } = this.config
     const fixed = fix($input.value)
     const lastLine = readLine($input.value, -1)

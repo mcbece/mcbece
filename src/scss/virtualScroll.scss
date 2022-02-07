@@ -6,6 +6,11 @@
     overflow: auto;
     position: relative;
     
+    &::-webkit-scrollbar {
+        display: block !important;
+        width: 4px;
+    }
+    
     &__container {
         display: block;
         position: relative;

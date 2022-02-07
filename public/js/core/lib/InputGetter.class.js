@@ -1,15 +1,15 @@
 export class InputGetter {
     constructor(app) {
-        this._app = app
+        this.__app = app
     }
     catchInput(length) {
-        return this._app.input.catchInput(length)
+        return this.__app.input.catchInput(length)
     }
     catchName() {
-        return this._app.input.catchName()
+        return this.__app.input.catchName()
     }
     searchFrom(listName, query, template = i => i) {
-        const index = this._app.data.get("list", listName).body.findIndex(_item => _item.name === query)
+        const index = this.__app.data.get("list", listName).body.findIndex(_item => _item.name === query)
         return template(index)
     }
 }

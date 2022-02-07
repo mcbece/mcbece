@@ -7,19 +7,27 @@ export default class {
     constructor(app) {
         this.names = {}
         this.lists = {}
-        this.complete = false
         
         this.load = this.load.bind(app)
         this.search = this.search.bind(app)
         this.getFromJson = getFromJson.bind(app)
         this.renderToHTML = renderToHTML.bind(app)
         this.loadToPage = loadToPage.bind(app)
+        
+        this._useDivider = this._useDivider.bind(app)
+        this._useVirtualScroll = this._useVirtualScroll.bind(app)
+    }
+    _useDivider() {
+        return this.config.list._use_divider && this.config.list.template.divider && !this.list._useVirtualScroll
+    }
+    _useVirtualScroll() {
+        return this.config.list._use_virtual_scroll && document.querySelector(".virtual-scroll")
     }
     load(listGroup) {
         const result = this.list.getFromJson(listGroup)
-        // console.log({_listResult: result})
+        // console.log({ listGetResult: result })
         if (Object.keys(deepCopy(this.list.names)).sort().toString() !== Object.keys(deepCopy(result.names)).sort().toString()) {
-            console.log({result})
+            console.log({ listLoadResult: result })
             this.list.names = result.names
             this.list.lists = result.lists
             this.list.renderToHTML(result, list => this.list.loadToPage(list, this.config.$list))

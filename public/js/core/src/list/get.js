@@ -54,23 +54,26 @@ export function getFromJson(listGroup) {
             Object.assign(output.names, result.names)
             if (!body.length) return
         }
-        let { length: { max: maxLength = body.length - 1, min: minLength = 0 } = {}, input: { replace, text } = {} } = _option && toJSON(_option)
+        let { length: { max: maxLength = body.length - 1, min: minLength = 0 } = {}, input: { replace: replaceOption, text: textOption } = {} } = _option && toJSON(_option)
         ~~maxLength
         ~~minLength
         if (maxLength > body.length - 1) maxLength = body.length - 1
         if (minLength < 0) minLength = 0
         if (maxLength < 0) maxLength = 0
         if (minLength > maxLength) minLength = maxLength - 1
-        const { input = {}, url } = header.template ?? {}
-        if (replace !== undefined) input.replace = replace
-        if (text !== undefined) input.text = text
+        let { input: { replace: replaceHeader, text: textHeader } = {}, urlHeader } = header.template ?? {}
+        replaceHeader ??= replaceOption
+        textHeader ??= textOption
         const list = {
             header: reeditHeader.call(this, _name, header),
             body: []
         }
         for (let i = minLength; i < maxLength + 1; i++) {
-            if (!body[i].input) body[i].input = input
-            if (!body[i].url) body[i].url = url
+            body[i].input ??= {
+                replace: replaceHeader,
+                text: textHeader
+            }
+            body[i].url ??= urlHeader
             list.body.push(body[i])
         }
         output.lists[_name] = list.body

@@ -3,153 +3,209 @@ import { List } from "../../core/lib/ListData.class.js"
 
 export default {
     "zh-CN": {
-        list: {
-            __new: {
-                player: [
-                    {
-                        template: {
-                            input: {
-                                text: "{name} "
-                            }
+        vanilla: {
+            list: {
+                __new: {
+                    player: [
+                        {
+                            template: {
+                                input: {
+                                    text: "{name} "
+                                }
+                            },
+                            __app_list__: true
                         },
-                        __app_list__: true
+                        {
+                            name: "PFiS1737",
+                            info: "作者名称 :-)"
+                        }
+                ]
+                },
+                command: [
+                    {
+                        name: "@list",
+                        info: "加载任意列表",
+                        input: {
+                            replace: "all",
+                            text: "{name} "
+                        }
                     },
                     {
-                        name: "PFiS1737",
-                        info: "作者名称 :-)"
+                        name: "@option",
+                        info: "切换页面设置",
+                        input: {
+                            replace: "all",
+                            text: "{name} "
+                        }
+                    },
+                    {
+                        name: "@tools",
+                        info: "打开对应工具",
+                        input: {
+                            replace: "all",
+                            text: "{name} "
+                        }
                     }
                 ]
             },
-            command: [
-                {
-                    name: "@list",
-                    info: "加载任意列表",
-                    input: {
-                        replace: "all",
-                        text: "{name} "
-                    }
-                },
-                {
-                    name: "@option",
-                    info: "切换页面设置",
-                    input: {
-                        replace: "all",
-                        text: "{name} "
-                    }
-                    
-                }
-            ]
-        },
-        grammar: {
-            __new: [
-                [
-                    {
-                        command: {
-                            name: "/^@list$/",
-                            info: "加载任意列表"
-                        }
-                    },
-                    {
-                        grammar: "<列表名> [列表内容]",
-                        info: [
-                            {
-                                length: 1,
-                                note: "指定要加载的列表的名称",
-                            },
-                            {
-                                length: 2,
-                                note(getter) {
-                                    return `当前加载：${getter.catchInput(1)}`
+            grammar: {
+                __new: [
+                   [
+                        {
+                            command: {
+                                name: "/^@list$/",
+                                info: "加载任意列表"
+                            }
+                        },
+                        {
+                            grammar: "<列表名> [列表内容]",
+                            info: [
+                                {
+                                    length: 1,
+                                    note: "指定要加载的列表的名称",
                                 },
-                                list(getter) {
-                                    return getter.catchInput(1)
+                                {
+                                    length: 2,
+                                    note(getter) {
+                                        return `当前加载：${getter.catchInput(1)}`
+                                    },
+                                    list(getter) {
+                                        return getter.catchInput(1)
+                                    }
                                 }
-                            }
-                        ]
-                    }
-                ],
-                [
-                    {
-                        command: {
-                            name: "/^@option$/",
-                            info: "切换页面设置"
+                            ]
                         }
-                    },
-                    {
-                        grammar: "<设置名> <值> <确认>",
-                        info: [
-                            {
-                                length: 1,
-                                note: "指定要切换设置的名称",
-                                list(getter) {
-                                    const keys = getter._app.option.keys()
-                                    const list = new List()
-                                    list.setHeader({
-                                        _indexName: "_option.keys",
-                                        template: {
-                                            input: {
-                                                text: "{name} "
+                    ],
+                    [
+                        {
+                            command: {
+                                name: "/^@option$/",
+                                info: "切换页面设置"
+                            }
+                        },
+                        {
+                            grammar: "<设置名> <值> <确认>",
+                            info: [
+                                {
+                                    length: 1,
+                                    note: "指定要切换设置的名称",
+                                    list(getter) {
+                                        const keys = getter.__app.option.keys()
+                                        const list = new List()
+                                        list.setHeader({
+                                            _indexName: "_option.keys",
+                                            template: {
+                                                input: {
+                                                    text: "{name} "
+                                                }
                                             }
-                                        }
-                                    })
-                                    each(keys, key => list.setItem({
-                                        name: key
-                                    }))
-                                    return list
-                                }
-                            },
-                            {
-                                length: 2,
-                                note: "指定要设置的值",
-                                list(getter) {
-                                    const values = getter._app.option.values(getter.catchInput(1))
-                                    const list = new List()
-                                    list.setHeader({
-                                        _indexName: "_option.values",
-                                        template: {
-                                            input: {
-                                                text: "{name} "
-                                            }
-                                        }
-                                    })
-                                    each(values, value => list.setItem({
-                                        name: value
-                                    }))
-                                    return list
-                                }
-                            },
-                            {
-                                length: 3,
-                                note(getter) {
-                                    return replaceString("你确定要将 {key} 的值改为 {value} 吗？（按空格继续)", {
-                                        key: getter.catchInput(1),
-                                        value: getter.catchInput(2)
-                                    })
+                                        })
+                                        each(keys, key => list.setItem({
+                                            name: key
+                                        }))
+                                        return list
+                                    }
                                 },
-                                list() {
-                                    const list = new List()
-                                    return list.setHeader({
-                                        _indexName: "_option.confirm",
-                                        template: {
-                                            input: {
-                                                text: " "
+                                {
+                                    length: 2,
+                                    note: "指定要设置的值",
+                                    list(getter) {
+                                        const values = getter.__app.option.valuesOf(getter.catchInput(1))
+                                        const list = new List()
+                                        list.setHeader({
+                                            _indexName: "_option.values",
+                                            template: {
+                                                input: {
+                                                    text: "{name} "
+                                                }
                                             }
-                                        }
-                                    }).setItem({
-                                        info: "是的，我确定"
-                                    })
+                                        })
+                                        each(values, value => list.setItem({
+                                            name: value
+                                        }))
+                                        return list
+                                    }
+                                },
+                                {
+                                    length: 3,
+                                    note(getter) {
+                                        return replaceString("你确定要将 {key} 的值改为 {value} 吗？（按空格继续)", {
+                                            key: getter.catchInput(1),
+                                            value: getter.catchInput(2)
+                                        })
+                                    },
+                                    list() {
+                                        const list = new List()
+                                        return list.setHeader({
+                                            _indexName: "_option.confirm",
+                                            template: {
+                                                input: {
+                                                    text: " "
+                                                }
+                                            }
+                                        }).setItem({
+                                            info: "是的，我确定"
+                                        })
+                                    }
+                                }
+                            ],
+                            endFun(getter) {
+                                getter.__app.option.setItem(getter.catchInput(1), getter.catchInput(2))
+                                return {
+                                    note: "已完成设置"
                                 }
                             }
-                        ],
-                        endFun(getter) {
-                            getter._app.option.setItem(getter.catchInput(1), getter.catchInput(2))
-                            return {
-                                note: "已完成设置"
+                        }
+                    ],
+                    [
+                        {
+                            command: {
+                                name: "/^@tools$/",
+                                info: "打开对应工具"
+                            }
+                        },
+                        {
+                            grammar: "<工具名>",
+                            info: [
+                                {
+                                    length: 1,
+                                    note: "指定要打开的工具的名称",
+                                    list() {
+                                        const list = new List()
+                                        list.setHeader({
+                                            _indexName: "_tools",
+                                            template: {
+                                                input: {
+                                                    text: "{name} "
+                                                }
+                                            }
+                                        })
+                                        each(document.querySelectorAll("[id$='dialog']"), tool => {
+                                            list.setItem({
+                                                name: tool.id.replace(/-dialog$/, ""),
+                                                info: tool.querySelector(".mdui-dialog-title .mdui-typo-headline").innerHTML + ": " + tool.querySelector(".mdui-dialog-title .mdui-typo-caption-opacity").innerHTML
+                                            })
+                                        })
+                                        return list
+                                    }
+                                }
+                            ],
+                            endFun(getter) {
+                                try {
+                                    _page.dialogs[getter.catchInput(1)].open()
+                                    return {
+                                        note: "打开成功"
+                                    }
+                                } catch {
+                                    return {
+                                        note: "打开失败"
+                                    }
+                                }
                             }
                         }
-                    }
+                    ]
                 ]
-            ]
+            }
         }
     }
 }
