@@ -18,7 +18,8 @@ export default class {
             return this.data[lang][space].get(name, _return)
         } catch (err) {
             console.warn(`Could not get "${name}" in "${space}", returning with default language or \`_return\`.`, {_return}, err)
-            if (lang !== this.config.DEFAULT_LANGUAGE) return this.data.get(space, name, _return, this.config.DEFAULT_LANGUAGE)
+            const DEFAULT_LANGUAGE = objectGet(this.config, "DEFAULT_LANGUAGE", "langDef")
+            if (lang !== DEFAULT_LANGUAGE) return this.data.get(space, name, _return, DEFAULT_LANGUAGE)
         }
     }
 }

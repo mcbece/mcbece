@@ -21,7 +21,7 @@ export function mapObject(obj, callbackfn, thisArg) {
     return newObj
 }
 
-export function objectGet(obj, key, handler = s => s, _return) {
+export function objectGet(obj, key, _return, handler = s => s) {
     if (objectHas(obj, key)) return obj[key]
     else try {
         return eval(`obj.${handler(key)}`)
@@ -79,10 +79,8 @@ export function testRegExp(regexp, str) {
 
 export function readLine(text, len) {
     const all = text.split("\n")
-    if (typeof len === "number") {
-        if (len < 0) return all[all.length + len]
-        else return all[len]
-    } else return all
+    if (typeof len === "number") return all.at(len)
+    else return all
 }
 
 export function toJSON(str) {

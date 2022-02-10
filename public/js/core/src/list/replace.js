@@ -1,4 +1,4 @@
-/**
+/*
  * TODO
  * {\s*(This:|Header:|Global:)?(.+)(\|(.+))?\s*}
  *     即 { <namespace>:<thing>[|<returnedThingIfNotFound>] }

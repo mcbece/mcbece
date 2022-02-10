@@ -2,10 +2,7 @@ import { readLine } from "../../util/common.js"
 
 export function catchInput(length) {
     const all = readLine(this.config.$input.value, -1).split(" ")
-    if (typeof length === "number") {
-        if (length < 0) return all[all.length + length]
-        else return all[length]
-    }
+    if (typeof length === "number") return all.at(length)
     
     // TODO  FIXME
     else if (length === "the_latest_selector_variable") {

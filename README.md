@@ -6,9 +6,6 @@
 
 #### 目前进度：以下为部分未完成任务
 
-- 主要html：
-    - ~~编写 `div#option` 对应的设置列表~~
-    - 暂时取消设置界面的 Web UI 计划
 - 主要json：
     - 查看 [mcbelist-api](https://github.com/PFiS1737/mcbelist-api)
 - 主要js：
@@ -28,9 +25,12 @@
     - 长列表优化
         - 完善 `虚拟滚动（Virtual Scroll）`
             - 滑到两头会卡住
-            - 缓慢滑动时有隐约的抖动感
             - 支持加载不同高度的列表项
+            - 使用 `IntersectionObserver` 优化虚拟滚动
+    - 事件化
     - 历史记录及收藏功能
+    - 将缩略版纳入设置
+    - 支持将搜索内容缓存
     - ...
 - 优化：
     - 自动滚动的语法提示栏
@@ -41,13 +41,6 @@
     - 穷举助手
     - JSON 编辑器
     - ...
-- 后端
-    - ~~cookie~~
-        - ~~使可以通过 GET 中的 cookie, 按需进行 SSR~~
-    - ~~ES Module~~
-        - ~~由于 vercel 会将 esm 的文件自动编译成 commonjs, 导致部分无法正常导入~~
-        - ~~正在研究解决方法~~
-        - 暂时取消对 vercel 的支持
 - 后期计划
     - 等有时间和设备的支持后，会视实际情况再决定要不要做
     - 使用 `webpack` 打包 `public/js/core` 及涉及的 `scss` 部分

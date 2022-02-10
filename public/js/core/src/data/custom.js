@@ -1,9 +1,9 @@
-import { each, eachAsync, importDefault, objectHas } from "../../util/common.js"
+import { each, eachAsync, importDefault, objectHas, objectGet } from "../../util/common.js"
 import { ListData, List } from "../../lib/ListData.class.js"
 import { Grammar } from "../../lib/GrammarData.class.js"
 
 export async function setCustom(urlsInput) {
-    const _custom = this.config.data.custom
+    const _custom = objectGet(this.config, "data.custom")
     if (_custom) await eachAsync(_custom, async item => {
         if (item) setFrom.call(this, await _get(item))
     })

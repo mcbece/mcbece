@@ -5,7 +5,7 @@ export class ListData {
         this._data = parse(data) ?? {}
     }
     get(name) {
-        return objectGet(this._data, name, s => s?.replace(/\{([\-0-9]+)\}/g, ".getItem($1)"), new List())
+        return objectGet(this._data, name, new List(), s => s?.replace(/\{([\-0-9]+)\}/g, ".getItem($1)"))
     }
     set(name, list) {
         this._data[name] = list

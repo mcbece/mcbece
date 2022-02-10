@@ -1,6 +1,6 @@
-import { objectHas, testRegExp } from "../../util/common.js"
+import { objectHas, objectGet, testRegExp } from "../../util/common.js"
 
-export function getFromJson(commandName) {
+export function _getFromJson(commandName) {
     const grammarGroup = this.data.get("grammar", commandName)
     const body = grammarGroup.body
     const output = {
@@ -14,7 +14,8 @@ export function getFromJson(commandName) {
             for (let e = 0; e < this.input.catchInput().length - 1 && e < body[i].control.length; e++) {
                 const rule = body[i].control[e].rule
                 const input = this.input.catchInput(body[i].control[e].length)
-                if (objectHas(this.config.grammar.control.shortcut, rule)) _result.push(testRegExp(this.config.grammar.control.shortcut[rule], input))
+                const shortcut = objectGet(this.config, "grammar.control.shortcut", {})
+                if (objectHas(shortcut, rule)) _result.push(testRegExp(shortcut[rule], input))
                 else _result.push(testRegExp(rule, input))
             }
             if (!_result.includes(false)) result.push(i)

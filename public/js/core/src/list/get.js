@@ -1,8 +1,8 @@
-import { deepCopy, objectHas, toJSON } from "../../util/common.js"
+import { each, deepCopy, objectHas, toJSON } from "../../util/common.js"
 import { rename } from "./rename.js"
 import { List } from "../../lib/ListData.class.js"
 
-export function getFromJson(listGroup) {
+export function _getFromJson(listGroup) {
     const output = {
         names: {},
         lists: {}
@@ -16,7 +16,7 @@ export function getFromJson(listGroup) {
                 const option = _part[2] ?? ""
                 const name = _name + option
                 if (/\s*;\s*/.test(_name)) {
-                    const result = this.list.getFromJson(name)
+                    const result = this.list._getFromJson(name)
                     Object.assign(output.lists, result.lists)
                     Object.assign(output.names, result.names)
                     continue
@@ -49,18 +49,12 @@ export function getFromJson(listGroup) {
             output.names[_name] = reeditHeader.call(this, _name, header)
             return
         } else if (objectHas(header, "extend")) {
-            const result = this.list.getFromJson(header.extend)
+            const result = this.list._getFromJson(header.extend)
             Object.assign(output.lists, result.lists)
             Object.assign(output.names, result.names)
             if (!body.length) return
         }
-        let { length: { max: maxLength = body.length - 1, min: minLength = 0 } = {}, input: { replace: replaceOption, text: textOption } = {} } = _option && toJSON(_option)
-        ~~maxLength
-        ~~minLength
-        if (maxLength > body.length - 1) maxLength = body.length - 1
-        if (minLength < 0) minLength = 0
-        if (maxLength < 0) maxLength = 0
-        if (minLength > maxLength) minLength = maxLength - 1
+        let { length: { max: maxIndex = body.length, min: minIndex = 0 } = {}, input: { replace: replaceOption, text: textOption } = {} } = _option && toJSON(_option)
         let { input: { replace: replaceHeader, text: textHeader } = {}, urlHeader } = header.template ?? {}
         replaceHeader ??= replaceOption
         textHeader ??= textOption
@@ -68,14 +62,14 @@ export function getFromJson(listGroup) {
             header: reeditHeader.call(this, _name, header),
             body: []
         }
-        for (let i = minLength; i < maxLength + 1; i++) {
-            body[i].input ??= {
+        each(body.slice(~~minIndex, ~~maxIndex), item => {
+            item.input ??= {
                 replace: replaceHeader,
                 text: textHeader
             }
-            body[i].url ??= urlHeader
-            list.body.push(body[i])
-        }
+            item.url ??= urlHeader
+            list.body.push(item)
+        })
         output.lists[_name] = list.body
         output.names[_name] = list.header
     }

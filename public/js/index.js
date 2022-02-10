@@ -25,14 +25,14 @@ window.app = new App({
         // TODO 这里不是很合理的样子，等再改改
         if (screen.height < 800) {
             document.body.classList.add("lite")
-            window._LITE_MODEL = true
+            window._LITE_MODELL = true
         }
         if (app.LANG === "en") this.$grammar.classList.add("minecraft-font")
         document.body.classList.remove("loading")
     },
     onI18n(getText) {
         document.title = getText("title")
-        this.$input.placeholder = getText("input")
+        app.config.$input.placeholder = getText("input")
     },
     
     list: {
@@ -40,14 +40,14 @@ window.app = new App({
             return true
         },
         get _use_divider() {
-            return !_LITE_MODEL
+            return !window._LITE_MODELL
         },
         get _height() {
-            const _fix = _LITE_MODEL ? 85 : 120
+            const _fix = window._LITE_MODELL ? 85 : 120
             return document.documentElement.clientHeight - _fix
         },
         get _itemHeight() {
-            if (_LITE_MODEL) {
+            if (window._LITE_MODELL) {
                 const height = window.innerHeight / 16
                 if (height > 36) return 36
                 else if (height < 24) return 24
@@ -55,15 +55,15 @@ window.app = new App({
             } else return 72
         },
         template: {
-            item(_id, name, renderer) {
+            item(_id, _name, renderer) {
                 const item = stringToNode(`
-                    <li class="mdui-list-item mdui-ripple" id="${_id}" data-list-name="${name}">
-                        ${ _LITE_MODEL ? renderer.get("image") : "" }
+                    <li class="mdui-list-item mdui-ripple" id="${_id}" data-list-name="${_name}">
+                        ${ window._LITE_MODELL ? renderer.get("image") : "" }
                         <div class="mdui-list-item-content">
                             <div class="mdui-list-item-title minecraft-font" id="name">${renderer.get("name")}</div>
                             <div class="mdui-list-item-text mdui-list-item-one-line" id="info">${renderer.get("info")}</div>
                         </div>
-                        ${ _LITE_MODEL ? renderer.get("url") : "" }
+                        ${ window._LITE_MODELL ? renderer.get("url") : "" }
                     </li>
                 `)
                 item.setAttribute("onclick", renderer.get("input") || "")
@@ -133,7 +133,7 @@ window.app = new App({
         snackbar(message, option) {
             mdui.snackbar({
                 message,
-                position: _LITE_MODEL ? "bottom" : "left-top",
+                position: window._LITE_MODELL ? "bottom" : "left-top",
                 timeout: 2000,
                 ...option
             })

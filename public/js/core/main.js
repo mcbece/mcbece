@@ -1,4 +1,4 @@
-import { each, addValueChangedListener } from "./util/common.js"
+import { each, addValueChangedListener, objectGet } from "./util/common.js"
 import __Data__ from "./src/data/index.js"
 import __Input__ from "./src/input/index.js"
 import __List__ from "./src/list/index.js"
@@ -15,19 +15,19 @@ export default class {
         this.initialize = this.initialize.bind(this)
         this.change = this.change.bind(this)
         
-        if (this.config.plugin) Promise.all(this.config.plugin.plugins.map(e => e(this)))
-            .then(result => this.config.plugin.handler(result, this))
+        if (objectGet(this.config, "plugin")) Promise.all(objectGet(this.config, "plugin.plugins", []).map(e => e(this)))
+            .then(result => objectGet(this.config, "plugin.handler", () => {})(result, this))
             .catch(console.error)
     }
     initialize({ lang, branch, customURL, listWithImage }) {
-        this.data.init(lang, branch, this.config.data.url, customURL).then(() => {
+        this.data.init(lang, branch, objectGet(this.config, "data.url", ""), customURL).then(() => {
             this.list.withImage = listWithImage
-            this.config.onI18n(this.data.get.bind(this, "text"))
-            this.config.onInit()
+            objectGet(this.config, "onI18n", () => {})(this.data.get.bind(this, "text"))
+            objectGet(this.config, "onInit", () => {})()
             addValueChangedListener(this.config.$input, () => {
                 this.change()
                 this.list.search()
-                each(this.config.onInput || [], listener => listener())
+                each(objectGet(this.config, "onInput", []), listener => listener())
             }, true)
             this.change()
         }).catch(console.error)
@@ -38,7 +38,7 @@ export default class {
             document.querySelector(".virtual-scroll").removeEventListener("scroll", this._onScroll)
             window.removeEventListener("resize", this._onScroll)
         }
-        this.config.$list.innerHTML = ""
+        $list.innerHTML = ""
         this.list.names = {}
         $grammar.innerHTML = ""
         $note.innerHTML = ""

@@ -64,10 +64,6 @@
             min-height: 24px;
             max-height: 36px;
             height: calc(100vh / 16);
-            // height: calc(var(--vh, 1vh) * 100 / 16);
-            /* transition: height .3s; */
-            /* 因为在加载长列表时会比较卡，所以这行先注释掉了 */
-            /* 建议开启输入法的 不挤压页面 等类似功能 */
         }
         
         .mdui-list-item-content {

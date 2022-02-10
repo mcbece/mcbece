@@ -1,7 +1,6 @@
-import { each, deepCopy, toStringRegExp } from "../../util/common.js"
-import { getFromJson } from "./get.js"
-import { renderToHTML } from "./render.js"
-import { loadToPage } from "./load.js"
+import { each, deepCopy, toStringRegExp, objectGet } from "../../util/common.js"
+import { _getFromJson } from "./get.js"
+import { _loadToPage } from "./load.js"
 
 export default class {
     constructor(app) {
@@ -10,27 +9,29 @@ export default class {
         
         this.load = this.load.bind(app)
         this.search = this.search.bind(app)
-        this.getFromJson = getFromJson.bind(app)
-        this.renderToHTML = renderToHTML.bind(app)
-        this.loadToPage = loadToPage.bind(app)
+        this._getFromJson = _getFromJson.bind(app)
+        this._loadToPage = _loadToPage.bind(app)
         
         this._useDivider = this._useDivider.bind(app)
         this._useVirtualScroll = this._useVirtualScroll.bind(app)
     }
     _useDivider() {
-        return this.config.list._use_divider && this.config.list.template.divider && !this.list._useVirtualScroll
+        return objectGet(this.config, "list._use_divider") && objectGet(this.config, "list.template.divider") && !this.list._useVirtualScroll
     }
     _useVirtualScroll() {
-        return this.config.list._use_virtual_scroll && document.querySelector(".virtual-scroll")
+        return objectGet(this.config, "list._use_virtual_scroll") && document.querySelector(".virtual-scroll")
     }
     load(listGroup) {
-        const result = this.list.getFromJson(listGroup)
+        const result = this.list._getFromJson(listGroup)
         // console.log({ listGetResult: result })
         if (Object.keys(deepCopy(this.list.names)).sort().toString() !== Object.keys(deepCopy(result.names)).sort().toString()) {
             console.log({ listLoadResult: result })
             this.list.names = result.names
             this.list.lists = result.lists
-            this.list.renderToHTML(result, list => this.list.loadToPage(list, this.config.$list))
+            
+            this.list._loadToPage(result, this.config.$list)
+            
+            // this.list.renderToHTML(result, list => this.list.loadToPage(list, this.config.$list))
         }
     }
     search() {
@@ -64,8 +65,8 @@ export default class {
                 result.names[listName] = list.header
             }
         })
-        if (Object.keys(result.lists).length) this.list.renderToHTML(result, list => this.list.loadToPage(list, this.config.$list))
-        else this.list.renderToHTML({
+        if (Object.keys(result.lists).length) this.list._loadToPage(result, this.config.$list)
+        else this.list._loadToPage({
             lists: {
                 _: [
                     {
@@ -80,12 +81,12 @@ export default class {
                     }
                 }
             }
-        }, list => this.list.loadToPage(list, this.config.$list))
+        }, this.config.$list)
         
         function _search(list, query, searchSpace) {
             const result = list.filter(item => query.test(item[searchSpace]))
             return result.map(item => {
-                item[searchSpace] = item[searchSpace]?.replace(query, this.config.list.template.highlight)
+                item[searchSpace] = item[searchSpace]?.replace(query, objectGet(this.config, "list.template.highlight", (_, $1) => $1))
                 return item
             })
         }

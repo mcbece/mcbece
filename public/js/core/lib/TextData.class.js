@@ -5,7 +5,7 @@ export class TextData {
         this._data = data
     }
     get(key, _return) {
-        return objectGet(this._data, key, s => s, _return)
+        return objectGet(this._data, key, _return)
     }
     set(key, value) {
         this._data[key] = value
