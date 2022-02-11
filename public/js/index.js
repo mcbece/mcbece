@@ -31,8 +31,7 @@ window.app = new App({
         document.body.classList.remove("loading")
     },
     onI18n(getText) {
-        document.title = getText("title")
-        app.config.$input.placeholder = getText("input")
+        this.$input.placeholder = getText("input")
     },
     
     list: {
@@ -124,7 +123,7 @@ window.app = new App({
             createPWAManager
         ],
         handler([ webOption, pwa ]) {
-            if (webOption) app.option = webOption.init(app.initialize)
+            if (webOption) app.option = webOption.init(res => app.initialize(res))
             if (pwa && !pwa._noServiceWorker) app.pwa = pwa
         }
     },

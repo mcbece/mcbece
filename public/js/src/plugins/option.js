@@ -7,7 +7,6 @@ export default async function (app) {
         DEFAULT_THEME_COLOR
     } = app.config
     const option = new __Option__("option", res => {
-        app.clear()
         document.body.classList.add("loading")
         app.initialize(res)
     })

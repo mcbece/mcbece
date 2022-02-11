@@ -1,14 +1,13 @@
-import { _getFromJson } from "./get.js"
+import { _get } from "./get.js"
 import { InputGetter } from "../../lib/InputGetter.class.js"
 
 export default class {
     constructor(app) {
         this.load = this.load.bind(app)
-        this._getFromJson = _getFromJson.bind(app)
     }
     load(commandName) {
         const { $grammar, $note } = this.config
-        const result = this.grammar._getFromJson(commandName)
+        const result = _get.call(this, commandName)
         if (result.body) {
             const commandLength = this.input.catchInput().length - 1
             $grammar.innerHTML = `<span>${commandName} </span>`

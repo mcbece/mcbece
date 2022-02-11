@@ -1,6 +1,6 @@
 import { objectHas, objectGet, testRegExp } from "../../util/common.js"
 
-export function _getFromJson(commandName) {
+export function _get(commandName) {
     const grammarGroup = this.data.get("grammar", commandName)
     const body = grammarGroup.body
     const output = {

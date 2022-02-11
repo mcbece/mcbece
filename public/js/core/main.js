@@ -12,34 +12,36 @@ export default class {
         this.list = new __List__(this)
         this.grammar = new __Grammar__(this)
         
-        this.initialize = this.initialize.bind(this)
-        this.change = this.change.bind(this)
-        
         if (objectGet(this.config, "plugin")) Promise.all(objectGet(this.config, "plugin.plugins", []).map(e => e(this)))
             .then(result => objectGet(this.config, "plugin.handler", () => {})(result, this))
             .catch(console.error)
     }
     initialize({ lang, branch, customURL, listWithImage }) {
+        this.clear()
         this.data.init(lang, branch, objectGet(this.config, "data.url", ""), customURL).then(() => {
             this.list.withImage = listWithImage
-            objectGet(this.config, "onI18n", () => {})(this.data.get.bind(this, "text"))
+            this.i18n()
             objectGet(this.config, "onInit", () => {})()
             addValueChangedListener(this.config.$input, () => {
                 this.change()
-                this.list.search()
                 each(objectGet(this.config, "onInput", []), listener => listener())
             }, true)
             this.change()
         }).catch(console.error)
     }
-    clear() {
-        const { $list, $grammar, $note, $funBtn } = this.config
-        if (this._useVirtualScroll) {
-            document.querySelector(".virtual-scroll").removeEventListener("scroll", this._onScroll)
-            window.removeEventListener("resize", this._onScroll)
-        }
+    i18n() {
+        const getText = this.data.get.bind(this, "text")
+        document.title = getText("title")
+        each(document.querySelectorAll("[data-i18n]"), item => item.innerHTML = getText(item.getAttribute("data-i18n")))
+        const onI18n = objectGet(this.config, "onI18n") ?? new Function()
+        onI18n.call(this.config, getText)
+    }
+    clear(clearInput) {
+        const { $list, $grammar, $note, $funBtn, $input } = this.config
+        if (clearInput) $input.value = ""
+        if (this.list._useVirtualScroll()) this.list._vs?.destroy()
         $list.innerHTML = ""
-        this.list.names = {}
+        this.list = new __List__(this)
         $grammar.innerHTML = ""
         $note.innerHTML = ""
         $funBtn.innerHTML = ""

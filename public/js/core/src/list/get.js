@@ -2,21 +2,32 @@ import { each, deepCopy, objectHas, toJSON } from "../../util/common.js"
 import { rename } from "./rename.js"
 import { List } from "../../lib/ListData.class.js"
 
-export function _getFromJson(listGroup) {
+export function _get(listGroup, autoAddNext = true) {
     const output = {
         names: {},
         lists: {}
+    }
+    if (autoAddNext && this.input.typeFrom("next")) {
+        const result = _get.call(this, "next", false)
+        Object.assign(output.lists, result.lists)
+        Object.assign(output.names, result.names)
     }
     if (typeof listGroup === "object" || typeof listGroup === "string") {
         if (Array.isArray(listGroup) || typeof listGroup === "string") {
             listGroup = [...new Set(split(listGroup))]
             for (let _listName of listGroup) {
+                if (_listName instanceof List) {
+                    const result = _get.call(this, _listName)
+                    Object.assign(output.lists, result.lists)
+                    Object.assign(output.names, result.names)
+                    continue
+                }
                 const _part = _listName.match(/^([.A-Za-z0-9\[\]\(\)_@#$&*%=^~]+)({.*})?$/) ?? []
                 const _name = rename.call(this, _part[1])
                 const option = _part[2] ?? ""
                 const name = _name + option
                 if (/\s*;\s*/.test(_name)) {
-                    const result = this.list._getFromJson(name)
+                    const result = _get.call(this, name)
                     Object.assign(output.lists, result.lists)
                     Object.assign(output.names, result.names)
                     continue
@@ -49,7 +60,7 @@ export function _getFromJson(listGroup) {
             output.names[_name] = reeditHeader.call(this, _name, header)
             return
         } else if (objectHas(header, "extend")) {
-            const result = this.list._getFromJson(header.extend)
+            const result = _get.call(this, header.extend)
             Object.assign(output.lists, result.lists)
             Object.assign(output.names, result.names)
             if (!body.length) return

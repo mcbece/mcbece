@@ -1,7 +1,7 @@
 import { each, objectHas, objectGet } from "../../util/common.js"
 import { ListItemRenderer } from "./renderer.js"
 
-export function _renderToHTML(items) {
+export function _render(items) {
     if (Array.isArray(items)) return items.map(handle.bind(this))
     else return handle.call(this, items)
 }

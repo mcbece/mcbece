@@ -11,9 +11,9 @@ export class VirtualScroll {
         this.callback = callback
         this.rootEle = document.querySelector(".virtual-scroll")
         this.container = this.rootEle.querySelector(".virtual-scroll__container")
-        // if ("IntersectionObserver" in window) this.initObserver()
-        // else
-        this.initScroll()
+        
+        if (/* "IntersectionObserver" in window */ false) this.initObserver()
+        else this.initScroll()
     }
     
     first = 0
@@ -21,18 +21,20 @@ export class VirtualScroll {
     scrollTop = 0
     
     initScroll() {
-        this.container.innerHTML = ""
-        const onScroll = () => this.onEvent()
-        this.rootEle.removeEventListener("scroll", this.__app._onScroll)
-        window.removeEventListener("resize", this.__app._onScroll)
-        this.__app._onScroll = onScroll
-        this.rootEle.addEventListener("scroll", onScroll)
-        window.addEventListener("resize", onScroll)
+        const _listener = () => this.onEvent()
+        this.rootEle.removeEventListener("scroll", this.__app.list._vs_listener)
+        window.removeEventListener("resize", this.__app.list._vs_listener)
+        this.__app.list._vs_listener = _listener
+        this.rootEle.addEventListener("scroll", _listener)
+        window.addEventListener("resize", _listener)
         this.rootEle.dispatchEvent(new Event("scroll"))
+    }
+    destroy() {
+        this.rootEle.removeEventListener("scroll", this.__app.list._vs_listener)
+        window.removeEventListener("resize", this.__app.list._vs_listener)
     }
     initObserver() {
         this.useObserver = true
-        this.container.innerHTML = ""
         this.observer = new IntersectionObserver((entries, observer) => {
             if (entries[0].intersectionRatio > 0) {
                 observer.unobserve(entries.at(-1).target)

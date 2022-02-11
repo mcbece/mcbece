@@ -1,8 +1,8 @@
 import { each, stringToNode } from "../../util/common.js"
 import { VirtualScroll } from "../../lib/VirtualScroll.class.js"
-import { _renderToHTML } from "./render.js"
+import { _render } from "./render.js"
 
-export function _loadToPage({ names, lists }, container) {
+export function _load({ names, lists }, container) {
     const data = []
     each(lists, (name, list) => {
         if (this.list._useDivider()) data.push({
@@ -24,7 +24,7 @@ export function _loadToPage({ names, lists }, container) {
         const vs = new VirtualScroll({
             app: this,
             data: data,
-            render: _renderToHTML.bind(this),
+            render: _render.bind(this),
             bench: 1,
             callback: (container, _items) => {
                 const items = document.createDocumentFragment()
@@ -38,11 +38,11 @@ export function _loadToPage({ names, lists }, container) {
             left: 0,
             behavior: "smooth"
         })
-    }
-    else {
+        this.list._vs = vs
+    } else {
         container.innerHTML = ""
         const items = document.createDocumentFragment()
-        each(_renderToHTML.call(this, data), item => items.appendChild(stringToNode(item, true)))
+        each(_render.call(this, data), item => items.appendChild(stringToNode(item, true)))
         container.appendChild(items)
         window.scrollTo({
             top: 0,

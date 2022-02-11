@@ -44,7 +44,7 @@ export function getReturn(target, ...args) {
 export function toString(target, _return) {
     if (typeof target === "object") return JSON.stringify(target)
     else if (target?.toString) return target.toString()
-    else return _return
+    else return getReturn(_return, target)
 }
 
 export function kvArrayToObject(kvArray) {
