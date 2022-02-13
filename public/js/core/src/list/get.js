@@ -22,16 +22,17 @@ export function _get(listGroup, autoAddNext = true) {
                     Object.assign(output.names, result.names)
                     continue
                 }
-                const _part = _listName.match(/^([.A-Za-z0-9\[\]\(\)_@#$&*%=^~]+)({.*})?$/) ?? []
-                const _name = rename.call(this, _part[1])
-                const option = _part[2] ?? ""
-                const name = _name + option
-                if (/\s*;\s*/.test(_name)) {
-                    const result = _get.call(this, name)
+                const _part = _listName.split("<-")
+                let _name = rename.call(this, _part[0])
+                if (split(_name).length > 1) {
+                    const result = _get.call(this, _name)
                     Object.assign(output.lists, result.lists)
                     Object.assign(output.names, result.names)
                     continue
                 }
+                else _name = Array.isArray(_name) ? _name[0] : _name
+                const option = _part[1] ?? ""
+                const name = _name + option
                 handleGet.call(this, name, option, this.data.get("list", _name))
             }
         }
@@ -41,6 +42,9 @@ export function _get(listGroup, autoAddNext = true) {
     return output
     
     function handleGet(_name, _option, _list) {
+        
+        console.log({_name, _option, _list})
+        
         const header = deepCopy(_list?.header)
         const body = deepCopy(_list?.body)
         if (_list === undefined) {
@@ -67,16 +71,21 @@ export function _get(listGroup, autoAddNext = true) {
         }
         let { length: { max: maxIndex = body.length, min: minIndex = 0 } = {}, input: { replace: replaceOption, text: textOption } = {} } = _option && toJSON(_option)
         let { input: { replace: replaceHeader, text: textHeader } = {}, urlHeader } = header.template ?? {}
-        replaceHeader ??= replaceOption
-        textHeader ??= textOption
+        
+        //console.log({replaceHeader, replaceOption, textHeader, textOption})
+        
+        // replaceHeader ??= replaceOption
+        // textHeader ??= textOption
         const list = {
             header: reeditHeader.call(this, _name, header),
             body: []
         }
+        
+        
         each(body.slice(~~minIndex, ~~maxIndex), item => {
             item.input ??= {
-                replace: replaceHeader,
-                text: textHeader
+                replace: replaceOption ?? replaceHeader,
+                text: textOption ?? textHeader
             }
             item.url ??= urlHeader
             list.body.push(item)

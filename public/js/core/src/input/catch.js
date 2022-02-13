@@ -5,11 +5,11 @@ export function catchInput(length) {
     if (typeof length === "number") return all.at(length)
     
     // TODO  FIXME
-    else if (length === "the_latest_selector_variable") {
+    else if (length === "the_last_selector_argument") {
         const _all = this.input.catchInput(-1).split("[")[1].split(",")
         return _all[_all.length - 1]
-    } else if (length === "selector_variable_value") {
-        return this.input.catchInput("the_latest_selector_variable").split("=")[1]
+    } else if (length === "selector_argument_value") {
+        return this.input.catchInput("the_last_selector_argument").split("=")[1]
         
     }
     

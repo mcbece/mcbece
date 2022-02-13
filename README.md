@@ -7,7 +7,7 @@
 #### 目前进度：以下为部分未完成任务
 
 - 主要json：
-    - 查看 [mcbelist-api](https://github.com/PFiS1737/mcbelist-api)
+    - 见 [mcbelist-api](https://github.com/PFiS1737/mcbelist-api)
 - 主要js：
     - 框架化（基本完成）
         - 部分逻辑关系有待优化
@@ -32,6 +32,8 @@
     - i18n
     - 事件化
     - 历史记录及收藏功能
+    - 支持使用 `WebSocket` 连接至游戏并直接执行命令
+        - 见 [mcbewscc](https://github.com/PFiS1737/mcbelist-api)
     - 优化设置模块，并添加新的设置项
         - 支持使用键值对预定设置内容
         - 将缩略版纳入设置

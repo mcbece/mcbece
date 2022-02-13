@@ -26,7 +26,7 @@ export function objectGet(obj, key, _return, handler = s => s) {
     else try {
         return eval(`obj.${handler(key)}`)
     } catch (err) {
-        console.warn(`Could not get "${key}" in \`obj\`, returning \`_return\`.`, {obj, _return}, err)
+        // console.warn(`Could not get "${key}" in \`obj\`, returning \`_return\`.`, {obj, _return}, err)
         return _return
     }
 }
@@ -149,4 +149,16 @@ export function removeValueChangedListener(inputEle, listener, withEventListener
         inputEle.__valueChangedListener.delete(listener)
         if (withEventListener) inputEle.removeEventListener("input", listener)
     }
+}
+
+export function includesAll(arr, valuesToFind, fromIndex) {
+    const result = []
+    each(valuesToFind, valueToFind => result.push(arr.includes(valueToFind, fromIndex)))
+    return !result.includes(false)
+}
+
+export function includesSome(arr, valuesToFind, fromIndex) {
+    const result = []
+    each(valuesToFind, valueToFind => result.push(arr.includes(valueToFind, fromIndex)))
+    return result.includes(true)
 }

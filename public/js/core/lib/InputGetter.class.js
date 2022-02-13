@@ -9,7 +9,7 @@ export class InputGetter {
         return this.__app.input.catchName()
     }
     searchFrom(listName, query, template = i => i) {
-        const index = this.__app.data.get("list", listName).body.findIndex(_item => _item.name === query)
+        const index = this.__app.data.get("list", listName).body.findIndex(e => e.name === query)
         return template(index)
     }
 }

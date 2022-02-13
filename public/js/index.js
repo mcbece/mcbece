@@ -3,6 +3,8 @@ import App from "./core/main.js"
 import createWebOptionManager from "./src/plugins/option.js"
 import createPWAManager from "./src/plugins/pwa.js"
 
+import { typeFrom } from "./core/src/input/type.js"
+
 window.app = new App({
     DEFAULT_LANGUAGE: "zh-CN",
     DEFAULT_THEME_COLOR: {
@@ -20,7 +22,9 @@ window.app = new App({
         copy: `<i class="mdui-icon material-icons mdui-text-color-theme-icon">content_copy</i>`
     },
     
-    onInput: [],
+    onInput: [
+        // () => console.log("typeFrom: ", app.input.typeFrom())
+    ],
     onInit() {
         // TODO 这里不是很合理的样子，等再改改
         if (screen.height < 800) {
@@ -91,13 +95,6 @@ window.app = new App({
                     return `<a class="mdui-btn mdui-btn-icon mdui-list-item-things-display-when-hover" href="${url}" target="_blank" id="url"><i class="mdui-icon material-icons mdui-text-color-black-icon">send</i></a>`
                 }
             }
-        },
-        shortcut: {
-            "enchantment.level": handler,
-            "entity.event": handler,
-            "block.data": handler,
-            "item.data": handler,
-            "entity.family": "entity_family"
         }
     },
     
@@ -139,9 +136,3 @@ window.app = new App({
         }
     }
 })
-
-function handler(getter, item) {
-    const fixReg = /^(?<name>.+)\.(?<subname>.+)$/
-    const { groups: { name, subname, option } } = item.match(fixReg)
-    return getter.searchFrom(name, getter.catchInput(-2), i => `${name}{${i}}.${subname}`)
-}

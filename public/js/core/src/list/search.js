@@ -14,8 +14,8 @@ export function _search(__query, cacheName) {
         }
         let _query = __query
         if (listName === "command") _query = _query.replace("/", "")
-        else if (listName === "selector.variable") _query = catchInput("the_latest_selector_variable")
-        else if (typeFrom("selector_variable_value")) _query = catchInput("selector_variable_value")
+        else if (listName === "selector.argument") _query = catchInput("the_last_selector_argument")
+        else if (typeFrom("selector.argument.value")) _query = catchInput("selector_argument_value")
         if (!list.header.option.searchable || !_query) {
             result.lists[listName] = list.body
             result.names[listName] = list.header

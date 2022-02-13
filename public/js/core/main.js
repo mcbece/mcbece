@@ -70,6 +70,8 @@ export default class {
         }
         else this.list.load(result.list ?? "")
         this.list.search()
+        
+        console.log("===== changed =====")
     }
     toggleFunIcon(editEnd, url) {
         const { $funBtn, _funIcon } = this.config
