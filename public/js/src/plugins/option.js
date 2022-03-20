@@ -79,6 +79,18 @@ export default async function (app) {
         },
         defaultValue: ""
     })
+    .addItem({
+        name: "liteModel",
+        values: [ true, false ],
+        callback: (selected, original) => {
+            console.log("Option: liteModel -> from", original, "to", selected)
+            if (selected) {
+                document.body.classList.add("lite")
+                window._LITE_MODELL = selected
+            }
+        },
+        defaultValue: false
+    })
     
     // Listeners
     app.config.onInput.push(() => {
