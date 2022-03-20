@@ -1,5 +1,5 @@
 self.__version = {
-    version: "v1",
+    version: "v0.0.0",
     content: [
         // {
         //     url: "",

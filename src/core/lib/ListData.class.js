@@ -28,13 +28,13 @@ function parse(data) {
 
 export class List {
     constructor(list) {
-        this._header = {}
-        this._body = []
         if (list) {
             this.setHeader(list[0])
             for (let i = 1; i < list.length; i++) this.setItem(list[i])
         }
     }
+    _header = {}
+    _body = []
     setHeader(header, value) {
         if (value) this._header[header] = value
         else this._header = header

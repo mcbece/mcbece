@@ -1,8 +1,8 @@
 export class DataCache {
     constructor(maxLenght) {
         this.maxLenght = maxLenght
-        this.data = []
     }
+    data = []
     push(name, data) {
         if (!this.some(name)) {
             this.data.push([name, data])

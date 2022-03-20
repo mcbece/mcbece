@@ -1,6 +1,6 @@
-import { objectGet, importDefault } from "../public/js/core/util/common.js"
-import { stringify } from "../public/js/core/util/JSONWithFun.js"
-import  GLOBAL_DATA from "../src/data.js"
+import { objectGet, importDefault } from "../src/core/util/common.js"
+import { stringify } from "../src/core/util/JSONWithFun.js"
+import GLOBAL_DATA from "../src/data.js"
 import express from "express"
 
 const api = express.Router()
@@ -31,7 +31,7 @@ api.get("/mcbelist.:lang.:branch", (req, res) => {
         res.status(200).type(".js").send("export default " + stringify(data))
     }).catch(err => {
         console.warn("Could not find content by incoming language and branch, sending `{}` with 404.", err)
-        res.status(404).send("export default {}")
+        res.status(404).type(".js").send("export default {}")
     })
 })
 

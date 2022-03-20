@@ -1,4 +1,4 @@
-import { each, deepCopy, toStringRegExp, objectGet } from "../../util/common.js"
+import { each, deepCopy, toRegExp, objectGet } from "../../util/common.js"
 
 export function _search(__query, cacheName) {
     const { list: { searchCache }, input: { catchInput, typeFrom } } = this
@@ -14,14 +14,17 @@ export function _search(__query, cacheName) {
         }
         let _query = __query
         if (listName === "command") _query = _query.replace("/", "")
-        else if (listName === "selector.argument") _query = catchInput("the_last_selector_argument")
+        else if (listName === "selector.argument") _query = catchInput("last_selector_argument")
         else if (typeFrom("selector.argument.value")) _query = catchInput("selector_argument_value")
         if (!list.header.option.searchable || !_query) {
             result.lists[listName] = list.body
             result.names[listName] = list.header
             return
         }
-        const query = toStringRegExp(_query)
+        const query = (() => {
+            if (/^\/.*\/[gimsuy]*$/.test(_query)) return toRegExp(_query)
+            else return new RegExp(`(${_query})`)
+        })()
         let _lists = []
         for (let searchSpace of list.header.option.search_spaces) {
             _lists = match.call(this, list.body, query, searchSpace)

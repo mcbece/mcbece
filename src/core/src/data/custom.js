@@ -1,13 +1,13 @@
-import { each, eachAsync, importDefault, objectHas, objectGet } from "../../util/common.js"
+import { each, asyncEach, importDefault, objectHas, objectGet } from "../../util/common.js"
 import { ListData, List } from "../../lib/ListData.class.js"
 import { Grammar } from "../../lib/GrammarData.class.js"
 
 export async function setCustom(urlsInput) {
     const _custom = objectGet(this.config, "data.custom")
-    if (_custom) await eachAsync(_custom, async item => {
+    if (_custom) await asyncEach(_custom, async item => {
         if (item) setFrom.call(this, await _get(item))
     })
-    if (urlsInput) await eachAsync(urlsInput, async url => {
+    if (urlsInput) await asyncEach(urlsInput, async url => {
         if (url) setFrom.call(this, await _get(url))
     })
 }

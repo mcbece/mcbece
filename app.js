@@ -2,7 +2,6 @@ import express from "express"
 import logger from "morgan"
 import docsRouter from "./router/docs.js"
 import apiRouter from "./router/api.js"
-import sass from "sass"
 
 const app = express()
 
@@ -18,15 +17,6 @@ app.use("/lib", express.static("./node_modules"))
 // Routers
 app.use("/docs", docsRouter)
 app.use("/api", apiRouter)
-
-// SASS -> CSS
-app.get("/css/index.css", (req, res) => {
-    sass.compileAsync("./src/scss/index.scss", {
-        style: "compressed"
-    }).then(({ css }) => {
-        res.status(200).type(".css").send(css)
-    }).catch(console.error)
-})
 
 // Main
 app.get("/", (req, res) => {

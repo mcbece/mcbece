@@ -20,13 +20,13 @@ function parse(data) {
 
 export class Grammar {
     constructor(grammar) {
-        this._header = {}
-        this._body = []
         if (grammar) {
             this.setHeader(grammar[0])
             for (let i = 1; i < grammar.length; i++) this.setItem(grammar[i])
         }
     }
+    _header = {}
+    _body = []
     setHeader(header) {
         this._header = header
         return this

@@ -5,11 +5,11 @@ export function input({ text, replace }) {
     const fixed = fix($input.value)
     const lastLine = readLine($input.value, -1)
     let output = ""
-    if (replace === "the_last_selector_argument") {
+    if (replace === "last_selector_argument") {
         const selector_argument = lastLine.split("[").at(-1)
         if (/,/.test(selector_argument)) output = fixLine(lastLine, ",")
         else output = fixLine(lastLine, "[")
-    } else if (replace === "the_last_selector_argument_value") {
+    } else if (replace === "last_selector_argument_value") {
         output = fixLine(lastLine, "=")
     } else if (replace === "none") {
         output = lastLine

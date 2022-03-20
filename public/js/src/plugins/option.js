@@ -1,5 +1,5 @@
 import { WebOption } from "../../lib/WebOption.class.js"
-import { importDefault, addValueChangedListener } from "../../core/util/common.js"
+import { importDefault, addValueChangedListener } from "../../lib/util.min.js"
 
 export default async function (app) {
     const {
@@ -69,7 +69,8 @@ export default async function (app) {
         values: [ true, false ],
         callback: (selected, original) => {
             console.log("Option: listWithImage -> from", original, "to", selected)
-        }
+        },
+        defaultValue: false
     })
     .addItem({
         name: "inputing",

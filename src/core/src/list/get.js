@@ -42,9 +42,6 @@ export function _get(listGroup, autoAddNext = true) {
     return output
     
     function handleGet(_name, _option, _list) {
-        
-        console.log({_name, _option, _list})
-        
         const header = deepCopy(_list?.header)
         const body = deepCopy(_list?.body)
         if (_list === undefined) {
@@ -69,25 +66,32 @@ export function _get(listGroup, autoAddNext = true) {
             Object.assign(output.names, result.names)
             if (!body.length) return
         }
-        let { length: { max: maxIndex = body.length, min: minIndex = 0 } = {}, input: { replace: replaceOption, text: textOption } = {} } = _option && toJSON(_option)
-        let { input: { replace: replaceHeader, text: textHeader } = {}, urlHeader } = header.template ?? {}
-        
-        //console.log({replaceHeader, replaceOption, textHeader, textOption})
-        
-        // replaceHeader ??= replaceOption
-        // textHeader ??= textOption
+        const {
+            length: {
+                max: maxIndex = body.length,
+                min: minIndex = 0
+            } = {},
+            input: {
+                replace: replaceOption,
+                text: textOption
+            } = {}
+        } = _option && toJSON(_option)
+        const {
+            input: {
+                replace: replaceHeader,
+                text: textHeader
+            } = {}
+        } = header.template ?? {}
         const list = {
             header: reeditHeader.call(this, _name, header),
             body: []
         }
-        
-        
         each(body.slice(~~minIndex, ~~maxIndex), item => {
             item.input ??= {
                 replace: replaceOption ?? replaceHeader,
                 text: textOption ?? textHeader
             }
-            item.url ??= urlHeader
+            item = Object.assign({}, header.template, item)
             list.body.push(item)
         })
         output.lists[_name] = list.body

@@ -10,7 +10,7 @@ html
         // Manifest 
         link(rel="manifest" href="/manifest.json")
         // CSS 
-        link(rel="stylesheet" href="/css/index.css")
+        link(rel="stylesheet" href="/css/index.min.css")
         // MDUI CSS 
         link(rel="stylesheet" href="/lib/mdui/dist/css/mdui.min.css")
         if MOBILE_DEV_MODEL
@@ -46,5 +46,4 @@ html
         // MDUI JS 
         script(src="/lib/mdui/dist/js/mdui.min.js")
         // JavaScript 
-        script(src="/js/index.js" type="module")
-        script(src="/js/page.js" type="module")
+        script(type="module" src="/js/index.js")

@@ -1,5 +1,5 @@
-import { each, replaceString } from "../../core/util/common.js"
-import { List } from "../../core/lib/ListData.class.js"
+import { each, replaceString } from "../../lib/util.min.js"
+import { List } from "../../lib/core.min.js"
 
 export default {
     "zh-CN": {
@@ -150,7 +150,13 @@ export default {
                                 }
                             ],
                             endFun(getter) {
-                                getter.__app.option.setItem(getter.catchInput(1), getter.catchInput(2))
+                                const key = getter.catchInput(1)
+                                const value = getter.catchInput(2)
+                                getter.__app.option.setItem(key, (function() {
+                                    if (value === "true") return true
+                                    else if (value === "false") return false
+                                    else return value
+                                })())
                                 return {
                                     note: "已完成设置"
                                 }

@@ -25,7 +25,7 @@ export function _load({ names, lists }, container) {
             app: this,
             data: data,
             render: _render.bind(this),
-            bench: 1,
+            bench: 5,
             callback: (container, _items) => {
                 const items = document.createDocumentFragment()
                 each(_items, item => items.appendChild(item))

@@ -1,4 +1,4 @@
-import { each } from "../../core/util/common.js"
+import { each } from "../../lib/util.min.js"
 
 const dialogs = {}
 each(document.querySelectorAll("[id$='dialog']"), dialog => {

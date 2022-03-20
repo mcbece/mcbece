@@ -86,3 +86,10 @@ export default class {
         }
     }
 }
+
+export { DataCache } from "./lib/DataCache.class.js"
+export { GrammarData, Grammar } from "./lib/GrammarData.class.js"
+export { InputGetter } from "./lib/InputGetter.class.js"
+export { ListData, List } from "./lib/ListData.class.js"
+export { TextData } from "./lib/TextData.class.js"
+export { VirtualScroll } from "./lib/VirtualScroll.class.js"

@@ -1,4 +1,4 @@
-import deepCopy from "./fast-copy.esm.js"
+import deepCopy from "fast-copy"
 export { deepCopy }
 
 export const sleepAsync = ms => new Promise(resolve => setTimeout(resolve, ms))
@@ -9,10 +9,10 @@ export function each(target, callbackfn, thisArg) {
     else if (typeof target === "object") each(Object.keys(target), (key, i) => callbackfn.call(thisArg, key, target[key], i, target))
 }
 
-export async function eachAsync(target, asyncfn, thisArg) {
+export async function asyncEach(target, asyncfn, thisArg) {
     if (Array.isArray(target)) for (let i = 0; i < target.length; i++) await asyncfn.call(thisArg, target[i], i, target)
     else if (target && target[Symbol.iterator]) for (let item of target) await asyncfn.call(thisArg, item, target)
-    else if (typeof target === "object") await eachAsync(Object.keys(target), async (key, i) => await asyncfn.call(thisArg, key, target[key], i, target))
+    else if (typeof target === "object") await asyncEach(Object.keys(target), async (key, i) => await asyncfn.call(thisArg, key, target[key], i, target))
 }
 
 export function mapObject(obj, callbackfn, thisArg) {
@@ -92,15 +92,6 @@ export function toJSON(str) {
     }
 }
 
-export function toStringRegExp(str) {
-    if (/^\/.*\/[gimsuy]*$/.test(str)) return toRegExp(str)
-    else return new RegExp(`(${str})`
-        .replace("?", "\\?")
-        .replace("[", "\\[")
-        .replace("]", "\\]")
-    )
-}
-
 export async function importDefault(url) {
     try {
         const data = await import(url)
@@ -152,13 +143,9 @@ export function removeValueChangedListener(inputEle, listener, withEventListener
 }
 
 export function includesAll(arr, valuesToFind, fromIndex) {
-    const result = []
-    each(valuesToFind, valueToFind => result.push(arr.includes(valueToFind, fromIndex)))
-    return !result.includes(false)
+    return !valuesToFind.map(valueToFind => arr.includes(valueToFind, fromIndex)).includes(false)
 }
 
 export function includesSome(arr, valuesToFind, fromIndex) {
-    const result = []
-    each(valuesToFind, valueToFind => result.push(arr.includes(valueToFind, fromIndex)))
-    return result.includes(true)
+    return valuesToFind.map(valueToFind => arr.includes(valueToFind, fromIndex)).includes(true)
 }

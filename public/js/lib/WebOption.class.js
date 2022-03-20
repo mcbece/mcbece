@@ -1,11 +1,11 @@
-import { each } from "../core/util/common.js"
-import { stringify, parse } from "../core/util/JSONWithFun.js"
+import { each } from "./util.min.js"
+import { stringify, parse } from "./JSONWithFun.min.js"
 
 export class WebOption {
     constructor(namespace = "WebOption") {
         this._namespace = namespace
-        this.items = {}
     }
+    items = {}
     init(...callbacks) {
         this.getStorage()
         this.setStorage()
@@ -66,7 +66,6 @@ class WebOptionItem {
         }
         this.handler = handler
         this.selected = this.hasVal(defaultValue) ? defaultValue : values[0]
-        this.original = undefined
         this.callback(this.selected)
     }
     select(value, withoutcallback) {

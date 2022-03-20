@@ -2,7 +2,6 @@ import { each, objectHas, objectGet, replaceString, getReturn, toString } from "
 
 export class ListItemRenderer {
     constructor(app, target, listItem) {
-        this.renderers = {}
         if (listItem) this.setListItem(listItem)
         
         const DEFAULT_CONFIG = getDefaultConfig(app)
@@ -16,12 +15,13 @@ export class ListItemRenderer {
             else this.addItem(name, handlerFun, callbackFun, defaultVal)
         })
     }
+    renderers = {}
     setListItem(listItem) {
         this.listItem = listItem
         return this
     }
-    addItem(name, handler, callbackFun, defaultVal) {
-        this.renderers[name] = new ListItemRendererItem(handler, callbackFun, defaultVal)
+    addItem(name, handlerFun, callbackFun, defaultVal) {
+        this.renderers[name] = new ListItemRendererItem(handlerFun, callbackFun, defaultVal)
         return this
     }
     getItem(name) {

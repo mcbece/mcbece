@@ -6,15 +6,14 @@ import { _search } from "./search.js"
 
 export default class {
     constructor(app) {
-        this.names = {}
-        this.lists = {}
-        this.searchCache = new DataCache(1000)
-        
         this.load = this.load.bind(app)
         this.search = this.search.bind(app)
         this._useDivider = this._useDivider.bind(app)
         this._useVirtualScroll = this._useVirtualScroll.bind(app)
     }
+    names = {}
+    lists = {}
+    searchCache = new DataCache(1000)
     _useDivider() {
         return objectGet(this.config, "list._use_divider") && objectGet(this.config, "list.template.divider") && !this.list._useVirtualScroll
     }

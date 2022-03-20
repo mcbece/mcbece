@@ -19,6 +19,10 @@ export default class {
             } else {
                 $grammar.innerHTML += `<span>${replace(result.body.grammar)}</span>`
                 $grammar.querySelectorAll("span")[commandLength].style.fontWeight = "bold"
+                // $grammar.querySelectorAll("span")[commandLength].scrollIntoView({
+                //     behavior: "smooth",
+                //     inline: "start"
+                // })
                 $note.innerHTML = handle.call(this, result.body.info[commandLength - 1].note)
                 return {
                     list: handle.call(this, result.body.info[commandLength - 1].list)
