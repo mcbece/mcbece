@@ -1,15 +1,10 @@
-import { objectGet, importDefault } from "../src/core/util/common.js"
-import { stringify } from "../src/core/util/JSONWithFun.js"
+import { objectGet, importDefault } from "../src/browser/js/_core/util/common.js"
+import { stringify } from "../src/browser/js/_core/util/betterJSON.js"
 import GLOBAL_DATA from "../src/data.js"
 import express from "express"
 
 const api = express.Router()
 
-api.get(/^\/data\.(.+)$/, (req, res) => {
-    const result = objectGet(GLOBAL_DATA, req.params[0])
-    if (result) res.status(200).type(".js").send("export default " + stringify(result))
-    else res.status(404).end()
-})
 api.get("/processEnv.:name", (req, res) => {
     const result = process.env[req.params.name]
     if (result) res.status(200).type(".js").send("export default " + stringify(result))

@@ -1,6 +1,6 @@
 src/data/
-public/js/src/custom/dev.js
-**/*.min.*
+public/css/
+public/js/
 
 # Logs
 logs

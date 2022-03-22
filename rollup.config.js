@@ -4,7 +4,7 @@ import pkg from "./package.json"
 
 const banner = `
 /*!
- * ${pkg.name}-core ${pkg.version} (${pkg.homepage})
+ * ${pkg.name}-core.js v${pkg.version} (${pkg.homepage})
  * Copyright 2022-${new Date().getFullYear()} ${pkg.author}
  * Licensed under ${pkg.license}
  *
@@ -13,11 +13,12 @@ const banner = `
 `.trim()
 
 export default [
+    // Utils
     {
-        input: "./src/core/util/common.js",
+        input: "./src/browser/js/_core/util/common.js",
         output: {
             strict: true,
-            name: `${pkg.name}-core`,
+            name: `${pkg.name}-core.util.js`,
             banner,
             sourcemap: true,
             format: "es",
@@ -33,14 +34,77 @@ export default [
        ]
     },
     {
-        input: "./src/core/util/JSONWithFun.js",
+        input: "./src/browser/js/_core/util/betterJSON.js",
         output: {
             strict: true,
-            name: `${pkg.name}-core`,
+            name: `${pkg.name}-core.util.js`,
             banner,
             sourcemap: true,
             format: "es",
-            file: "./public/js/lib/JSONWithFun.min.js"
+            file: "./public/js/lib/betterJSON.min.js"
+        },
+        plugins: [
+            resolve(),
+            uglify({
+                output: {
+                    preamble: banner
+                }
+            })
+       ]
+    },
+    
+    // Core
+    {
+        input: "./src/browser/js/_core/index.js",
+        output: {
+            strict: true,
+            name: `${pkg.name}-core.js`,
+            banner,
+            sourcemap: true,
+            format: "es",
+            file: "./public/js/lib/core.min.js"
+        },
+        plugins: [
+            resolve(),
+            uglify({
+                output: {
+                    preamble: banner
+                }
+            })
+       ]
+    },
+    
+    // bundle.js
+    {
+        input: "./src/browser/js/index.js",
+        output: {
+            strict: true,
+            name: `${pkg.name}-bundle.js`,
+            banner,
+            sourcemap: true,
+            format: "es",
+            file: "./public/js/bundle.min.js"
+        },
+        plugins: [
+            resolve(),
+            uglify({
+                output: {
+                    preamble: banner
+                }
+            })
+       ]
+    },
+    
+    // custom file
+    {
+        input: "./src/browser/js/data/example.js",
+        output: {
+            strict: true,
+            name: `${pkg.name}-custom-file.js`,
+            banner,
+            sourcemap: true,
+            format: "es",
+            file: "./public/js/lib/custom/example.min.js"
         },
         plugins: [
             resolve(),
@@ -52,14 +116,14 @@ export default [
        ]
     },
     {
-        input: "./src/core/index.js",
+        input: "./src/browser/js/data/dev.js",
         output: {
             strict: true,
-            name: "mcbece-core",
+            name: `${pkg.name}-custom-file.js`,
             banner,
             sourcemap: true,
             format: "es",
-            file: "./public/js/lib/core.min.js"
+            file: "./public/js/lib/custom/dev.min.js"
         },
         plugins: [
             resolve(),

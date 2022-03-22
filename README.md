@@ -42,7 +42,9 @@
             - 完善及优化 `WebOption` 模块
                 - 支持使用键值对预定设置内容
             - 增加历史记录及收藏功能
-    - 由后端进行 `Service Worker` 的版本控制
+        - custom
+            - 支持修改已经定义的部分
+    - `Service Worker` 的相关文件由服务器打包生成
     - 穷举助手
     - JSON 编辑器
 - docs

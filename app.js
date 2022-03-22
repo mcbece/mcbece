@@ -20,9 +20,7 @@ app.use("/api", apiRouter)
 
 // Main
 app.get("/", (req, res) => {
-    res.render("index.pug", {
-        MOBILE_DEV_MODEL: process.argv.includes("--mobile-dev"),
-    })
+    res.render("index.pug")
 })
 
 // 404 Not Found

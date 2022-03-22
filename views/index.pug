@@ -13,24 +13,6 @@ html
         link(rel="stylesheet" href="/css/index.min.css")
         // MDUI CSS 
         link(rel="stylesheet" href="/lib/mdui/dist/css/mdui.min.css")
-        if MOBILE_DEV_MODEL
-            // Eruda.js 
-            script(src="/lib/eruda/eruda.js")
-            script(src="/lib/eruda-dom/eruda-dom.js")
-            script(src="/lib/eruda-fps/eruda-fps.min.js")
-            script(src="/lib/eruda-timing/eruda-timing.js")
-            script.
-                eruda.init({
-                    defaults: {
-                        displaySize: 50,
-                        transparency: 1,
-                        theme: "Light"
-                    }
-                })
-                eruda.add(erudaDom)
-                eruda.add(erudaFps)
-                eruda.add(erudaTiming)
-                eruda.show()
     body.loading
         .loading-box.mdui-valign
             .mdui-spinner.mdui-center
@@ -46,4 +28,4 @@ html
         // MDUI JS 
         script(src="/lib/mdui/dist/js/mdui.min.js")
         // JavaScript 
-        script(type="module" src="/js/index.js")
+        script(type="module" src="/js/bundle.min.js")

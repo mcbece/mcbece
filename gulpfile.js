@@ -7,26 +7,36 @@ import dartSass from "sass"
 import rename from "gulp-rename"
 import sourcemaps from "gulp-sourcemaps"
 
+const sass = gulpSass(dartSass)
 const pkg = JSON.parse(fs.readFileSync("./package.json").toString())
-const { src, dest } = gulp
 const banner = `
 /*!
- * ${pkg.name} ${pkg.version} (${pkg.homepage})
+ * ${pkg.name}.css v${pkg.version} (${pkg.homepage})
  * Copyright 2022-${new Date().getFullYear()} ${pkg.author}
  * Licensed under ${pkg.license}
  */
 `.trim()
-const sass = gulpSass(dartSass)
 
 function css() {
-    return src("./src/sass/index.scss")
+    return gulp.src("./src/browser/sass/index.scss")
         .pipe(sourcemaps.init())
         .pipe(sass({outputStyle: "compressed"}).on("error", sass.logError))
         .pipe(header(banner))
         .pipe(autoprefixer())
         .pipe(rename("index.min.css"))
         .pipe(sourcemaps.write("./"))
-        .pipe(dest("./public/css"))
+        .pipe(gulp.dest("./public/css"))
 }
 
-export default css
+function virtualScrollCss() {
+    return gulp.src("./src/browser/sass/virtualScroll.scss")
+        .pipe(sourcemaps.init())
+        .pipe(sass({outputStyle: "compressed"}).on("error", sass.logError))
+        .pipe(header(banner))
+        .pipe(autoprefixer())
+        .pipe(rename("virtualScroll.min.css"))
+        .pipe(sourcemaps.write("./"))
+        .pipe(gulp.dest("./public/css"))
+}
+
+export default gulp.parallel(css, virtualScrollCss)
