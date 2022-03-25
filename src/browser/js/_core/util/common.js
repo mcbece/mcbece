@@ -14,7 +14,10 @@ export async function asyncEach(target, asyncfn, thisArg) {
 
 export function mapObject(obj, callbackfn, thisArg) {
     const newObj = {}
-    each(obj, (key, value, i, _obj) => newObj[key] = callbackfn.call(thisArg, value, i, _obj))
+    each(obj, (key, value, i, _obj) => {
+        const result = callbackfn.call(thisArg, key, value, i, _obj)
+        newObj[result[0]] = result[1]
+    })
     return newObj
 }
 
@@ -25,7 +28,7 @@ export function objectGet(obj, key, { _return, handler = s => s, strict = true }
         if (!strict && output === undefined) return _return
         else return output
     } catch (err) {
-        // console.warn(`Could not get "${key}" in \`obj\`, returning \`_return\`.`, {obj, _return}, err)
+        // console.warn(`Could not get "${key}" in \`obj\`, returning \`_return\`.`, {obj, _return})
         return _return
     }
 }
@@ -86,7 +89,7 @@ export function toJSON(str) {
     try {
         return JSON.parse(str)
     } catch (err) {
-        console.warn(`Could not use \`JSON.parse()\`, returning with trying \`eval()\`.`, err)
+        console.warn(`Could not use \`JSON.parse()\`, returning with trying \`eval()\`.`)
         return eval(`(${str})`)
     }
 }
@@ -120,11 +123,11 @@ export function addValueChangedListener(inputEle, listener, withEventListener) {
         inputEle.__valueChangedListener = new Set()
         const valueDes = Object.getOwnPropertyDescriptor(inputEle.constructor.prototype, "value")
         Object.defineProperty(inputEle, "value", {
-            set: function (value) {
+            set(value) {
                 valueDes.set.apply(this, arguments)
                 each(inputEle.__valueChangedListener, _listener => _listener.call(this, withEventListener ? undefined : value))
             },
-            get: function () {
+            get() {
                 return valueDes.get.apply(this, arguments)
             }
         })

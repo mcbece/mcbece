@@ -1,8 +1,11 @@
-import { each, addValueChangedListener, objectGet } from "./util/common.js"
+import { each, addValueChangedListener, objectGet, mapObject } from "./util/common.js"
 import __Data__ from "./src/data/index.js"
 import __Input__ from "./src/input/index.js"
 import __List__ from "./src/list/index.js"
 import __Grammar__ from "./src/grammar/index.js"
+import __Event__ from "./src/event/index.js"
+
+import { List } from "./lib/ListData.class.js"
 
 export default class {
     constructor(config) {
@@ -11,43 +14,53 @@ export default class {
         this.input = new __Input__(this)
         this.list = new __List__(this)
         this.grammar = new __Grammar__(this)
+        this.event = new __Event__(this)
         
-        if (objectGet(this.config, "plugin")) Promise.all(objectGet(this.config, "plugin.plugins", { _return: [] }).map(e => e(this)))
-            .then(result => objectGet(this.config, "plugin.handler", { _return: () => {} })(result, this))
-            .catch(console.error)
-        addValueChangedListener(this.config.$input, () => {
-            this.change()
-            each(objectGet(this.config, "onInput", { _return: [], strict: false }), listener => listener())
-        }, true)
+        if (this.config.plugin) Promise.all(Object.values(mapObject(this.config.plugin.plugins ?? {}, (key, plugin) => {
+            const result = plugin(this)
+            this.event.emit("app.plugin.load", key, result)
+            return [ key, result ]
+        }))).then(result => {
+            const init = (this.config.plugin.init ?? new Function()).bind(this.config.plugin)
+            init(result, this)
+            this.event.emit("app.plugin.init", result)
+            addValueChangedListener(this.config.$input, () => {
+                this.event.emit("app.input", this.config.$input.value)
+                this.change()
+            }, true)
+        }).catch(console.error)
     }
-    initialize({ lang, branch, customURL, listWithImage }) {
-        this.clear()
+    initialize(args) {
+        const { lang, branch, customURL, listWithImage } = args
         this.data.init(lang, branch, objectGet(this.config, "data.url", { _return: "" }), customURL).then(() => {
             this.list.withImage = listWithImage
+            this.clear()
+            this.event.emit("app.init", args, this.config)
             this.i18n()
-            objectGet(this.config, "onInit", { _return: () => {}, strict: false })()
             this.change()
         }).catch(console.error)
     }
     i18n() {
         const getText = this.data.get.bind(this, "text")
         document.title = getText("title")
-        each(document.querySelectorAll("[data-i18n]"), item => item.innerHTML = getText(item.getAttribute("data-i18n")))
-        objectGet(this.config, "onI18n", { _return: new Function(), strict: false }).call(this.config, getText)
+        each(document.querySelectorAll("[data-i18n]"), ele => ele.innerHTML = getText(ele.getAttribute("data-i18n")))
+        this.event.emit("app.i18n", this.config, getText)
     }
     clear(clearInput) {
-        const { $list, $grammar, $note, $funBtn, $input } = this.config
+        const { $list, $grammar, $note, $input } = this.config
+        this.event.emit("app.clear", clearInput)
         if (clearInput) $input.value = ""
-        if (this.list._useVirtualScroll()) this.list._vs?.destroy()
+        if (this.list._useVirtualScroll) this.list.__vs?.destroy()
         $list.innerHTML = ""
-        this.list = new __List__(this)
+        this.list.names = {}
+        this.list.lists = {}
+        this.list.searchCache.clear()
         $grammar.innerHTML = ""
         $note.innerHTML = ""
-        $funBtn.innerHTML = ""
     }
     change() {
         const { $list, $grammar, $note } = this.config
-        this.toggleFunIcon(false, this.data.get("text", "url.command_page") + this.input.catchName())
+        this.event.emit("app.change")
         if (this.input.catchInput().length === 1) {
             this.list.load("command")
             $grammar.innerHTML = ""
@@ -59,9 +72,8 @@ export default class {
         if (result._finish) {
             $list.innerHTML = ""
             $grammar.innerHTML = ""
-            $note.innerHTML = result.note || this.data.get("text", "edit.end")
+            $note.innerHTML = result.note ?? this.data.get("text", "edit.end")
             this.list.names = {}
-            this.toggleFunIcon(true)
         } else if (result._undefined) {
             $list.innerHTML = ""
             $note.innerHTML = "未知的命令"
@@ -69,27 +81,9 @@ export default class {
         }
         else this.list.load(result.list ?? "")
         this.list.search()
-        
-        console.log("===== changed =====")
     }
-    toggleFunIcon(editEnd, url) {
-        // 待改
-        const { $funBtn, _funBtnCont } = this.config
-        if (editEnd) {
-            $funBtn.innerHTML = _funBtnCont.copy
-            $funBtn.setAttribute("mdui-tooltip", `{content: "COPY"}`)
-            $funBtn.onclick = this.input.copy
-        } else {
-            $funBtn.innerHTML = _funBtnCont.wiki
-            $funBtn.setAttribute("mdui-tooltip", `{content: "WIKI"}`)
-            $funBtn.onclick = () => window.open(url, "_blank")
-        }
+    
+    __lib = {
+        List
     }
 }
-
-export * from "./lib/DataCache.class.js"
-export * from "./lib/GrammarData.class.js"
-export * from "./lib/InputGetter.class.js"
-export * from "./lib/ListData.class.js"
-export * from "./lib/TextData.class.js"
-export * from "./lib/VirtualScroll.class.js"

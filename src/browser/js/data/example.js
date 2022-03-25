@@ -1,5 +1,6 @@
 import { each, replaceString } from "../_core/util/common.js"
-import { List, TextData } from "../_core/index.js"
+
+const List = app.__lib.List
 
 export default {
     "zh-CN": {
@@ -89,8 +90,8 @@ export default {
                                 {
                                     length: 1,
                                     note: "指定要切换设置的名称",
-                                    list(getter) {
-                                        const keys = getter.__app.option.keys()
+                                    list() {
+                                        const keys = app.option.keys()
                                         const list = new List()
                                         list.setHeader({
                                             _indexName: "_option.keys",
@@ -110,7 +111,7 @@ export default {
                                     length: 2,
                                     note: "指定要设置的值",
                                     list(getter) {
-                                        const values = getter.__app.option.valuesOf(getter.catchInput(1))
+                                        const values = app.option.valuesOf(getter.catchInput(1))
                                         const list = new List()
                                         list.setHeader({
                                             _indexName: "_option.values",
@@ -152,7 +153,7 @@ export default {
                             endFun(getter) {
                                 const key = getter.catchInput(1)
                                 const value = getter.catchInput(2)
-                                getter.__app.option.setItem(key, (function() {
+                                app.option.setItem(key, (function() {
                                     if (value === "true") return true
                                     else if (value === "false") return false
                                     else return value

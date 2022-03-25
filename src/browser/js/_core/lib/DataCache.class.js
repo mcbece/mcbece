@@ -16,4 +16,8 @@ export class DataCache {
     find(name) {
         return this.data.find(([_name]) => _name === name)[1]
     }
+    clear() {
+        this.data = []
+        return this
+    }
 }

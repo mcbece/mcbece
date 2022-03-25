@@ -5,7 +5,7 @@ import { _render } from "./render.js"
 export function _load({ names, lists }, container) {
     const data = []
     each(lists, (name, list) => {
-        if (this.list._useDivider()) data.push({
+        if (this.list._useDivider) data.push({
             __divider: true,
             __listName: name,
             _id: -1,
@@ -20,10 +20,10 @@ export function _load({ names, lists }, container) {
             )
         )
     })
-    if (this.list._useVirtualScroll()) {
+    if (this.list._useVirtualScroll) {
         const vs = new VirtualScroll({
             app: this,
-            data: data,
+            data,
             render: _render.bind(this),
             bench: 5,
             callback: (container, _items) => {
@@ -38,7 +38,7 @@ export function _load({ names, lists }, container) {
             left: 0,
             behavior: "smooth"
         })
-        this.list._vs = vs
+        this.list.__vs = vs
     } else {
         container.innerHTML = ""
         const items = document.createDocumentFragment()

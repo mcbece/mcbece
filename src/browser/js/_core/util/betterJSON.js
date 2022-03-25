@@ -12,7 +12,7 @@ export function stringify(obj) {
         if (Array.isArray(target)) return target.map(e => handle(e))
         else if (typeof target === "object") {
             if (target instanceof Number || target instanceof String || target instanceof Boolean) return target.toString()
-            else return mapObject(target, e => handle(e))
+            else return mapObject(target, (k, e) => ([ k, handle(e) ]))
         }
         else if (typeof target === "number" || typeof target === "boolean") return target
         else if (typeof target === "function") return "@@function " + funStrToArrowFunStr(target.toString())
@@ -32,7 +32,7 @@ export function parse(str) {
     
     function handle(target) {
         if (Array.isArray(target)) return target.map(e => handle(e))
-        else if (typeof target === "object") return mapObject(target, e => handle(e))
+        else if (typeof target === "object") return mapObject(target, (k, e) => ([ k, handle(e) ]))
         else if (typeof target === "string" && target.startsWith("@@function ")) return eval(target.replace(/^@@function /, ""))
         else return target
     }

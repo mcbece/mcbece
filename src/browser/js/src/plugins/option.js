@@ -13,8 +13,8 @@ export default async function (app) {
         app.initialize(res)
     })
     
-    // Listeners
-    app.config.onInput.push(() => {
+    // Events
+    app.event.on("app.input", () => {
         option._getItem("inputing").select(app.config.$input.value, true)
         option.setStorage()
     })
@@ -27,12 +27,12 @@ export default async function (app) {
         values: Object.keys(LANGUAGES),
         callback: (selected, original) => {
             document.documentElement.lang = selected
-            console.log("Option: lang -> from", original, "to", selected)
+            console.debug("Option: lang -> from", original, "to", selected)
             option.addItem({
                 name: "branch",
                 values: Object.keys(LANGUAGES[selected].branch),
                 callback:(_selected, _original) => {
-                    console.log("Option: branch -> from", _original, "to", _selected)
+                    console.debug("Option: branch -> from", _original, "to", _selected)
                 }
             })
         },
@@ -47,7 +47,7 @@ export default async function (app) {
             document.body.classList.remove(`mdui-theme-primary-${original}`)
             document.body.classList.add(`mdui-theme-primary-${selected}`)
             document.head.querySelector('meta[name="theme-color"]').content = THEME_COLOR.primary[selected]
-            console.log("Option: themePrimaryColor -> from", original, "to", selected)
+            console.debug("Option: themePrimaryColor -> from", original, "to", selected)
         },
         defaultValue: DEFAULT_THEME_COLOR.primary
     })
@@ -57,7 +57,7 @@ export default async function (app) {
         callback: (selected, original) => {
             document.body.classList.remove(`mdui-theme-accent-${original}`)
             document.body.classList.add(`mdui-theme-accent-${selected}`)
-            console.log("Option: themeAccentColor -> from", original, "to", selected)
+            console.debug("Option: themeAccentColor -> from", original, "to", selected)
         },
         defaultValue: DEFAULT_THEME_COLOR.accent
     })
@@ -67,16 +67,16 @@ export default async function (app) {
         name: "customURL",
         callback: (selected, original) => {
             document.querySelector("#customURL").value = selected.join("\n")
-            console.log("Option: customURL -> from", original, "to", selected)
+            console.debug("Option: customURL -> from", original, "to", selected)
         },
-        handler: value => value.split("\n"),
+        // handler: value => value.split("\n"),
         defaultValue: []
     })
     .addItem({
         name: "listWithImage",
         values: [ true, false ],
         callback: (selected, original) => {
-            console.log("Option: listWithImage -> from", original, "to", selected)
+            console.debug("Option: listWithImage -> from", original, "to", selected)
         },
         defaultValue: false
     })
@@ -91,7 +91,7 @@ export default async function (app) {
         name: "liteModel",
         values: [ true, false ],
         callback: (selected, original) => {
-            console.log("Option: liteModel -> from", original, "to", selected)
+            console.debug("Option: liteModel -> from", original, "to", selected)
             if (selected) {
                 document.body.classList.add("lite")
                 window._LITE_MODELL = selected

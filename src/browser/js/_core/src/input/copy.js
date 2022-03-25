@@ -5,5 +5,5 @@ export function copy() {
     $input.select()
     $input.setSelectionRange(0, $input.value.length)
     document.execCommand("copy")
-    objectGet(this.config, "_components.snackbar", { _return: window.alert })("已复制")
+    this.event.emit("app.input.copy", $input.value)
 }

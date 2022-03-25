@@ -8,11 +8,13 @@ export default class {
     load(commandName) {
         const { $grammar, $note } = this.config
         const result = _get.call(this, commandName)
+        this.event.emit("app.grammar.load", result, commandName)
         if (result.body) {
             const commandLength = this.input.catchInput().length - 1
             $grammar.innerHTML = `<span>${commandName} </span>`
             $note.innerHTML = `<span>${result.header.command.info}</span>`
             if (result.body.info.length < commandLength) {
+                this.event.emit("app.grammar.finish")
                 return Object.assign({}, {
                     _finish: true
                 }, handle.call(this, result.body.endFun))
@@ -28,8 +30,11 @@ export default class {
                     list: handle.call(this, result.body.info[commandLength - 1].list)
                 }
             }
-        } else return {
-            _undefined: true
+        } else {
+            this.event.emit("app.grammar.undefined")
+            return {
+                _undefined: true
+            }
         }
     }
 }

@@ -58,13 +58,13 @@ export class WebOption {
 }
 
 class WebOptionItem {
-    constructor({ name, values = [], callback = () => {}, handler = s => s, defaultValue }) {
+    constructor({ name, values = [], callback = () => {}, /* handler = s => s, */ defaultValue }) {
         this.name = name
         this.values = new Set(values)
         this.callback = (...args) => {
             if (this.selected) callback(...args)
         }
-        this.handler = handler
+        // this.handler = handler
         this.selected = this.hasVal(defaultValue) ? defaultValue : values[0]
         this.callback(this.selected)
     }

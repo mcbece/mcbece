@@ -1,5 +1,6 @@
+import { nodeResolve } from "@rollup/plugin-node-resolve"
+import commonjs from "@rollup/plugin-commonjs"
 import { uglify } from "rollup-plugin-uglify"
-import resolve from "@rollup/plugin-node-resolve"
 import pkg from "./package.json"
 
 const banner = `
@@ -13,125 +14,66 @@ const banner = `
 `.trim()
 
 export default [
-    // Utils
-    {
-        input: "./src/browser/js/_core/util/common.js",
-        output: {
-            strict: true,
-            name: `${pkg.name}-core.util.js`,
-            banner,
-            sourcemap: true,
-            format: "es",
-            file: "./public/js/lib/util.min.js"
-        },
-        plugins: [
-            resolve(),
-            uglify({
-                output: {
-                    preamble: banner
-                }
-            })
-       ]
-    },
-    {
-        input: "./src/browser/js/_core/util/betterJSON.js",
-        output: {
-            strict: true,
-            name: `${pkg.name}-core.util.js`,
-            banner,
-            sourcemap: true,
-            format: "es",
-            file: "./public/js/lib/betterJSON.min.js"
-        },
-        plugins: [
-            resolve(),
-            uglify({
-                output: {
-                    preamble: banner
-                }
-            })
-       ]
-    },
+    // utils
+    _({
+        src: "_core/util/common.js",
+        dest: "lib/util.min.js",
+        name: "util"
+    }),
+    _({
+        src: "_core/util/betterJSON.js",
+        dest: "lib/betterJSON.min.js",
+        name: "util"
+    }),
     
-    // Core
-    {
-        input: "./src/browser/js/_core/index.js",
-        output: {
-            strict: true,
-            name: `${pkg.name}-core.js`,
-            banner,
-            sourcemap: true,
-            format: "es",
-            file: "./public/js/lib/core.min.js"
-        },
-        plugins: [
-            resolve(),
-            uglify({
-                output: {
-                    preamble: banner
-                }
-            })
-       ]
-    },
+    // core
+    _({
+        src: "_core/index.js",
+        dest: "lib/core.min.js",
+        name: "core"
+    }),
     
     // bundle.js
-    {
-        input: "./src/browser/js/index.js",
-        output: {
-            strict: true,
-            name: `${pkg.name}-bundle.js`,
-            banner,
-            sourcemap: true,
-            format: "es",
-            file: "./public/js/bundle.min.js"
-        },
-        plugins: [
-            resolve(),
-            uglify({
-                output: {
-                    preamble: banner
-                }
-            })
-       ]
-    },
+    _({
+        src: "index.js",
+        dest: "bundle.min.js",
+        mame: "bundle"
+    }),
     
     // custom file
-    {
-        input: "./src/browser/js/data/example.js",
-        output: {
-            strict: true,
-            name: `${pkg.name}-custom-file.js`,
-            banner,
-            sourcemap: true,
-            format: "es",
-            file: "./public/js/lib/custom/example.min.js"
-        },
-        plugins: [
-            resolve(),
-            uglify({
-                output: {
-                    preamble: banner
-                }
-            })
-       ]
-    },
-    {
-        input: "./src/browser/js/data/dev.js",
-        output: {
-            strict: true,
-            name: `${pkg.name}-custom-file.js`,
-            banner,
-            sourcemap: true,
-            format: "es",
-            file: "./public/js/lib/custom/dev.min.js"
-        },
-        plugins: [
-            resolve(),
-            uglify({
-                output: {
-                    preamble: banner
-                }
-            })
-       ]
-    }
+    _({
+        src: "data/example.js",
+        dest: "lib/custom/example.min.js",
+        name: "custom-file"
+    }),
+    _({
+        src: "data/dev.js",
+        dest: "lib/custom/dev.min.js",
+        name: "custom-file"
+    })
 ]
+
+function _({ src, dest, name }) {
+    return {
+        input: `./src/browser/js/${src}`,
+        output: {
+            strict: true,
+            name: `${pkg.name}${ name ? `-${name}` : "" }.js`,
+            banner,
+            sourcemap: true,
+            format: "es",
+            file: `./public/js/${dest}`
+        },
+        plugins: [
+            nodeResolve({
+                preferBuiltins: false
+            }),
+            commonjs(),
+            uglify({
+                output: {
+                    preamble: banner
+                }
+            })
+        ]
+    }
+}

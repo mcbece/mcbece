@@ -21,8 +21,7 @@ function parse(data) {
         each(data.header, (key, value) => data.setHeader(key, parse(value)))
         each(data.body, (item, i) => data.setItem(i, parse(item)))
         return data
-    }
-    else if (typeof data === "object") return mapObject(data, item => parse(item))
+    } else if (typeof data === "object") return mapObject(data, (key, item) => ([ key, parse(item) ]))
     else return data
 }
 

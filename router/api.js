@@ -25,7 +25,7 @@ api.get("/mcbelist.:lang.:branch", (req, res) => {
         Object.assign(data.text, text)
         res.status(200).type(".js").send("export default " + stringify(data))
     }).catch(err => {
-        console.warn("Could not find content by incoming language and branch, sending `{}` with 404.", err)
+        console.warn("Could not find content by incoming language and branch, sending `{}` with 404.")
         res.status(404).type(".js").send("export default {}")
     })
 })

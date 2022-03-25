@@ -1,37 +1,25 @@
-import { toString, stringToNode, nodeToString } from "./_core/util/common.js"
 import App from "./_core/index.js"
+import { toString, stringToNode, nodeToString } from "./_core/util/common.js"
 import createWebOptionManager from "./src/plugins/option.js"
 import createPWAManager from "./src/plugins/pwa.js"
+
+const $funBtn = document.querySelector("#function")
+const funBtnCont = {
+    wiki: `<i class="mdui-icon material-icons mdui-text-color-theme-icon">send</i>`,
+    copy: `<i class="mdui-icon material-icons mdui-text-color-theme-icon">content_copy</i>`
+}
 
 window.app = new App({
     DEFAULT_LANGUAGE: "zh-CN",
     
     $input: document.querySelector("#edit"),
-    $funBtn: document.querySelector("#function"),
     $grammar: document.querySelector("#grammar"),
     $note: document.querySelector("#note"),
     $list: document.querySelector("#list"),
-    _funBtnCont: {
-        wiki: `<i class="mdui-icon material-icons mdui-text-color-theme-icon">send</i>`,
-        copy: `<i class="mdui-icon material-icons mdui-text-color-theme-icon">content_copy</i>`
-    },
-    
-    onInput: [],
-    onInit() {
-        if (app.LANG === "en") this.$grammar.classList.add("minecraft-font")
-        document.body.classList.remove("loading")
-    },
-    onI18n(getText) {
-        this.$input.placeholder = getText("input")
-    },
     
     list: {
-        get _use_virtual_scroll() {
-            return true
-        },
-        get _use_divider() {
-            return !window._LITE_MODELL
-        },
+        _useVirtualScroll: true,
+        _useDivider: !window._LITE_MODELL,
         get _height() {
             const _fix = window._LITE_MODELL ? 85 : 120
             return document.documentElement.clientHeight - _fix
@@ -101,25 +89,50 @@ window.app = new App({
         ]
     },
     
-    plugin: {
-        plugins: [
-            createWebOptionManager,
-            createPWAManager
+    event: {
+        "app.init": [
+            (_, config) => {
+                if (app.LANG === "en") config.$grammar.classList.add("minecraft-font")
+                document.body.classList.remove("loading")
+            }
         ],
-        handler([ webOption, pwa ]) {
-            if (webOption) app.option = webOption.init(res => app.initialize(res))
-            if (pwa && !pwa._noServiceWorker) app.pwa = pwa
-        }
+        "app.i18n": [
+            (config, getText) => config.$input.placeholder = getText("input")
+        ],
+        "app.clear": [
+            () => $funBtn.innerHTML = ""
+        ],
+        "app.change": [
+            () => {
+                $funBtn.innerHTML = funBtnCont.wiki
+                $funBtn.setAttribute("mdui-tooltip", `{content: "WIKI"}`)
+                $funBtn.onclick = () => window.open(app.data.get("text", "url.command_page") + app.input.catchName(), "_blank")
+            }
+        ],
+        "app.grammar.finish": [
+            () => {
+                $funBtn.innerHTML = funBtnCont.copy
+                $funBtn.setAttribute("mdui-tooltip", `{content: "COPY"}`)
+                $funBtn.onclick = app.input.copy
+            }
+        ],
+        "app.input.copy": [
+            () => mdui.snackbar({
+                message: "已复制",
+                position: window._LITE_MODELL ? "bottom" : "left-top",
+                timeout: 2000
+            })
+        ]
     },
     
-    _components: {
-        snackbar(message, option) {
-            mdui.snackbar({
-                message,
-                position: window._LITE_MODELL ? "bottom" : "left-top",
-                timeout: 2000,
-                ...option
-            })
+    plugin: {
+        plugins: {
+            option: createWebOptionManager,
+            pwa: createPWAManager
+        },
+        init([ webOption, pwa ]) {
+            if (webOption) app.option = webOption.init(res => app.initialize(res))
+            if (pwa && !pwa._noServiceWorker) app.pwa = pwa
         }
     }
 })

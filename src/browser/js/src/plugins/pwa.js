@@ -14,17 +14,17 @@ class __PWA__ extends PWAManager {
     constructor(app, url, option) {
         super(url, option, {
             ready: () => {
-                console.log("SW: on ready")
+                console.debug("SW: on ready")
             },
             registered: () => {
-                console.log("SW: on registered")
+                console.debug("SW: on registered")
             },
             updated: () => {
-                console.log("SW: on updated")
+                console.debug("SW: on updated")
                 this._haveNewVersion()
             },
             updatefound: () => {
-                console.log("SW: on updatefound")
+                console.debug("SW: on updatefound")
             }
         })
         this.__app = app
@@ -45,17 +45,23 @@ class __PWA__ extends PWAManager {
         this.checkUpdate().then(result => {
             if (!result) {
                 if (this.updateReady) this._haveNewVersion()
-                else this._alreadyLatest()
+                else snackbar("已是最新版")
             }
         })
     }
     _haveNewVersion() {
-        this.__app._components.snackbar("检测到新版本，立即更新？", {
+        snackbar("检测到新版本，立即更新？", {
             buttonText: "yes",
             onButtonClick: () => this.update()
         })
     }
-    _alreadyLatest() {
-        this.__app._components.snackbar("已是最新版")
-    }
+}
+
+function snackbar(message, option) {
+    mdui.snackbar({
+        message,
+        position: window._LITE_MODELL ? "bottom" : "left-top",
+        timeout: 2000,
+        ...option
+    })
 }
