@@ -83,7 +83,7 @@ window.app = new App({
     },
     
     data: {
-        url: "/api/mcbelist.{lang}.{branch}.js",
+        url: "/api/mcbelist.{lang}.{branch}.min.js",
         custom: [
             "/js/custom/example.min.js"
         ]

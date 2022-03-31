@@ -10,7 +10,7 @@ api.get("/processEnv.:name", (req, res) => {
     if (result) res.status(200).type(".js").send("export default " + stringify(result))
     else res.status(404).end()
 })
-api.get("/mcbelist.:lang.:branch.js", (req, res) => {
+api.get("/mcbelist.:lang.:branch.min.js", (req, res) => {
     mcbelist(req.params.lang, req.params.branch).then(data => {
         res.status(200)
             .set("Access-Control-Allow-Origin", "*")

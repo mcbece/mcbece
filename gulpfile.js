@@ -72,9 +72,8 @@ async function mcbelistData() {
         fs.mkdirSync("./public/api")
         each(LANGUAGES, (lang, _) => {
             each(_.branch, branch => {
-                console.log('abcvdrfh')
                 mcbelist(lang, branch).then(data => {
-                    fs.writeFileSync(`./public/api/mcbelist.${lang}.${branch}.js`, "export default " + data)
+                    fs.writeFileSync(`./public/api/mcbelist.${lang}.${branch}.min.js`, "export default " + data)
                     resolve()
                 }).catch(err => reject(err))
             })

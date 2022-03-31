@@ -92,10 +92,9 @@ export default async function (app) {
         values: [ true, false ],
         callback: (selected, original) => {
             console.debug("Option: liteModel -> from", original, "to", selected)
-            if (selected) {
-                document.body.classList.add("lite")
-                window._LITE_MODELL = selected
-            }
+            if (selected) document.body.classList.add("lite")
+            else document.body.classList.remove("lite")
+            window._LITE_MODELL = selected
         },
         defaultValue: false
     })
