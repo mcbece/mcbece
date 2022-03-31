@@ -1,6 +1,8 @@
-src/data/
+# src/data/
 public/css/
 public/js/
+public/api/
+public/index.html
 
 # Logs
 logs

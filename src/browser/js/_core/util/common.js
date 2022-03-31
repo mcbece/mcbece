@@ -49,17 +49,6 @@ export function toString(target, _return) {
     else return getReturn(_return, target)
 }
 
-export function kvArrayToObject(kvArray) {
-    const obj = {}
-    each(kvArray, (kv, i) => {
-        if (Array.isArray(kv)) {
-            const [key, value] = kv
-            obj[key] = value
-        } else obj[i] = kv
-    })
-    return obj
-}
-
 export function replaceString(target, args) {
     return target.replace(/{([^}]+)}/g, (_, key) => objectGet(args, key))
 }

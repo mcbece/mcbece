@@ -9,23 +9,29 @@ html
         link(rel="shortcut icon" type="image/png" href="/favicon/512.png")
         // Manifest 
         link(rel="manifest" href="/manifest.json")
+        // MDUI CSS 
+        if bundle
+            link(rel="stylesheet" href="//cdn.jsdelivr.net/npm/mdui/dist/css/mdui.min.css")
+        else
+            link(rel="stylesheet" href="/lib/mdui/dist/css/mdui.min.css")
         // CSS 
         link(rel="stylesheet" href="/css/index.min.css")
-        // MDUI CSS 
-        link(rel="stylesheet" href="/lib/mdui/dist/css/mdui.min.css")
     body.loading
         .loading-box.mdui-valign
             .mdui-spinner.mdui-center
         // Header 
-        include partial/header.pug
+        include includes/header.pug
         // Sidebar 
-        include partial/sidebar.pug
+        include includes/sidebar.pug
         // Dialogs 
-        include partial/dialogs.pug
+        include includes/dialogs.pug
         // List 
         .virtual-scroll
             #list.virtual-scroll__container.mdui-list.mdui-p-y-0
         // MDUI JS 
-        script(src="/lib/mdui/dist/js/mdui.min.js")
+        if bundle
+            script(src="//cdn.jsdelivr.net/npm/mdui/dist/js/mdui.min.js")
+        else
+            script(src="/lib/mdui/dist/js/mdui.min.js")
         // JavaScript 
         script(type="module" src="/js/bundle.min.js")

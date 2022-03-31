@@ -15,7 +15,7 @@ mixin dialog({id, title, subtitle, tab, content, onsave})
                     .mdui-typo-title= item.title
                 if item.content
                     .mdui-col-xs-1.mdui-p-b-1.retract
-                    .mdui-col-xs-10.mdui-col-sm-11.mdui-p-b-1!= item.content
+                    .mdui-col-xs-10.mdui-col-sm-11.mdui-p-b-1!= item.content.trim().replaceAll("\n", "").replaceAll("    ", "")
         .mdui-dialog-actions
             if onsave
                 button.mdui-btn.mdui-ripple(onclick=onsave) 保存

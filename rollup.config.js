@@ -43,12 +43,12 @@ export default [
     // custom file
     _({
         src: "data/example.js",
-        dest: "lib/custom/example.min.js",
+        dest: "custom/example.min.js",
         name: "custom-file"
     }),
     _({
         src: "data/dev.js",
-        dest: "lib/custom/dev.min.js",
+        dest: "custom/dev.min.js",
         name: "custom-file"
     })
 ]
