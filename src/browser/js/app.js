@@ -85,7 +85,7 @@ window.app = new App({
     data: {
         url: "/api/mcbelist.{lang}.{branch}.js",
         custom: [
-            "/js/lib/custom/example.min.js"
+            "/js/custom/example.min.js"
         ]
     },
     
