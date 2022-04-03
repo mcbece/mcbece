@@ -12,8 +12,8 @@ export class VirtualScroll {
         this.rootEle = document.querySelector(".virtual-scroll")
         this.container = this.rootEle.querySelector(".virtual-scroll__container")
         
-        if (/* "IntersectionObserver" in window */ false) this.initObserver()
-        else this.initScroll()
+        /* if ("IntersectionObserver" in window) this.initObserver()
+        else */ this.initScroll()
     }
     
     first = 0
@@ -33,7 +33,7 @@ export class VirtualScroll {
         this.rootEle.removeEventListener("scroll", this.__app.list._vs_listener)
         window.removeEventListener("resize", this.__app.list._vs_listener)
     }
-    initObserver() {
+    /* initObserver() {
         this.useObserver = true
         this.observer = new IntersectionObserver((entries, observer) => {
             if (entries[0].intersectionRatio > 0) {
@@ -45,7 +45,7 @@ export class VirtualScroll {
             }
         })
         this.onEvent()
-    }
+    } */
     get height() {
         return objectGet(this.__app.config, "list._height")
     }
@@ -80,7 +80,7 @@ export class VirtualScroll {
         const item = _item instanceof Node ? _item : stringToNode(_item)
         item.style.top = `${(index + this.firstToRender) * this.itemHeight}px`
         item.classList.add("virtual-scroll__item")
-        if (this.useObserver) this.observer.observe(item)
+        // if (this.useObserver) this.observer.observe(item)
         return item
     }
 }

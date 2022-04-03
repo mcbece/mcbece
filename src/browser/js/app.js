@@ -1,5 +1,7 @@
 import App from "./_core/index.js"
-import { toString, stringToNode, nodeToString } from "./_core/util/common.js"
+import { toString, stringToNode, nodeToString, getReturn } from "./_core/util/common.js"
+import { setThemeColor, snackbar } from "./src/mdui.js"
+
 import createWebOptionManager from "./src/plugins/option.js"
 import createPWAManager from "./src/plugins/pwa.js"
 
@@ -44,8 +46,13 @@ window.app = new App({
                         ${ window._LITE_MODELL ? renderer.get("url") : "" }
                     </li>
                 `.trim())
-                item.setAttribute("onclick", renderer.get("input") || "")
-                return nodeToString(item)
+                item.onclick = () => {
+                    console.debug(renderer)
+                    
+                    eval(renderer.get("input") || "")
+                    getReturn(renderer.get("onclick"))
+                }
+                return item
             },
             divider(name, _name) {
                 return `<li class="mdui-subheader" data-list-name="${_name}">${name}</li>`
@@ -91,13 +98,26 @@ window.app = new App({
     
     event: {
         "app.init": [
-            (_, config) => {
-                if (app.LANG === "en") config.$grammar.classList.add("minecraft-font")
+            () => {
+                if (app.LANG === "en") app.config.$grammar.classList.add("minecraft-font")
+                if (/-04-01$/.test((() => {
+                    const _date = new Date()
+                    const month = _date.getMonth() + 1
+                    const date = _date.getDate()
+                    return [
+                        _date.getFullYear(),
+                        (month < 10) ? ("0" + month) : month,
+                        (date < 10) ? ("0" + date) : date
+                    ].join("-")
+                })())) setThemeColor({
+                    primary: [app.option._getItem("themePrimaryColor").selected, "green"],
+                    accent: [app.option._getItem("themeAccentColor").selected, "red"]
+                })
                 document.body.classList.remove("loading")
             }
         ],
         "app.i18n": [
-            (config, getText) => config.$input.placeholder = getText("input")
+            (getText) => app.config.$input.placeholder = getText("input")
         ],
         "app.clear": [
             () => $funBtn.innerHTML = ""
@@ -117,11 +137,7 @@ window.app = new App({
             }
         ],
         "app.input.copy": [
-            () => mdui.snackbar({
-                message: "已复制",
-                position: window._LITE_MODELL ? "bottom" : "left-top",
-                timeout: 2000
-            })
+            () => snackbar("已复制")
         ]
     },
     

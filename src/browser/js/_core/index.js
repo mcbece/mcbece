@@ -44,7 +44,7 @@ export default class {
         const getText = this.data.get.bind(this, "text")
         document.title = getText("title")
         each(document.querySelectorAll("[data-i18n]"), ele => ele.innerHTML = getText(ele.getAttribute("data-i18n")))
-        this.event.emit("app.i18n", this.config, getText)
+        this.event.emit("app.i18n", getText, this.config)
     }
     clear(clearInput) {
         const { $list, $grammar, $note, $input } = this.config

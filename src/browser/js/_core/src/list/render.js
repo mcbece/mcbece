@@ -1,13 +1,13 @@
 import { each, objectHas, objectGet } from "../../util/common.js"
+import deepCopy from "fast-copy"
 import { ListItemRenderer } from "./renderer.js"
 
 export function _render(items) {
-    if (Array.isArray(items)) return items.map(handle.bind(this))
-    else return handle.call(this, items)
+    const renderer = new ListItemRenderer(this, objectGet(this.config, "list.renderer", { _return: {} }))
+    return items.map(item => handle.call(this, item, renderer.setListItem(item)))
 }
 
-function handle(item) {
-    const renderer = new ListItemRenderer(this, objectGet(this.config, "list.renderer", { _return: {} }))
+function handle(item, renderer) {
     if (item.__divider) return objectGet(this.config, "list.template.divider", { _return: defDividerTmpl })(
         item.name,
         item.__listName
@@ -15,7 +15,7 @@ function handle(item) {
     else return objectGet(this.config, "list.template.item", { _return: defItemTmpl })(
         item._id,
         item.__listName,
-        renderer.setListItem(item)
+        deepCopy(renderer)
     )
 }
 

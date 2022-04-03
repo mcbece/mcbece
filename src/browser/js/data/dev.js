@@ -1,3 +1,5 @@
+const List = app.__lib.List
+
 export default {
     "zh-CN": {
         vanilla: {
@@ -23,7 +25,7 @@ export default {
                     },
                     {
                         "name": "@test1",
-                        "info": "测试1",
+                        "info": "onclick 测试",
                         "input": {
                             "replace": "all",
                             "text": "{name} "
@@ -91,25 +93,36 @@ export default {
                         {
                             "command": {
                                 "name": "/^@test1$/",
-                                "info": "测试1"
+                                "info": "onclick 测试"
                             }
                         },
-                        /*{
-                            "grammar": "<测试> [测试]",
+                        {
+                            "grammar": "<测试>",
                             "info": [
                                 {
                                     "length": 1,
-                                    "note": "从 item 列表中检索数据",
-                                    "list": "item<-{input:{replace:'all'}}"
-                                },
-                                {
-                                    length: 2,
-                                    note(getter) {
-                                        return `索引值：${getter.searchFrom("item", getter.catchInput(1))}`
+                                    "note": "---",
+                                    list() {
+                                        const list = new List()
+                                        list.setHeader({
+                                            _indexName: "test1.key1",
+                                            template: {
+                                                input: {
+                                                    text: "alert"
+                                                }
+                                            }
+                                        })
+                                        list.setItem({
+                                            name: 'alert("test")',
+                                            onclick() {
+                                                alert("test")
+                                            }
+                                        })
+                                        return list
                                     }
                                 }
                             ]
-                        }*/
+                        }
                     ],
                     [
                         {

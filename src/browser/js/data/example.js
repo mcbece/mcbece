@@ -1,4 +1,5 @@
 import { each, replaceString } from "../_core/util/common.js"
+import { snackbar, confirm } from "../src/mdui.js"
 
 const List = app.__lib.List
 
@@ -51,7 +52,7 @@ export default {
             },
             grammar: {
                 __new: [
-                   [
+                    [
                         {
                             command: {
                                 name: "/^@list$/",
@@ -85,7 +86,7 @@ export default {
                             }
                         },
                         {
-                            grammar: "<设置名> <值> <确认>",
+                            grammar: "<设置名> <值>",
                             info: [
                                 {
                                     length: 1,
@@ -101,9 +102,11 @@ export default {
                                                 }
                                             }
                                         })
-                                        each(keys, key => list.setItem({
-                                            name: key
-                                        }))
+                                        each(keys, key => {
+                                            if (key !== "customURL") list.setItem({
+                                               name: key
+                                            })
+                                        })
                                         return list
                                     }
                                 },
@@ -115,52 +118,26 @@ export default {
                                         const list = new List()
                                         list.setHeader({
                                             _indexName: "_option.values",
-                                            template: {
-                                                input: {
-                                                    text: "{name} "
-                                                }
-                                            }
                                         })
                                         each(values, value => list.setItem({
-                                            name: value
+                                            name: value.toString(),
+                                            onclick() {
+                                                const key = getter.catchInput(1)
+                                                confirm({
+                                                    message: replaceString("你确定要将 {key} 的值改为 {value} 吗？", { key, value }),
+                                                    onConfirm: () => app.option.setItem(key, value)
+                                                }).then(result => {
+                                                    if (result) snackbar("已完成设置")
+                                                }).catch(console.log)
+                                                app.config.$input.value = `@option ${key} `
+                                            }
                                         }))
                                         return list
-                                    }
-                                },
-                                {
-                                    length: 3,
-                                    note(getter) {
-                                        return replaceString("你确定要将 {key} 的值改为 {value} 吗？（按空格继续)", {
-                                            key: getter.catchInput(1),
-                                            value: getter.catchInput(2)
-                                        })
-                                    },
-                                    list() {
-                                        const list = new List()
-                                        return list.setHeader({
-                                            _indexName: "_option.confirm",
-                                            template: {
-                                                input: {
-                                                    text: " "
-                                                }
-                                            }
-                                        }).setItem({
-                                            info: "是的，我确定"
-                                        })
                                     }
                                 }
                             ],
                             endFun(getter) {
-                                const key = getter.catchInput(1)
-                                const value = getter.catchInput(2)
-                                app.option.setItem(key, (function() {
-                                    if (value === "true") return true
-                                    else if (value === "false") return false
-                                    else return value
-                                })())
-                                return {
-                                    note: "已完成设置"
-                                }
+                                
                             }
                         }
                     ],

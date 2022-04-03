@@ -34,7 +34,7 @@ export class ListItemRenderer {
     get(name) {
         let target
         if (this.hasItem(name)) target = this.getItem(name)
-        else target =  (new ListItemRendererItem(item => objectGet(item, name)))
+        else target = new ListItemRendererItem(item => objectGet(item, name))
         return target.run(this.listItem)
     }
 }
@@ -69,7 +69,7 @@ class ListItemRendererItem {
 function getDefaultConfig(app) {
     return {
         image: {
-            handlerFun(item, util) {
+            handlerFun(item) {
                 if (!app.list.withImage) return
                 const image = item.image
                 if (image) return image

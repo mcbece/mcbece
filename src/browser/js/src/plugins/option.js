@@ -1,6 +1,7 @@
 import { LANGUAGES, THEME_COLOR } from "../../../../data.js"
 import { WebOption } from "../../lib/WebOption.class.js"
 import { addValueChangedListener } from "../../_core/util/common.js"
+import { setThemeColor } from "../mdui.js"
 
 export default async function (app) {
     const { DEFAULT_LANGUAGE } = app.config
@@ -44,9 +45,7 @@ export default async function (app) {
         name: "themePrimaryColor",
         values: Object.keys(THEME_COLOR.primary),
         callback: (selected, original) => {
-            document.body.classList.remove(`mdui-theme-primary-${original}`)
-            document.body.classList.add(`mdui-theme-primary-${selected}`)
-            document.head.querySelector('meta[name="theme-color"]').content = THEME_COLOR.primary[selected]
+            setThemeColor({ primary: [original, selected] })
             console.debug("Option: themePrimaryColor -> from", original, "to", selected)
         },
         defaultValue: DEFAULT_THEME_COLOR.primary
@@ -55,8 +54,7 @@ export default async function (app) {
         name: "themeAccentColor",
         values: Object.keys(THEME_COLOR.accent),
         callback: (selected, original) => {
-            document.body.classList.remove(`mdui-theme-accent-${original}`)
-            document.body.classList.add(`mdui-theme-accent-${selected}`)
+            setThemeColor({ accent: [original, selected] })
             console.debug("Option: themeAccentColor -> from", original, "to", selected)
         },
         defaultValue: DEFAULT_THEME_COLOR.accent

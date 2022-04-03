@@ -21,14 +21,14 @@ export function mapObject(obj, callbackfn, thisArg) {
     return newObj
 }
 
-export function objectGet(obj, key, { _return, handler = s => s, strict = true } = {}) {
+export function objectGet(obj, key, { _return, handler = s => s, strict = false } = {}) {
     if (objectHas(obj, key)) return obj[key]
     else try {
         const output = eval(`obj.${handler(key)}`)
         if (!strict && output === undefined) return _return
         else return output
     } catch (err) {
-        // console.warn(`Could not get "${key}" in \`obj\`, returning \`_return\`.`, {obj, _return})
+        console.debug(`Could not get "${key}" in \`obj\`, returning \`_return\`.`, {obj, _return})
         return _return
     }
 }

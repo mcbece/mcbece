@@ -28,8 +28,8 @@ function parse(data) {
 export class List {
     constructor(list) {
         if (list) {
-            this.setHeader(list[0])
-            for (let i = 1; i < list.length; i++) this.setItem(list[i])
+            this.setHeader(list.shift())
+            each(list, e => this.setItem(e)) 
         }
     }
     _header = {}
@@ -48,7 +48,7 @@ export class List {
         return this
     }
     addItem(...items) {
-        this._body = items.concat(this.body)
+        this._body = this.body.concat(items)
         return this
     }
     getItem(index) {

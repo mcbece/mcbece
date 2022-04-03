@@ -1,5 +1,6 @@
 import { PWAManager } from "../../lib/PWAManager.class.js"
 import { importDefault } from "../../_core/util/common.js"
+import { snackbar } from "../mdui.js"
 
 export default async function (app) {
     try {
@@ -55,13 +56,4 @@ class __PWA__ extends PWAManager {
             onButtonClick: () => this.update()
         })
     }
-}
-
-function snackbar(message, option) {
-    mdui.snackbar({
-        message,
-        position: window._LITE_MODELL ? "bottom" : "left-top",
-        timeout: 2000,
-        ...option
-    })
 }
