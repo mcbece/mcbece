@@ -2,6 +2,7 @@ import { LANGUAGES, THEME_COLOR } from "../../../../data.js"
 import { WebOption } from "../../lib/WebOption.class.js"
 import { addValueChangedListener } from "../../_core/util/common.js"
 import { setThemeColor } from "../mdui.js"
+import { isAprilFools } from "../util.js"
 
 export default async function (app) {
     const { DEFAULT_LANGUAGE } = app.config
@@ -104,6 +105,10 @@ class __Option__ extends WebOption {
         this._handler = handler
     }
     setItem(key, value) {
+        if (
+            isAprilFools() &&
+            (key === "themePrimaryColor" || key === "themeAccentColor")
+        ) return "Happy April Fools!"
         this.setItemVal(key, value, (_, __, res) => this._handler(res))
     }
     getItem(key) {

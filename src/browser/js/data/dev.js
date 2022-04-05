@@ -1,4 +1,4 @@
-const List = app.__lib.List
+const List = app.data._forCustom.List
 
 export default {
     "zh-CN": {

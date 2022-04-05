@@ -5,8 +5,6 @@ import __List__ from "./src/list/index.js"
 import __Grammar__ from "./src/grammar/index.js"
 import __Event__ from "./src/event/index.js"
 
-import { List } from "./lib/ListData.class.js"
-
 export default class {
     constructor(config) {
         this.config = config
@@ -81,9 +79,5 @@ export default class {
         }
         else this.list.load(result.list ?? "")
         this.list.search()
-    }
-    
-    __lib = {
-        List
     }
 }

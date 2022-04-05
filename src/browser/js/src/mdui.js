@@ -13,14 +13,14 @@ export async function confirm({ message, onConfirm = () => {}, onCancel = () => 
     return new Promise((resolve, reject) => {
         mdui.confirm(
             message,
-            () => {
+            () => resolve([
+                true,
                 onConfirm()
-                resolve(true)
-            },
-            () => {
+            ]),
+            () => resolve([
+                false,
                 onCancel()
-                resolve(false)
-            },
+            ]),
             option
         )
     })

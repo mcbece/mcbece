@@ -1,6 +1,7 @@
 import App from "./_core/index.js"
 import { toString, stringToNode, nodeToString, getReturn } from "./_core/util/common.js"
 import { setThemeColor, snackbar } from "./src/mdui.js"
+import { isAprilFools } from "./src/util.js"
 
 import createWebOptionManager from "./src/plugins/option.js"
 import createPWAManager from "./src/plugins/pwa.js"
@@ -47,8 +48,6 @@ window.app = new App({
                     </li>
                 `.trim())
                 item.onclick = () => {
-                    console.debug(renderer)
-                    
                     eval(renderer.get("input") || "")
                     getReturn(renderer.get("onclick"))
                 }
@@ -100,16 +99,7 @@ window.app = new App({
         "app.init": [
             () => {
                 if (app.LANG === "en") app.config.$grammar.classList.add("minecraft-font")
-                if (/-04-01$/.test((() => {
-                    const _date = new Date()
-                    const month = _date.getMonth() + 1
-                    const date = _date.getDate()
-                    return [
-                        _date.getFullYear(),
-                        (month < 10) ? ("0" + month) : month,
-                        (date < 10) ? ("0" + date) : date
-                    ].join("-")
-                })())) setThemeColor({
+                if (isAprilFools()) setThemeColor({
                     primary: [app.option._getItem("themePrimaryColor").selected, "green"],
                     accent: [app.option._getItem("themeAccentColor").selected, "red"]
                 })

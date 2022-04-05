@@ -78,7 +78,7 @@ function getDefaultConfig(app) {
         input: {
             handlerFun(item) {
                 const input = item.input
-                if (input && toString(input) !== "{}") {
+                if (input && Object.keys(input).length) {
                     const { text, replace } = input
                     const output = {
                         text: "",

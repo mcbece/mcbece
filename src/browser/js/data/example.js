@@ -1,7 +1,8 @@
 import { each, replaceString } from "../_core/util/common.js"
 import { snackbar, confirm } from "../src/mdui.js"
+import { isAprilFools } from "../src/util.js"
 
-const List = app.__lib.List
+const List = app.data._forCustom.List
 
 export default {
     "zh-CN": {
@@ -114,31 +115,31 @@ export default {
                                     length: 2,
                                     note: "指定要设置的值",
                                     list(getter) {
-                                        const values = app.option.valuesOf(getter.catchInput(1))
+                                        const key = getter.catchInput(1)
+                                        const values = app.option.valuesOf(key)
                                         const list = new List()
                                         list.setHeader({
                                             _indexName: "_option.values",
                                         })
                                         each(values, value => list.setItem({
-                                            name: value.toString(),
+                                            name: value === app.option._getItem(key).selected ? `${value} (Selected)` : value.toString(),
                                             onclick() {
-                                                const key = getter.catchInput(1)
                                                 confirm({
                                                     message: replaceString("你确定要将 {key} 的值改为 {value} 吗？", { key, value }),
-                                                    onConfirm: () => app.option.setItem(key, value)
-                                                }).then(result => {
-                                                    if (result) snackbar("已完成设置")
-                                                }).catch(console.log)
+                                                    onConfirm: () => {
+                                                        return app.option.setItem(key, value)
+                                                    }
+                                                }).then(([result, e]) => {
+                                                    if (e) snackbar(e)  // Happy April Fools!
+                                                    else if (result) snackbar("设置成功")
+                                                }).catch(console.error)
                                                 app.config.$input.value = `@option ${key} `
                                             }
                                         }))
                                         return list
                                     }
                                 }
-                            ],
-                            endFun(getter) {
-                                
-                            }
+                            ]
                         }
                     ],
                     [
