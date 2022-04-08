@@ -7,9 +7,9 @@ export function rename(listName) {
     const listShortcut = Object.assign({}, getDefaultListShortcut(), objectGet(this.config, "list.shortcut", { _return: {} }))
     const inputGetter = new InputGetter(this)
     const lastInput = catchInput(-1)
-    const parsedSrlector = typeFromSelector(lastInput)
+    const parsedSelector = typeFromSelector(lastInput)
     if (listName === "selector") {
-        const { types, keywords } = parsedSrlector
+        const { types, keywords } = parsedSelector
         const output = []
         if (types.includes("variable")) output.push("selector.variable")
         if (types.includes("next")) output.push("selector.next")
@@ -19,8 +19,8 @@ export function rename(listName) {
         if (types.includes("argument.value")) output.push(inputGetter.searchFrom("selector.argument", keywords.key, i => `selector.argument{${i}}.value`))
         return output
     } else if (/^coordinate.(x|y|z)$/.test(listName)) {
-        if (!lastInput || parsedSrlector.types.includes("argument.value.coordinate")) return listName
-        else if (lastInput === "~" || lastInput === "^" || parsedSrlector.types.includes("argument.value.coordinate.value")) return `${listName}.header.value`
+        if (!lastInput || parsedSelector.types.includes("argument.value.coordinate")) return listName
+        else if (lastInput === "~" || lastInput === "^" || parsedSelector.types.includes("argument.value.coordinate.value")) return `${listName}.header.value`
         else return "next"
     } else if (/^rotation.(x|y)$/.test(listName)) {
         if (!lastInput) return listName

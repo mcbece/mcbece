@@ -1,4 +1,4 @@
-import { each } from "../_core/util/common.js"
+import { each, toString } from "../_core/util/common.js"
 import { stringify, parse } from "../_core/util/betterJSON.js"
 
 export class WebOption {
@@ -15,8 +15,8 @@ export class WebOption {
         this.init = undefined
         return this
     }
-    addItem({ name, values, callback, handler, defaultValue }) {
-        this.items[name] = new WebOptionItem({ name, values, callback, handler, defaultValue })
+    addItem(opts) {
+        this.items[opts.name] = new WebOptionItem(opts)
         return this
     }
     hasItem(name) {
@@ -43,27 +43,37 @@ export class WebOption {
         return this._getItem(name)?.selected
     }
     getItemValMap() {
-        let result = {}
+        const result = {}
         each(this.items, key => result[key] = this.getItemVal(key))
+        
+        console.log(result)
+        
         return result
     }
     setStorage() {
-        let storage = this.getItemValMap()
+        const storage = this.getItemValMap()
         localStorage.setItem(this._namespace + ":all", stringify(storage))
     }
     getStorage() {
-        let storage = parse(localStorage.getItem(this._namespace + ":all") ?? "{}")
+        const storage = parse(localStorage.getItem(this._namespace + ":all") ?? "{}")
         each(storage, (key, value) => this.setItemVal(key, value))
     }
 }
 
 class WebOptionItem {
-    constructor({ name, values = [], callback = () => {}, /* handler = s => s, */ defaultValue }) {
+    constructor({ name, description, values = [], callback = () => {}, /* handler = s => s, */ defaultValue }) {
         this.name = name
-        this.values = new Set(values)
+        this.description = description
+        this.values = new Map(values.map(value => {
+            if (typeof value[0] === "object") value[0] = toString(value[0])
+            else if (value[0] === undefined) value[0] = "undefined"
+            if (value[0] === true && !value[1]) value[1] = "开启"
+            else if (value[0] === false && !value[1]) value[1] = "关闭"
+            return value
+        }))
         this.callback = callback
         // this.handler = handler
-        this.selected = this.hasVal(defaultValue) ? defaultValue : values[0]
+        this.selected = this.hasVal(defaultValue) ? defaultValue : values[0][0]
         this.callback(this.selected)
     }
     select(value, withoutCallback) {
@@ -75,25 +85,29 @@ class WebOptionItem {
         } else return false
     }
     toggle() {
-        let _values = [...this.values]
+        const _values = [...this.values]
         for (let i = 0; i < _values.length; i++) {
-            let item = _values[i]
-            if (this.selected === item) {
-                if (i < _values.length - 1) this.select(_values[i + 1])
-                else this.select(_values[0])
+            const item = _values[i]
+            if (this.selected === item[0]) {
+                if (i < _values.length - 1) this.select(_values[i + 1][0])
+                else this.select(_values[0][0])
                 break
             }
         }
     }
-    addVal(value) {
-        this.values.add(value)
+    addVal(name, description) {
+        this.values.set(name, description)
         return this
     }
-    delVal(value) {
+    delVal(name) {
         this.values.delete(value)
         return this
     }
-    hasVal(value) {
-        return this.values.has(value) || !this.values.size
+    hasVal(name) {
+        return this.values.has(name) || !this.values.size
+    }
+    getValueDescription(name) {
+        if (name === undefined) name = this.selected
+        return this.values.get(name)
     }
 }

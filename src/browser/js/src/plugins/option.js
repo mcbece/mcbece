@@ -26,16 +26,24 @@ export default async function (app) {
     // Languages
     .addItem({
         name: "lang",
-        values: Object.keys(LANGUAGES),
+        description: "语言",
+        values: Object.entries(!function() {
+            const _languages = {}
+            each(LANGUAGES, (lang, {name}) => _languages[lang] = name)
+            return _languages
+        }),
         callback: (selected, original) => {
             document.documentElement.lang = selected
             console.debug("Option: lang -> from", original, "to", selected)
+            const branches = LANGUAGES[selected].branch
             option.addItem({
                 name: "branch",
-                values: Object.keys(LANGUAGES[selected].branch),
+                description: "分支",
+                values: Object.entries(branches),
                 callback:(_selected, _original) => {
                     console.debug("Option: branch -> from", _original, "to", _selected)
-                }
+                },
+                defaultValue: branches[0]
             })
         },
         defaultValue: DEFAULT_LANGUAGE
@@ -44,7 +52,8 @@ export default async function (app) {
     // Theme color
     .addItem({
         name: "themePrimaryColor",
-        values: Object.keys(THEME_COLOR.primary),
+        description: "主题色 - 主色",
+        values: Object.entries(THEME_COLOR.primary),
         callback: (selected, original) => {
             setThemeColor({ primary: [original, selected] })
             console.debug("Option: themePrimaryColor -> from", original, "to", selected)
@@ -53,7 +62,8 @@ export default async function (app) {
     })
     .addItem({
         name: "themeAccentColor",
-        values: Object.keys(THEME_COLOR.accent),
+        description: "主题色 - 强调色",
+        values: Object.entries(THEME_COLOR.accent),
         callback: (selected, original) => {
             setThemeColor({ accent: [original, selected] })
             console.debug("Option: themeAccentColor -> from", original, "to", selected)
@@ -62,6 +72,27 @@ export default async function (app) {
     })
     
     // Others
+    .addItem({
+        name: "liteModel",
+        description: "简洁模式，手机用户建议开启",
+        values: [ [true, "开启（覆盖 listWithImage，不显示列表项图片）"], [false] ],
+        callback: (selected, original) => {
+            console.debug("Option: liteModel -> from", original, "to", selected)
+            if (selected) document.body.classList.add("lite")
+            else document.body.classList.remove("lite")
+            window._LITE_MODELL = selected
+        },
+        defaultValue: false
+    })
+    .addItem({
+        name: "listWithImage",
+        description: "列表项是否带有图片（如果有）",
+        values: [ [true, "是"], [false, "否"] ],
+        callback: (selected, original) => {
+            console.debug("Option: listWithImage -> from", original, "to", selected)
+        },
+        defaultValue: false
+    })
     .addItem({
         name: "customURL",
         callback: (selected, original) => {
@@ -72,30 +103,11 @@ export default async function (app) {
         defaultValue: []
     })
     .addItem({
-        name: "listWithImage",
-        values: [ true, false ],
-        callback: (selected, original) => {
-            console.debug("Option: listWithImage -> from", original, "to", selected)
-        },
-        defaultValue: false
-    })
-    .addItem({
         name: "inputing",
         callback: selected => {
             if (selected) app.config.$input.value = selected
         },
         defaultValue: ""
-    })
-    .addItem({
-        name: "liteModel",
-        values: [ true, false ],
-        callback: (selected, original) => {
-            console.debug("Option: liteModel -> from", original, "to", selected)
-            if (selected) document.body.classList.add("lite")
-            else document.body.classList.remove("lite")
-            window._LITE_MODELL = selected
-        },
-        defaultValue: false
     })
 }
 

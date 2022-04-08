@@ -79,15 +79,6 @@ window.app = new App({
         }
     },
     
-    grammar: {
-        control: {
-            shortcut: {
-                isCoordinate: /^[-~^.0-9]+/,
-                isSelector: /(^@[a-z]?(\[[-~^=,\.\w]*\]?)?|[\w]+)/
-            }
-        }
-    },
-    
     data: {
         url: "/api/mcbelist.{lang}.{branch}.min.js",
         custom: [

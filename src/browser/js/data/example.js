@@ -1,4 +1,4 @@
-import { each, replaceString } from "../_core/util/common.js"
+import { each, replaceString, toString } from "../_core/util/common.js"
 import { snackbar, confirm } from "../src/mdui.js"
 import { isAprilFools } from "../src/util.js"
 
@@ -104,8 +104,10 @@ export default {
                                             }
                                         })
                                         each(keys, key => {
-                                            if (key !== "customURL") list.setItem({
-                                               name: key
+                                            const item = app.option._getItem(key)
+                                            if (item.values.size) list.setItem({
+                                               name: key,
+                                               info: item.description
                                             })
                                         })
                                         return list
@@ -121,19 +123,17 @@ export default {
                                         list.setHeader({
                                             _indexName: "_option.values",
                                         })
-                                        each(values, value => list.setItem({
-                                            name: value === app.option._getItem(key).selected ? `${value} (Selected)` : value.toString(),
+                                        each(values, ([name, description]) => list.setItem({
+                                            name: name === app.option._getItem(key).selected ? `${name} (Selected)` : toString(name),
+                                            info: description + (key === "themePrimaryColor" || key === "themeAccentColor" ? ` {color: ${description}}` : ""),
                                             onclick() {
                                                 confirm({
-                                                    message: replaceString("你确定要将 {key} 的值改为 {value} 吗？", { key, value }),
-                                                    onConfirm: () => {
-                                                        return app.option.setItem(key, value)
-                                                    }
+                                                    message: replaceString("你确定要将 {key} 的值改为 {name} 吗？", { key, name }),
+                                                    onConfirm: () => app.option.setItem(key, name)
                                                 }).then(([result, e]) => {
                                                     if (e) snackbar(e)  // Happy April Fools!
                                                     else if (result) snackbar("设置成功")
                                                 }).catch(console.error)
-                                                app.config.$input.value = `@option ${key} `
                                             }
                                         }))
                                         return list
