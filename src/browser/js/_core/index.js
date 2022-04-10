@@ -29,13 +29,13 @@ export default class {
         }).catch(console.error)
     }
     initialize(args) {
-        const { lang, branch, customURL, listWithImage } = args
+        const { lang, branch, customURL, listWithImage, _inputing } = args
         this.data.init(lang, branch, objectGet(this.config, "data.url", { _return: "" }), customURL).then(() => {
             this.list.withImage = listWithImage
             this.clear()
             this.event.emit("app.init", args, this.config)
             this.i18n()
-            this.change()
+            this.config.$input.value = _inputing
         }).catch(console.error)
     }
     i18n() {

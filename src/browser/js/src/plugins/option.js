@@ -17,7 +17,7 @@ export default async function (app) {
     
     // Events
     app.event.on("app.input", () => {
-        option._getItem("inputing").select(app.config.$input.value, true)
+        option.setItemVal("_inputing", app.config.$input.value)
         option.setStorage()
     })
     
@@ -49,7 +49,7 @@ export default async function (app) {
         defaultValue: DEFAULT_LANGUAGE
     })
     
-    // Theme color
+    // Theme Color
     .addItem({
         name: "themePrimaryColor",
         description: "主题色 - 主色",
@@ -71,7 +71,7 @@ export default async function (app) {
         defaultValue: DEFAULT_THEME_COLOR.accent
     })
     
-    // Others
+    // Lite Model
     .addItem({
         name: "liteModel",
         description: "简洁模式，手机用户建议开启",
@@ -84,6 +84,13 @@ export default async function (app) {
         },
         defaultValue: false
     })
+    
+    // History & Favorite
+    // .addItem({
+    //     name: "history"
+    // })
+    
+    // Others
     .addItem({
         name: "listWithImage",
         description: "列表项是否带有图片（如果有）",
@@ -103,25 +110,22 @@ export default async function (app) {
         defaultValue: []
     })
     .addItem({
-        name: "inputing",
-        callback: selected => {
-            if (selected) app.config.$input.value = selected
-        },
+        name: "_inputing",
         defaultValue: ""
     })
 }
 
 class __Option__ extends WebOption {
-    constructor(namespace, handler) {
-        super(namespace)
-        this._handler = handler
+    constructor(storeName, callback) {
+        super(storeName)
+        this.callback = callback
     }
     setItem(key, value) {
         if (
             isAprilFools() &&
             (key === "themePrimaryColor" || key === "themeAccentColor")
         ) return "Happy April Fools!"
-        this.setItemVal(key, value, (_, __, res) => this._handler(res))
+        this.setItemVal(key, value, (_, __, res) => this.callback(res)).catch(console.error)
     }
     getItem(key) {
         return this.getItemVal(key)

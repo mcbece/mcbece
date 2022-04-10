@@ -128,7 +128,7 @@ window.app = new App({
             pwa: createPWAManager
         },
         init([ webOption, pwa ]) {
-            if (webOption) app.option = webOption.init(res => app.initialize(res))
+            if (webOption) webOption.init(res => app.initialize(res)).then(option => app.option = option).catch(console.error)
             if (pwa && !pwa._noServiceWorker) app.pwa = pwa
         }
     }

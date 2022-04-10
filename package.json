@@ -19,6 +19,7 @@
         "express": "^4.17.1",
         "fast-copy": "^2.1.1",
         "github-markdown-css": "^5.1.0",
+        "idb": "^7.0.1",
         "mdui": "^1.0.2",
         "morgan": "^1.10.0",
         "pug": "^3.0.2",

@@ -1,14 +1,27 @@
-import { each, toString } from "../_core/util/common.js"
-import { stringify, parse } from "../_core/util/betterJSON.js"
+import { openDB } from "idb/with-async-ittr"
+import { each, asyncEach, toString } from "../_core/util/common.js"
 
 export class WebOption {
-    constructor(namespace = "WebOption") {
-        this._namespace = namespace
+    constructor(storeName = "WebOption") {
+        this._storeName = storeName
     }
     items = {}
-    init(...callbacks) {
-        this.getStorage()
-        this.setStorage()
+    async init(...callbacks) {
+        this._db = await openDB("WebOption", 1, {
+            upgrade: db => {
+                const store = db.createObjectStore(this._storeName, {
+                    keyPath: "name",
+                    autoIncrement: true
+                })
+                store.createIndex("value", "value")
+                each(this.items, name => store.put({
+                    name,
+                    value: this.getItemVal(name)
+                }))
+            }
+        })
+        await this.getStorage()
+        await this.setStorage()
         each(callbacks, callback => callback(this.getItemValMap()))
         this.addItem = undefined
         this.getStorage = undefined
@@ -25,18 +38,18 @@ export class WebOption {
     _getItem(name) {
         return this.items[name]
     }
-    setItemVal(name, value, callback = () => {}) {
+    async setItemVal(name, value, callback = () => {}) {
         const item = this._getItem(name)
         const result = item?.select(value)
         if (result) callback(item.selected, item.original, this.getItemValMap())
-        this.setStorage()
+        await this.setStorage()
         return this
     }
-    toggleItemVal(name, callback = () => {}) {
+    async toggleItemVal(name, callback = () => {}) {
         const item = this._getItem(name)
         item?.toggle()
         callback(item.selected, item.original, this.getItemValMap())
-        this.setStorage()
+        await this.setStorage()
         return this
     }
     getItemVal(name) {
@@ -44,19 +57,23 @@ export class WebOption {
     }
     getItemValMap() {
         const result = {}
-        each(this.items, key => result[key] = this.getItemVal(key))
-        
-        console.log(result)
-        
+        each(this.items, name => result[name] = this.getItemVal(name))
         return result
     }
-    setStorage() {
+    async setStorage() {
         const storage = this.getItemValMap()
-        localStorage.setItem(this._namespace + ":all", stringify(storage))
+        const tx = this._db.transaction(this._storeName, "readwrite")
+        for await (const cursor of tx.store) {
+            cursor.update({
+                ...cursor.value,
+                value: storage[cursor.value.name]
+            })
+        }
+        await tx.done
     }
-    getStorage() {
-        const storage = parse(localStorage.getItem(this._namespace + ":all") ?? "{}")
-        each(storage, (key, value) => this.setItemVal(key, value))
+    async getStorage() {
+        const storage = await this._db.getAll(this._storeName)
+        await asyncEach(storage, async ({name, value}) => await this.setItemVal(name, value))
     }
 }
 
