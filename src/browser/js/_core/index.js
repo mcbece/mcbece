@@ -7,35 +7,43 @@ import __Event__ from "./src/event/index.js"
 
 export default class {
     constructor(config) {
-        this.config = config
+        this.config = config ?? {}
         this.data = new __Data__(this)
         this.input = new __Input__(this)
         this.list = new __List__(this)
         this.grammar = new __Grammar__(this)
         this.event = new __Event__(this)
         
-        if (this.config.plugin) Promise.all(Object.values(mapObject(this.config.plugin.plugins ?? {}, (key, plugin) => {
-            const result = plugin(this)
-            this.event.emit("app.plugin.load", key, result)
-            return [ key, result ]
-        }))).then(result => {
-            const init = (this.config.plugin.init ?? new Function()).bind(this.config.plugin)
-            init(result, this)
+        Promise.all(
+            objectGet(this.config, "plugin.plugins", { _return: [] }).map(plugin => {
+                const result = plugin(this)
+                this.event.emit("app.plugin.load", result)
+                return result
+            })
+        ).then(result => {
+            const init = objectGet(this.config, "plugin.init", { _return: new Function() }).bind(this.config.plugin)
             this.event.emit("app.plugin.init", result)
+            init(result, this)
+        }).then(() => {
             addValueChangedListener(this.config.$input, () => {
                 this.event.emit("app.input", this.config.$input.value)
                 this.change()
             }, true)
         }).catch(console.error)
     }
+    
+    plugins = {}
+    
     initialize(args) {
-        const { lang, branch, customURL, listWithImage, _inputing } = args
+        const { lang, branch, customURL, listWithImage } = args
         this.data.init(lang, branch, objectGet(this.config, "data.url", { _return: "" }), customURL).then(() => {
             this.list.withImage = listWithImage
             this.clear()
             this.event.emit("app.init", args, this.config)
             this.i18n()
-            this.config.$input.value = _inputing
+        }).then(() => {
+            this.event.emit("app.init.end", args, this.config)
+            this.change()
         }).catch(console.error)
     }
     i18n() {

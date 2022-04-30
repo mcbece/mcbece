@@ -2,7 +2,33 @@ import { openDB } from "idb/with-async-ittr"
 import { each, asyncEach, toString } from "../_core/util/common.js"
 
 export class WebOption {
-    constructor(storeName = "WebOption") {
+    static async initAll(...wos) {
+        const _db = await openDB("WebOption", 1, {
+            upgrade: db => {
+                each(wos, wo => {
+                    const store = db.createObjectStore(wo._storeName, {
+                        keyPath: "name",
+                        autoIncrement: true
+                    })
+                    store.createIndex("value", "value")
+                    each(wo.items, name => store.put({
+                        name,
+                        value: wo.getItemVal(name)
+                    }))
+                })
+            }
+        })
+        const result = []
+        await asyncEach(wos, async wo => {
+            wo._db = _db
+            await wo._getStorage()
+            await wo._setStorage()
+            result.push(wo.getItemValMap())
+        })
+        return result
+    }
+    
+    constructor(storeName) {
         this._storeName = storeName
     }
     items = {}
@@ -20,13 +46,11 @@ export class WebOption {
                 }))
             }
         })
-        await this.getStorage()
-        await this.setStorage()
-        each(callbacks, callback => callback(this.getItemValMap()))
-        this.addItem = undefined
-        this.getStorage = undefined
-        this.init = undefined
-        return this
+        await this._getStorage()
+        await this._setStorage()
+        const result = this.getItemValMap()
+        each(callbacks, callback => callback(result))
+        return result
     }
     addItem(opts) {
         this.items[opts.name] = new WebOptionItem(opts)
@@ -38,18 +62,18 @@ export class WebOption {
     _getItem(name) {
         return this.items[name]
     }
-    async setItemVal(name, value, callback = () => {}) {
+    async setItemVal(name, value, callback = () => {}, replaceModel = false) {
         const item = this._getItem(name)
-        const result = item?.select(value)
+        const result = item?.select(value, replaceModel)
         if (result) callback(item.selected, item.original, this.getItemValMap())
-        await this.setStorage()
+        await this._setStorage()
         return this
     }
     async toggleItemVal(name, callback = () => {}) {
         const item = this._getItem(name)
         item?.toggle()
         callback(item.selected, item.original, this.getItemValMap())
-        await this.setStorage()
+        await this._setStorage()
         return this
     }
     getItemVal(name) {
@@ -60,7 +84,7 @@ export class WebOption {
         each(this.items, name => result[name] = this.getItemVal(name))
         return result
     }
-    async setStorage() {
+    async _setStorage() {
         const storage = this.getItemValMap()
         const tx = this._db.transaction(this._storeName, "readwrite")
         for await (const cursor of tx.store) {
@@ -71,16 +95,20 @@ export class WebOption {
         }
         await tx.done
     }
-    async getStorage() {
+    async _getStorage() {
         const storage = await this._db.getAll(this._storeName)
-        await asyncEach(storage, async ({name, value}) => await this.setItemVal(name, value))
+        
+        console.log({storage})
+        
+        await asyncEach(storage, async ({name, value}) => await this.setItemVal(name, value, undefined, true))
     }
 }
 
 class WebOptionItem {
-    constructor({ name, description, values = [], callback = () => {}, /* handler = s => s, */ defaultValue }) {
+    constructor({ name, description, values = [], callback = () => {}, /* handler = s => s, */ defaultValue, storageModel = false }) {
         this.name = name
         this.description = description
+        this._storageModel = storageModel
         this.values = new Map(values.map(value => {
             if (typeof value[0] === "object") value[0] = toString(value[0])
             else if (value[0] === undefined) value[0] = "undefined"
@@ -90,14 +118,17 @@ class WebOptionItem {
         }))
         this.callback = callback
         // this.handler = handler
-        this.selected = this.hasVal(defaultValue) ? defaultValue : values[0][0]
+        if (defaultValue !== undefined && this.hasVal(defaultValue)) this.selected = defaultValue
+        else if (values[0]) this.selected = values[0][0]
+        if (storageModel) this.selected = []
         this.callback(this.selected)
     }
-    select(value, withoutCallback) {
+    select(value, replaceModel) {
         if (this.selected !== value && this.hasVal(value)) {
             this.original = this.selected
-            this.selected = /* this.handler(value) */ value
-            if (!withoutCallback) this.callback(this.selected, this.original)
+            if (this._storageModel && !replaceModel) this.selected.push(value)
+            else this.selected = /* this.handler(value) */ value
+            this.callback(this.selected, this.original)
             return true
         } else return false
     }

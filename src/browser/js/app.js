@@ -1,15 +1,20 @@
 import App from "./_core/index.js"
-import { toString, stringToNode, nodeToString, getReturn } from "./_core/util/common.js"
+import { toString, stringToNode, nodeToString, getReturn, mapObject } from "./_core/util/common.js"
 import { setThemeColor, snackbar } from "./src/mdui.js"
 import { isAprilFools } from "./src/util.js"
+import { WebOption } from "./lib/WebOption.class.js"
 
+// Plugins
 import createWebOptionManager from "./src/plugins/option.js"
+import createUserDataManager from "./src/plugins/user.js"
 import createPWAManager from "./src/plugins/pwa.js"
 
 const $funBtn = document.querySelector("#function")
 const funBtnCont = {
-    wiki: `<i class="mdui-icon material-icons mdui-text-color-theme-icon">send</i>`,
-    copy: `<i class="mdui-icon material-icons mdui-text-color-theme-icon">content_copy</i>`
+    send: '<i class="mdui-icon material-icons mdui-text-color-theme-icon">send</i>',
+    wiki: '<i class="mdui-icon material-icons mdui-text-color-theme-icon">import_contacts</i>',
+    copy: '<i class="mdui-icon material-icons mdui-text-color-theme-icon">content_copy</i>',
+    love: '<i class="mdui-icon material-icons mdui-text-color-theme-icon">bookmark_border</i>'
 }
 
 window.app = new App({
@@ -73,7 +78,7 @@ window.app = new App({
             },
             url: {
                 callbackFun(url) {
-                    return `<a class="mdui-btn mdui-btn-icon mdui-list-item-things-display-when-hover" href="${url}" target="_blank" id="url"><i class="mdui-icon material-icons mdui-text-color-black-icon">send</i></a>`
+                    return `<a class="mdui-btn mdui-btn-icon mdui-list-item-things-display-when-hover" href="${url}" target="_blank" id="url"><i class="mdui-icon material-icons mdui-text-color-black-icon">import_contacts</i></a>`
                 }
             }
         }
@@ -97,8 +102,11 @@ window.app = new App({
                 document.body.classList.remove("loading")
             }
         ],
+        "app.init.end": [
+            args => app.config.$input.value = args.userData_inputting
+        ],
         "app.i18n": [
-            (getText) => app.config.$input.placeholder = getText("input")
+            getText => app.config.$input.placeholder = getText("input")
         ],
         "app.clear": [
             () => $funBtn.innerHTML = ""
@@ -117,18 +125,41 @@ window.app = new App({
                 $funBtn.onclick = app.input.copy
             }
         ],
+        "app.input.love": [
+            () => {
+                
+            }
+        ],
         "app.input.copy": [
             () => snackbar("已复制")
+        ],
+        "app.reoption": [
+            () => {
+                document.body.classList.add("loading")
+                app.initialize({
+                    ...app.option.getItemValMap(),
+                    ...mapObject(app._userData.getItemValMap(), (key, value) => {
+                        return [ `userData_${key}`, value ]
+                    })
+                })
+            }
         ]
     },
     
     plugin: {
-        plugins: {
-            option: createWebOptionManager,
-            pwa: createPWAManager
-        },
-        init([ webOption, pwa ]) {
-            if (webOption) webOption.init(res => app.initialize(res)).then(option => app.option = option).catch(console.error)
+        plugins: [
+            createWebOptionManager,
+            createUserDataManager,
+            createPWAManager
+        ],
+        init([ option, user, pwa ]) {
+            if (option && user) {
+                WebOption.initAll(option, user).then(([res1, res2]) => {
+                    app.option = option
+                    app._userData = user
+                    app.event.emit("app.reoption")
+                }).catch(console.error)
+            }
             if (pwa && !pwa._noServiceWorker) app.pwa = pwa
         }
     }

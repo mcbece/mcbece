@@ -23,6 +23,7 @@
                     - `scores`, `hasitem` 等涉及 `{}` 块的参数
                 - 命令嵌套
             - 桌面端tab键支持
+            - 支持多行输入框
         - list
             - vs
                 - 完善 `Virtual Scroll`

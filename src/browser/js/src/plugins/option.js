@@ -1,25 +1,17 @@
 import { LANGUAGES, THEME_COLOR } from "../../../../data.js"
 import { WebOption } from "../../lib/WebOption.class.js"
-import { addValueChangedListener } from "../../_core/util/common.js"
 import { setThemeColor } from "../mdui.js"
 import { isAprilFools } from "../util.js"
 
+const DEFAULT_THEME_COLOR = {
+    primary: "indigo",
+    accent: "pink"
+}
+
 export default async function (app) {
     const { DEFAULT_LANGUAGE } = app.config
-    const DEFAULT_THEME_COLOR = {
-        primary: "indigo",
-        accent: "pink"
-    }
-    const option = new __Option__("option", res => {
-        document.body.classList.add("loading")
-        app.initialize(res)
-    })
     
-    // Events
-    app.event.on("app.input", () => {
-        option.setItemVal("_inputing", app.config.$input.value)
-        option.setStorage()
-    })
+    const option = new __Option__("option", () => app.event.emit("app.reoption"))
     
     return option
     
@@ -85,11 +77,6 @@ export default async function (app) {
         defaultValue: false
     })
     
-    // History & Favorite
-    // .addItem({
-    //     name: "history"
-    // })
-    
     // Others
     .addItem({
         name: "listWithImage",
@@ -108,10 +95,6 @@ export default async function (app) {
         },
         // handler: value => value.split("\n"),
         defaultValue: []
-    })
-    .addItem({
-        name: "_inputing",
-        defaultValue: ""
     })
 }
 

@@ -3,6 +3,7 @@ import { each } from "../../util/common.js"
 
 const ALL_EVENTS = [
     "app.init",
+    "app.init.end",
     "app.i18n",
     "app.change",
     "app.clear",
