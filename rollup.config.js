@@ -16,19 +16,19 @@ const banner = `
 export default [
     // utils
     _({
-        src: "_core/util/common.js",
+        src: "core/util/common.js",
         dest: "lib/util.min.js",
         name: "util"
     }),
     _({
-        src: "_core/util/betterJSON.js",
+        src: "core/util/betterJSON.js",
         dest: "lib/betterJSON.min.js",
         name: "util"
     }),
     
     // core
     _({
-        src: "_core/index.js",
+        src: "core/index.js",
         dest: "lib/core.min.js",
         name: "core"
     }),

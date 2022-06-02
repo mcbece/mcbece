@@ -8,14 +8,19 @@ mixin dialog({id, title, subtitle, tab, content, onsave})
             .mdui-tab.mdui-tab-full-width(mdui-tab)
                 each item in tab
                     a.mdui-ripple(id=e.id)= item.name
-        .mdui-dialog-content
-            .mdui-row
-            each item in content
-                .mdui-col-xs-12.mdui-p-b-1
-                    .mdui-typo-title= item.title
-                if item.content
-                    .mdui-col-xs-1.mdui-p-b-1.retract
-                    .mdui-col-xs-10.mdui-col-sm-11.mdui-p-b-1!= item.content.trim().replaceAll("\n", "").replaceAll("    ", "")
+        if content
+            .mdui-dialog-content
+                if Array.isArray(content)
+                    .mdui-row
+                        each item in content
+                            .mdui-col-xs-12.mdui-p-b-1
+                                .mdui-typo-title= item.title
+                            if item.content
+                                .mdui-col-xs-1.mdui-p-b-1.retract
+                                .mdui-col-xs-10.mdui-col-sm-11.mdui-p-b-1!= item.content.trim().replaceAll("\n", "").replaceAll("    ", "")
+                else
+                    != content
+                    
         .mdui-dialog-actions
             if onsave
                 button.mdui-btn.mdui-ripple(onclick=onsave) 保存

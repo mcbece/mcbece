@@ -1,4 +1,5 @@
-import EventEmitter from "events"
+// import EventEmitter from "events"
+import EventEmitter from "../../../lib/EventEmitter.class.js"
 import { each } from "../../util/common.js"
 
 const ALL_EVENTS = [

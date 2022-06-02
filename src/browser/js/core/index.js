@@ -38,7 +38,7 @@ export default class {
         const { lang, branch, customURL, listWithImage } = args
         this.data.init(lang, branch, objectGet(this.config, "data.url", { _return: "" }), customURL).then(() => {
             this.list.withImage = listWithImage
-            this.clear()
+            this.clear({ ...args })
             this.event.emit("app.init", args, this.config)
             this.i18n()
         }).then(() => {
@@ -52,10 +52,10 @@ export default class {
         each(document.querySelectorAll("[data-i18n]"), ele => ele.innerHTML = getText(ele.getAttribute("data-i18n")))
         this.event.emit("app.i18n", getText, this.config)
     }
-    clear(clearInput) {
+    clear(args) {
         const { $list, $grammar, $note, $input } = this.config
-        this.event.emit("app.clear", clearInput)
-        if (clearInput) $input.value = ""
+        this.event.emit("app.clear", args)
+        if (args.clearInput) $input.value = ""
         if (this.list._useVirtualScroll) this.list.__vs?.destroy()
         $list.innerHTML = ""
         this.list.names = {}

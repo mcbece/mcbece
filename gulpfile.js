@@ -8,8 +8,7 @@ import gulpSass from "gulp-sass"
 import autoprefixer from "gulp-autoprefixer"
 import pug from "gulp-pug"
 
-import through from "through-gulp"
-import { each } from "./src/browser/js/_core/util/common.js"
+import { each } from "./src/browser/js/core/util/common.js"
 import { mcbelist } from "./src/mcbelist.js"
 import { LANGUAGES } from "./src/data.js"
 
@@ -26,7 +25,7 @@ const banner = `
 `.trim()
 
 function mainCss() {
-    return gulp.src("./src/browser/sass/index.scss")
+    return gulp.src("./src/browser/style/index.scss")
         .pipe(sourcemaps.init())
         .pipe(sass({ outputStyle: "compressed" }).on("error", sass.logError))
         .pipe(header(banner))
@@ -37,7 +36,7 @@ function mainCss() {
 }
 
 function virtualScrollCss() {
-    return gulp.src("./src/browser/sass/virtualScroll.scss")
+    return gulp.src("./src/browser/style/virtualScroll.scss")
         .pipe(sourcemaps.init())
         .pipe(sass({ outputStyle: "compressed" }).on("error", sass.logError))
         .pipe(header(banner))

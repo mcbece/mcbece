@@ -3,7 +3,7 @@ import { each, toRegExp, objectGet } from "../../util/common.js"
 
 export function _search(__query, cacheName) {
     const { list: { searchCache }, input: { catchInput, typeFrom } } = this
-    if (searchCache.some(cacheName)) return searchCache.find(cacheName)
+    if (searchCache.has(cacheName)) return searchCache.get(cacheName)
     const result = {
         lists: {},
         names: {}

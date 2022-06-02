@@ -1,5 +1,5 @@
 import { PWAManager } from "../../lib/PWAManager.class.js"
-import { importDefault } from "../../_core/util/common.js"
+import { importDefault } from "../../core/util/common.js"
 import { snackbar } from "../mdui.js"
 
 export default async function (app) {

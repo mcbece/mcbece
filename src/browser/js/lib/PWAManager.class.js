@@ -1,5 +1,5 @@
 import { register } from "register-service-worker"
-import { sleepAsync } from "../_core/util/common.js"
+import { sleepAsync } from "../core/util/common.js"
 
 // https://gitee.com/projectxero/idlistweb/blob/master/src/plugins/pwa.js
 export class PWAManager {

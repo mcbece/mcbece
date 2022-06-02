@@ -27,7 +27,6 @@
         - list
             - vs
                 - 完善 `Virtual Scroll`
-                    - 滑到两头会卡住
                     - 支持加载不同高度的列表项
                     - 使用 `IntersectionObserver` 优化虚拟滚动
         - grammar
@@ -38,9 +37,6 @@
             - 完善多语言优化
         - event
             - 添加更多精细化的事件，以实现更精细的扩展
-        - plugins
-            - option
-                - 增加历史记录及收藏功能
         - custom
             - 支持修改已经定义的部分
     - `Service Worker` 的相关文件由服务器打包生成

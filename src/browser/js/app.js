@@ -1,5 +1,5 @@
-import App from "./_core/index.js"
-import { toString, stringToNode, nodeToString, getReturn, mapObject } from "./_core/util/common.js"
+import App from "./core/index.js"
+import { toString, stringToNode, nodeToString, getReturn, mapObject } from "./core/util/common.js"
 import { setThemeColor, snackbar } from "./src/mdui.js"
 import { isAprilFools } from "./src/util.js"
 import { WebOption } from "./lib/WebOption.class.js"
@@ -103,13 +103,19 @@ window.app = new App({
             }
         ],
         "app.init.end": [
-            args => app.config.$input.value = args.userData_inputting
+            args => {
+                app.list.searchCache.data = args.userData_searchCache
+                app.config.$input.value = args.userData_inputting
+            }
         ],
         "app.i18n": [
             getText => app.config.$input.placeholder = getText("input")
         ],
         "app.clear": [
-            () => $funBtn.innerHTML = ""
+            args => {
+                $funBtn.innerHTML = ""
+                if (args.autoClearSearchCache) app._userData.clear("searchCache")  // TODO
+            }
         ],
         "app.change": [
             () => {

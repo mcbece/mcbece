@@ -22,7 +22,7 @@ export default class {
     }
     names = {}
     lists = {}
-    searchCache = new DataCache(1000)
+    searchCache = new DataCache(10000)
     load(listGroup) {
         const result = _get.call(this, listGroup, false)
         this.event.emit("app.list.load", result, listGroup)

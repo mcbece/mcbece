@@ -1,5 +1,5 @@
-import { asyncEach } from "./browser/js/_core/util/common.js"
-import { stringify } from "./browser/js/_core/util/betterJSON.js"
+import { asyncEach } from "./browser/js/core/util/common.js"
+import { stringify } from "./browser/js/core/util/betterJSON.js"
 
 export async function mcbelist(lang, branch) {
     /*

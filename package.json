@@ -40,13 +40,15 @@
         "rollup": "^2.70.1",
         "rollup-plugin-uglify": "^6.0.4",
         "sass": "^1.49.9",
-        "serve": "^13.0.2",
-        "through-gulp": "^0.5.0"
+        "serve": "^13.0.2"
     },
     "scripts": {
         "s": "node app",
+        "d": "npm run g && npm run s",
+        "g": "npm run g-css && npm run g-js",
         "s-s": "serve public --listen 8080 --debug",
-        "g": "gulp && npm run g-js",
+        "g-s": "gulp && npm run g-js",
+        "d-s": "npm run g-s && npm run s-s",
         "g-js": "rollup --config",
         "g-css": "gulp css",
         "g-html": "gulp html",

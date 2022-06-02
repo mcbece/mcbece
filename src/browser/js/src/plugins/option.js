@@ -96,6 +96,15 @@ export default async function (app) {
         // handler: value => value.split("\n"),
         defaultValue: []
     })
+    .addItem({
+        name: "autoClearSearchCache",
+        description: "是否在设置更改时自动清理搜索缓存",
+        values: [ [true, "是"], [false, "否"] ],
+        callback: (selected, original) => {
+            console.debug("Option: autoClearSearchCache -> from", original, "to", selected)
+        },
+        defaultValue: false
+    })
 }
 
 class __Option__ extends WebOption {

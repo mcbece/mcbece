@@ -1,5 +1,5 @@
-import { objectGet, importDefault } from "../src/browser/js/_core/util/common.js"
-import { stringify } from "../src/browser/js/_core/util/betterJSON.js"
+import { objectGet, importDefault } from "../src/browser/js/core/util/common.js"
+import { stringify } from "../src/browser/js/core/util/betterJSON.js"
 import { mcbelist } from "../src/mcbelist.js"
 import express from "express"
 

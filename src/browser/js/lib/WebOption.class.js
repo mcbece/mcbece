@@ -1,5 +1,5 @@
 import { openDB } from "idb/with-async-ittr"
-import { each, asyncEach, toString } from "../_core/util/common.js"
+import { each, asyncEach, toString } from "../core/util/common.js"
 
 export class WebOption {
     static async initAll(...wos) {
@@ -56,9 +56,6 @@ export class WebOption {
         this.items[opts.name] = new WebOptionItem(opts)
         return this
     }
-    hasItem(name) {
-        return this._getItem(name) ? true : false
-    }
     _getItem(name) {
         return this.items[name]
     }
@@ -68,6 +65,17 @@ export class WebOption {
         if (result) callback(item.selected, item.original, this.getItemValMap())
         await this._setStorage()
         return this
+    }
+    async setItemOfDef(name, callback) {
+        const item = this._getItem(name)
+        if (item) await this.setItem(name, item._defaultValue, callback, true)
+        return this
+    }
+    async clear(...names) {
+        each(names, name => {
+            const item = this._getItem(name)
+            if (item && item._storageModel) this.setItemOfDef(name)
+        })
     }
     async toggleItemVal(name, callback = () => {}) {
         const item = this._getItem(name)
@@ -97,9 +105,6 @@ export class WebOption {
     }
     async _getStorage() {
         const storage = await this._db.getAll(this._storeName)
-        
-        console.log({storage})
-        
         await asyncEach(storage, async ({name, value}) => await this.setItemVal(name, value, undefined, true))
     }
 }
@@ -117,6 +122,7 @@ class WebOptionItem {
             return value
         }))
         this.callback = callback
+        this._defaultValue = defaultValue
         // this.handler = handler
         if (defaultValue !== undefined && this.hasVal(defaultValue)) this.selected = defaultValue
         else if (values[0]) this.selected = values[0][0]
@@ -127,6 +133,7 @@ class WebOptionItem {
         if (this.selected !== value && this.hasVal(value)) {
             this.original = this.selected
             if (this._storageModel && !replaceModel) this.selected.push(value)
+            else if (this._storageModel) this.selected = []
             else this.selected = /* this.handler(value) */ value
             this.callback(this.selected, this.original)
             return true

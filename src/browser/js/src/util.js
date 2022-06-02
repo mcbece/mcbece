@@ -1,3 +1,5 @@
+import { testRegExp } from "../core/util/common.js"
+
 export function getDate() {
     const _date = new Date()
     const month = _date.getMonth() + 1
@@ -11,4 +13,8 @@ export function getDate() {
 
 export function isAprilFools() {
     return /-04-01$/.test(getDate())
+}
+
+export function isChrome() {
+    return testRegExp("!/Chrome/", navigator.userAgent)
 }
