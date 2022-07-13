@@ -1,7 +1,7 @@
+import express from "express"
 import { objectGet, importDefault } from "../src/browser/js/core/util/common.js"
 import { stringify } from "../src/browser/js/core/util/betterJSON.js"
 import { mcbelist } from "../src/mcbelist.js"
-import express from "express"
 
 const api = express.Router()
 

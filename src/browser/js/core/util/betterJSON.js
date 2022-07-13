@@ -17,12 +17,6 @@ export function stringify(obj) {
         else if (typeof target === "number" || typeof target === "boolean") return target
         else if (typeof target === "function") return "@@function " + funStrToArrowFunStr(target.toString())
         else return target.toString()
-        
-        function funStrToArrowFunStr(funStr) {
-            const regexp = /^(function\s)?([a-zA-Z$_0-9]*)?\s?\((?<args>[a-zA-Z$_,0-9\s]*)?\)\s?\{(?<content>[\S\s]*)?\}$/
-            const match = funStr.match(regexp)
-            if (match) return `(${match.groups.args || ""}) => {${match.groups.content || ""}}`
-        }
     }
 }
 
@@ -41,4 +35,10 @@ export function parse(str) {
 export default {
     stringify,
     parse
+}
+
+function funStrToArrowFunStr(funStr) {
+    const regexp = /^(function\s)?([a-zA-Z$_0-9]*)?\s?\((?<args>[a-zA-Z$_,0-9\s]*)?\)\s?\{(?<content>[\S\s]*)?\}$/
+    const match = funStr.match(regexp)
+    if (match) return `(${match.groups.args || ""}) => {${match.groups.content || ""}}`
 }

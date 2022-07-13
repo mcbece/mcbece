@@ -38,7 +38,7 @@ export default class {
         const { lang, branch, customURL, listWithImage } = args
         this.data.init(lang, branch, objectGet(this.config, "data.url", { _return: "" }), customURL).then(() => {
             this.list.withImage = listWithImage
-            this.clear({ ...args })
+            this.clear({ clearInput: false, ...args })
             this.event.emit("app.init", args, this.config)
             this.i18n()
         }).then(() => {
@@ -60,7 +60,7 @@ export default class {
         $list.innerHTML = ""
         this.list.names = {}
         this.list.lists = {}
-        this.list.searchCache.clear()
+        
         $grammar.innerHTML = ""
         $note.innerHTML = ""
     }

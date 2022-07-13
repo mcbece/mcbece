@@ -44,8 +44,8 @@
     },
     "scripts": {
         "s": "node app",
-        "d": "npm run g && npm run s",
         "g": "npm run g-css && npm run g-js",
+        "d": "npm run g && npm run s",
         "s-s": "serve public --listen 8080 --debug",
         "g-s": "gulp && npm run g-js",
         "d-s": "npm run g-s && npm run s-s",

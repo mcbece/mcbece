@@ -78,7 +78,7 @@ export function toJSON(str) {
     try {
         return JSON.parse(str)
     } catch (err) {
-        console.warn(`Could not use \`JSON.parse()\`, returning with trying \`eval()\`.`)
+        console.warn(`Could not use \`JSON.parse()\` to deserialise the JSON, trying \`eval()\`.`, { json: str })
         return eval(`(${str})`)
     }
 }

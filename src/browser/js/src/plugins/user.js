@@ -1,17 +1,16 @@
 import { WebOption } from "../../lib/WebOption.class.js"
-import { DataCache } from "../../core/lib/DataCache.class.js"
 
 export default async function(app) {
     const user = new WebOption("userData")
     
     app.event.on("app.input", () => {
         user.setItemVal("inputting", app.config.$input.value)
-    }).on("app.list.search", () => {
-        user.setItemVal("searchCache", app.list.searchCache.data)
+            .setItemVal("searchCache", app.list.searchCache.data)
+            .done()
     }).on("app.input.copy", value => {
-        user.setItemVal("history", value)
+        user.setItemVal("history", value).done()
     }).on("app.input.love", value => {
-        user.setItemVal("love", value)
+        user.setItemVal("love", value).done()
     })
     
     return user

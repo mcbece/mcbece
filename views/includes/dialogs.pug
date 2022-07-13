@@ -10,7 +10,7 @@ include ./mixins/dialog.pug
             content: `
                 <span class="mdui-typo">
                     该工具暂时不能使用，请尝试使用 <code>@option</code> 命令<br />
-                    请确保加载了 <code>/js/custom/example.js</code> 扩展（已在配置文件中指定并加载）
+                    请确保加载了 <code>/js/custom/example.min.js</code> 扩展（已在配置文件中指定并加载）
                 </span>
             `
         }
@@ -27,7 +27,7 @@ include ./mixins/dialog.pug
                 <span class="mdui-typo">
                     每行一个链接<br />
                     有关如何编写，请见<a href="./docs/how-to-custom.md" target="_blank">此处</a><br />
-                    您添加的所有信息都将保存在 <code>localStorage</code> 中
+                    您添加的所有信息都将保存在 <code>IndexedDB</code> 中
                 </span>
             `
         },

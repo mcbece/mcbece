@@ -121,7 +121,7 @@ export default {
                                         const values = app.option.valuesOf(key)
                                         const list = new List()
                                         list.setHeader({
-                                            _indexName: "_option.values",
+                                            _indexName: "@_option.values",
                                         })
                                         each(values, ([name, description]) => list.setItem({
                                             name: name === app.option._getItem(key).selected ? `${name} (Selected)` : toString(name),
@@ -158,35 +158,22 @@ export default {
                                     list() {
                                         const list = new List()
                                         list.setHeader({
-                                            _indexName: "_tools",
-                                            template: {
-                                                input: {
-                                                    text: "{name} "
-                                                }
-                                            }
+                                            _indexName: "@_tools",
                                         })
                                         each(document.querySelectorAll("[id$='dialog']"), tool => {
+                                            const name = tool.id.replace(/-dialog$/, "")
                                             list.setItem({
-                                                name: tool.id.replace(/-dialog$/, ""),
-                                                info: tool.querySelector(".mdui-dialog-title .mdui-typo-headline").innerHTML + ": " + tool.querySelector(".mdui-dialog-title .mdui-typo-caption-opacity").innerHTML
+                                                name,
+                                                info: tool.querySelector(".mdui-dialog-title .mdui-typo-headline").innerHTML + ": " + tool.querySelector(".mdui-dialog-title .mdui-typo-caption-opacity").innerHTML,
+                                                onclick() {
+                                                    _page.dialogs[name].open()
+                                                }
                                             })
                                         })
                                         return list
                                     }
                                 }
-                            ],
-                            endFun(getter) {
-                                try {
-                                    _page.dialogs[getter.catchInput(1)].open()
-                                    return {
-                                        note: "打开成功"
-                                    }
-                                } catch {
-                                    return {
-                                        note: "打开失败"
-                                    }
-                                }
-                            }
+                            ]
                         }
                     ]
                 ]

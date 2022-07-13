@@ -22,7 +22,10 @@ export default class {
     }
     names = {}
     lists = {}
-    searchCache = new DataCache(10000)
+    searchCache = new DataCache(10000, ([key, value]) => {
+        if (Object.keys(value.names).some(e => e.startsWith("@"))) return false
+        else return true
+    })
     load(listGroup) {
         const result = _get.call(this, listGroup, false)
         this.event.emit("app.list.load", result, listGroup)

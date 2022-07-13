@@ -22,7 +22,6 @@ export class WebOption {
         await asyncEach(wos, async wo => {
             wo._db = _db
             await wo._getStorage()
-            await wo._setStorage()
             result.push(wo.getItemValMap())
         })
         return result
@@ -47,7 +46,6 @@ export class WebOption {
             }
         })
         await this._getStorage()
-        await this._setStorage()
         const result = this.getItemValMap()
         each(callbacks, callback => callback(result))
         return result
@@ -59,29 +57,28 @@ export class WebOption {
     _getItem(name) {
         return this.items[name]
     }
-    async setItemVal(name, value, callback = () => {}, replaceModel = false) {
+    setItemVal(name, value, callback = () => {}, replaceModel = false) {
         const item = this._getItem(name)
         const result = item?.select(value, replaceModel)
         if (result) callback(item.selected, item.original, this.getItemValMap())
-        await this._setStorage()
         return this
     }
-    async setItemOfDef(name, callback) {
+    setItemValOfDef(name, callback) {
         const item = this._getItem(name)
-        if (item) await this.setItem(name, item._defaultValue, callback, true)
+        if (item) this.setItemVal(name, item._defaultValue, callback, true)
         return this
     }
-    async clear(...names) {
+    clear(...names) {
         each(names, name => {
             const item = this._getItem(name)
-            if (item && item._storageModel) this.setItemOfDef(name)
+            if (item && item._storageModel) this.setItemValOfDef(name)
         })
+        return this
     }
-    async toggleItemVal(name, callback = () => {}) {
+    toggleItemVal(name, callback = () => {}) {
         const item = this._getItem(name)
         item?.toggle()
         callback(item.selected, item.original, this.getItemValMap())
-        await this._setStorage()
         return this
     }
     getItemVal(name) {
@@ -103,9 +100,13 @@ export class WebOption {
         }
         await tx.done
     }
+    async done() {
+        await this._setStorage().catch(console.error)
+    }
     async _getStorage() {
         const storage = await this._db.getAll(this._storeName)
-        await asyncEach(storage, async ({name, value}) => await this.setItemVal(name, value, undefined, true))
+        each(storage, ({name, value}) => this.setItemVal(name, value, undefined, true))
+        await this.done()
     }
 }
 

@@ -117,7 +117,7 @@ class __Option__ extends WebOption {
             isAprilFools() &&
             (key === "themePrimaryColor" || key === "themeAccentColor")
         ) return "Happy April Fools!"
-        this.setItemVal(key, value, (_, __, res) => this.callback(res)).catch(console.error)
+        this.setItemVal(key, value, (_, __, res) => this.callback(res)).done()
     }
     getItem(key) {
         return this.getItemVal(key)
