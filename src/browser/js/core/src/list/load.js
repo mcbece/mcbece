@@ -21,24 +21,23 @@ export function _load({ names, lists }, container) {
         )
     })
     if (this.list._useVirtualScroll) {
-        const vs = new VirtualScroll({
-            app: this,
-            data,
-            render: _render.bind(this),
-            bench: 5,
-            callback: (container, _items) => {
-                const items = document.createDocumentFragment()
-                each(_items, item => items.appendChild(item))
-                container.innerHTML = ""
-                container.appendChild(items)
-            }
-        })
-        vs.rootEle.scrollTo({
-            top: 0,
-            left: 0,
-            behavior: "smooth"
-        })
-        this.list.__vs = vs
+        if (this.list.__vs) this.list.__vs.resetData(data).scrollToTop()
+        else {
+            const vs = new VirtualScroll({
+                rootEle: document.querySelector(".list-container"),
+                app: this,
+                data,
+                render: _render.bind(this),
+                bench: 5,
+                callback: (container, _items) => {
+                    const items = document.createDocumentFragment()
+                    each(_items, item => items.appendChild(item))
+                    container.innerHTML = ""
+                    container.appendChild(items)
+                }
+            })
+            this.list.__vs = vs.scrollToTop()
+        }
     } else {
         container.innerHTML = ""
         const items = document.createDocumentFragment()

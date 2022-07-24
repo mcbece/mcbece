@@ -1,5 +1,5 @@
 import App from "./core/index.js"
-import { toString, stringToNode, nodeToString, getReturn, mapObject } from "./core/util/common.js"
+import { toString, stringToNode, getReturn } from "./core/util/common.js"
 import { setThemeColor, snackbar } from "./src/mdui.js"
 import { isAprilFools } from "./src/util.js"
 import { WebOption } from "./lib/WebOption.class.js"
@@ -19,6 +19,7 @@ const funBtnCont = {
 
 window.app = new App({
     DEFAULT_LANGUAGE: "zh-CN",
+    DEFAULT_BRANCH: "vanilla",
     
     $input: document.querySelector("#edit"),
     $grammar: document.querySelector("#grammar"),
@@ -68,7 +69,11 @@ window.app = new App({
         renderer: {
             image: {
                 callbackFun(url) {
-                    return `<div class="mdui-list-item-avatar" id="image"><img src="${url}" /></div>`
+                    return `
+                        <div class="mdui-list-item-avatar" id="image">
+                            <img src="${url}" />
+                        </div>
+                    `
                 }
             },
             input: {
@@ -78,7 +83,11 @@ window.app = new App({
             },
             url: {
                 callbackFun(url) {
-                    return `<a class="mdui-btn mdui-btn-icon mdui-list-item-things-display-when-hover" href="${url}" target="_blank" id="url"><i class="mdui-icon material-icons mdui-text-color-black-icon">import_contacts</i></a>`
+                    return `
+                        <a class="mdui-btn mdui-btn-icon mdui-list-item-things-display-when-hover" href="${url}" target="_blank">
+                            <i class="mdui-icon material-icons mdui-text-color-black-icon">import_contacts</i>
+                        </a>
+                    `
                 }
             }
         }
@@ -99,12 +108,13 @@ window.app = new App({
                     primary: [app.option._getItem("themePrimaryColor").selected, "green"],
                     accent: [app.option._getItem("themeAccentColor").selected, "red"]
                 })
-                document.body.classList.remove("loading")
             }
         ],
         "app.init.end": [
             args => {
-                app.config.$input.value = args.userData_inputting
+                app.config.$input.value = args.userData.inputting
+                app.event.emit("app._history.add")
+                document.body.classList.remove("loading")
             }
         ],
         "app.i18n": [
@@ -131,9 +141,7 @@ window.app = new App({
             }
         ],
         "app.input.love": [
-            () => {
-                
-            }
+            () => snackbar("已收藏")
         ],
         "app.input.copy": [
             () => snackbar("已复制")
@@ -143,9 +151,7 @@ window.app = new App({
                 document.body.classList.add("loading")
                 app.initialize({
                     ...app.option.getItemValMap(),
-                    ...mapObject(app._userData.getItemValMap(), (key, value) => {
-                        return [ `userData_${key}`, value ]
-                    })
+                    userData: app._userData.getItemValMap()
                 })
             }
         ]
@@ -154,17 +160,15 @@ window.app = new App({
     plugin: {
         plugins: [
             createWebOptionManager,
-            createUserDataManager,
-            createPWAManager
+            createPWAManager,
+            createUserDataManager
         ],
-        init([ option, user, pwa ]) {
-            if (option && user) {
-                WebOption.initAll(option, user).then(([res1, res2]) => {
-                    app.option = option
-                    app._userData = user
-                    app.event.emit("app.reoption")
-                }).catch(console.error)
-            }
+        init([ option, pwa, user]) {
+            WebOption.initAll(option, user).then(() => {
+                app.option = option
+                app._userData = user
+                app.event.emit("app.reoption")
+            }).catch(console.error)
             if (pwa && !pwa._noServiceWorker) app.pwa = pwa
         }
     }

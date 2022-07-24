@@ -1,14 +1,14 @@
-import { each } from "../util/common.js"
+import { each, sliceByMaxLength } from "../util/common.js"
 
 export class DataCache {
     constructor(maxLength) {
         this.maxLength = maxLength
-        this.data = new Map()
     }
+    data = new Map()
     push(name, data) {
         if (!this.has(name)) {
             this.data.set(name, data)
-            if (this.maxLength) this.data = new Map(Array.from(this.data).reverse().slice(0, this.maxLength).reverse())
+            if (this.maxLength) this.data = new Map(sliceByMaxLength(Array.from(this.data), this.maxLength))
             return true
         } else {
             this.data.delete(name)

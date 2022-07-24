@@ -1,4 +1,4 @@
-mixin dialog({id, title, subtitle, tab, content, onsave})
+mixin dialog({id, title, subtitle, tab, content, contentClass, onsave, actions})
     .mdui-dialog.mdui-dialog-full-screen(id=`${id}-dialog`)
         .mdui-dialog-title.mdui-color-theme
             span.mdui-typo-headline= title
@@ -9,7 +9,7 @@ mixin dialog({id, title, subtitle, tab, content, onsave})
                 each item in tab
                     a.mdui-ripple(id=e.id)= item.name
         if content
-            .mdui-dialog-content
+            .mdui-dialog-content(class=contentClass)
                 if Array.isArray(content)
                     .mdui-row
                         each item in content
@@ -22,6 +22,9 @@ mixin dialog({id, title, subtitle, tab, content, onsave})
                     != content
                     
         .mdui-dialog-actions
+            if actions
+                each action in actions
+                    button.mdui-btn.mdui-ripple(onclick=action.onclick mdui-dialog-close=action.close)= action.text
             if onsave
                 button.mdui-btn.mdui-ripple(onclick=onsave) 保存
             button.mdui-btn.mdui-ripple(mdui-dialog-close) 关闭

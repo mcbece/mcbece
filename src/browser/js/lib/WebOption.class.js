@@ -1,5 +1,5 @@
 import { openDB } from "idb/with-async-ittr"
-import { each, asyncEach, toString } from "../core/util/common.js"
+import { each, asyncEach, toString, sliceByMaxLength } from "../core/util/common.js"
 
 export class WebOption {
     static async initAll(...wos) {
@@ -51,38 +51,55 @@ export class WebOption {
         return result
     }
     addItem(opts) {
-        this.items[opts.name] = new WebOptionItem(opts)
+        if (opts.storageModel) this.items[opts.name] = new WebStorageItem(opts)
+        else this.items[opts.name] = new WebOptionItem(opts)
         return this
     }
     _getItem(name) {
         return this.items[name]
     }
-    setItemVal(name, value, callback = () => {}, replaceModel = false) {
+    setItemVal(name, value, callback = () => {}, getFromStorage) {
         const item = this._getItem(name)
-        const result = item?.select(value, replaceModel)
-        if (result) callback(item.selected, item.original, this.getItemValMap())
+        if (item instanceof WebStorageItem) {
+            if (getFromStorage) item.setData(value)
+            else item.addData(value)
+            callback(value, item.data, this.getItemValMap())
+        } else {
+            const result = item.select(value)
+            if (result) callback(item.selected, item.original, this.getItemValMap())
+        }
         return this
     }
-    setItemValOfDef(name, callback) {
-        const item = this._getItem(name)
-        if (item) this.setItemVal(name, item._defaultValue, callback, true)
-        return this
-    }
-    clear(...names) {
+    setItemValOfDef(...names) {
         each(names, name => {
             const item = this._getItem(name)
-            if (item && item._storageModel) this.setItemValOfDef(name)
+            if (item instanceof WebOptionItem) this.setItemVal(name, item._defaultValue, callback)
+        })
+        return this
+    }
+    deleteStoreData(name, index) {
+        const item = this._getItem(name)
+        if (item instanceof WebStorageItem) item.delData(index)
+        return this
+    }
+    clearStoreData(...names) {
+        each(names, name => {
+            const item = this._getItem(name)
+            if (item instanceof WebStorageItem) item.clear()
         })
         return this
     }
     toggleItemVal(name, callback = () => {}) {
         const item = this._getItem(name)
-        item?.toggle()
+        if (item instanceof WebStorageItem) return this
+        item.toggle()
         callback(item.selected, item.original, this.getItemValMap())
         return this
     }
     getItemVal(name) {
-        return this._getItem(name)?.selected
+        const item = this._getItem(name)
+        if (item instanceof WebOptionItem) return item.selected
+        else if (item instanceof WebStorageItem) return item.data
     }
     getItemValMap() {
         const result = {}
@@ -111,10 +128,9 @@ export class WebOption {
 }
 
 class WebOptionItem {
-    constructor({ name, description, values = [], callback = () => {}, /* handler = s => s, */ defaultValue, storageModel = false }) {
+    constructor({ name, description, values = [], callback = () => {}, /* handler = s => s, */ defaultValue }) {
         this.name = name
         this.description = description
-        this._storageModel = storageModel
         this.values = new Map(values.map(value => {
             if (typeof value[0] === "object") value[0] = toString(value[0])
             else if (value[0] === undefined) value[0] = "undefined"
@@ -127,15 +143,12 @@ class WebOptionItem {
         // this.handler = handler
         if (defaultValue !== undefined && this.hasVal(defaultValue)) this.selected = defaultValue
         else if (values[0]) this.selected = values[0][0]
-        if (storageModel) this.selected = []
         this.callback(this.selected)
     }
-    select(value, replaceModel) {
+    select(value) {
         if (this.selected !== value && this.hasVal(value)) {
             this.original = this.selected
-            if (this._storageModel && !replaceModel) this.selected.push(value)
-            else if (this._storageModel) this.selected = []
-            else this.selected = /* this.handler(value) */ value
+            this.selected = /* this.handler(value) */ value
             this.callback(this.selected, this.original)
             return true
         } else return false
@@ -165,5 +178,30 @@ class WebOptionItem {
     getValueDescription(name) {
         if (name === undefined) name = this.selected
         return this.values.get(name)
+    }
+}
+
+class WebStorageItem {
+    constructor({ name, description, maxLength, callback = () => {} /*, handler = s => s */ }) {
+        this.name = name
+        this.description = description
+        this.maxLength = maxLength
+    }
+    data = []
+    setData(data) {
+        this.data = data || []
+    }
+    addData(data) {
+        this.data.push(data)
+        this.data = sliceByMaxLength(this.data, this.maxLength)
+    }
+    delData(index) {
+        this.data.splice(index, 1)
+    }
+    hasData(data) {
+        return this.data.some(e => e === data)
+    }
+    clear() {
+        this.data = []
     }
 }

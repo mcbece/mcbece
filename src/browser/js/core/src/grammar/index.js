@@ -1,5 +1,7 @@
+import { deepEqual } from "fast-equals"
 import { _get } from "./get.js"
 import { InputGetter } from "../../lib/InputGetter.class.js"
+import { getReturn } from "../../util/common.js"
 
 export default class {
     constructor(app) {
@@ -14,10 +16,10 @@ export default class {
             $grammar.innerHTML = `<span>${commandName} </span>`
             $note.innerHTML = `<span>${result.header.command.info}</span>`
             if (result.body.info.length < commandLength) {
-                this.event.emit("app.grammar.finish")
+                this.grammar._list = []
                 return Object.assign({}, {
                     _finish: true
-                }, handle.call(this, result.body.endFun))
+                }, getReturn(result.body.endFun, new InputGetter(this)))
             } else {
                 $grammar.innerHTML += `<span>${replace(result.body.grammar)}</span>`
                 $grammar.querySelectorAll("span")[commandLength].style.fontWeight = "bold"
@@ -25,13 +27,19 @@ export default class {
                 //     behavior: "smooth",
                 //     inline: "start"
                 // })
-                $note.innerHTML = handle.call(this, result.body.info[commandLength - 1].note)
-                return {
-                    list: handle.call(this, result.body.info[commandLength - 1].list)
+                $note.innerHTML = getReturn(result.body.info[commandLength - 1].note, new InputGetter(this))
+                const list = handle(getReturn(result.body.info[commandLength - 1].list, new InputGetter(this)))
+                if (!this.grammar._list || !deepEqual(this.grammar._list, list)) {
+                    this.grammar._list = list
+                    return {
+                        _load: true,
+                        list
+                    }
+                } else return {
+                    _search: true
                 }
             }
         } else {
-            this.event.emit("app.grammar.undefined")
             return {
                 _undefined: true
             }
@@ -48,8 +56,9 @@ function replace(grammar) {
 }
 
 function handle(target) {
-    if (typeof target === "function") return target(new InputGetter(this))
-    else if (Array.isArray(target)) {
-        return target.map(item => handle(item))
+    if (Array.isArray(target)) {
+        return target.sort()
+    } else if (typeof target === "string") {
+        return target.split(/\s*;\s*/).sort()
     } else return target
 }

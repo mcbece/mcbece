@@ -31,10 +31,7 @@ export default class {
             }, true)
         }).catch(console.error)
     }
-    
-    plugins = {}
-    
-    initialize(args) {
+    initialize(args = defInitConfig) {
         const { lang, branch, customURL, listWithImage } = args
         this.data.init(lang, branch, objectGet(this.config, "data.url", { _return: "" }), customURL).then(() => {
             this.list.withImage = listWithImage
@@ -60,7 +57,6 @@ export default class {
         $list.innerHTML = ""
         this.list.names = {}
         this.list.lists = {}
-        
         $grammar.innerHTML = ""
         $note.innerHTML = ""
     }
@@ -69,23 +65,39 @@ export default class {
         this.event.emit("app.change")
         if (this.input.catchInput().length === 1) {
             this.list.load("command")
+            this.grammar._list = [ "command" ]
             $grammar.innerHTML = ""
             $note.innerHTML = this.data.get("text", "edit.begin")
             this.list.search()
-            return
+        } else {
+            const result = this.grammar.load(this.input.catchName())
+            if (result._finish) {
+                this.event.emit("app.grammar.finish")
+                $list.innerHTML = ""
+                $grammar.innerHTML = ""
+                $note.innerHTML = result.note ?? this.data.get("text", "edit.end")
+                this.list.names = {}
+                this.list.lists = {}
+                if (this.list._useVirtualScroll) this.list.__vs?.destroy()
+            } else if (result._undefined) {
+                this.event.emit("app.grammar.undefined")
+                $list.innerHTML = ""
+                $note.innerHTML = "未知的命令"
+                this.list.names = {}
+                this.list.lists = {}
+                if (this.list._useVirtualScroll) this.list.__vs?.destroy()
+            } else if (result._load) {
+                this.list.load(result.list ?? "")
+                this.list.search()
+            } else if (result._search) {
+                this.list.search()
+            }
         }
-        const result = this.grammar.load(this.input.catchName())
-        if (result._finish) {
-            $list.innerHTML = ""
-            $grammar.innerHTML = ""
-            $note.innerHTML = result.note ?? this.data.get("text", "edit.end")
-            this.list.names = {}
-        } else if (result._undefined) {
-            $list.innerHTML = ""
-            $note.innerHTML = "未知的命令"
-            this.list.names = {}
-        }
-        else this.list.load(result.list ?? "")
-        this.list.search()
+        this.event.emit("app.change.end")
     }
+}
+
+const defInitConfig = {
+    lang: "zh-CN",
+    branch: "vanilla"
 }

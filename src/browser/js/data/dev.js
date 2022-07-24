@@ -16,8 +16,16 @@ export default {
                 },
                 command: [
                     {
-                        "name": "@long-list-test",
-                        "info": "长列表测试",
+                        "name": "@long-list-test1",
+                        "info": "长列表测试 1",
+                        "input": {
+                            "replace": "all",
+                            "text": "{name} "
+                        }
+                    },
+                    {
+                        "name": "@long-list-test2",
+                        "info": "长列表测试 2",
                         "input": {
                             "replace": "all",
                             "text": "{name} "
@@ -46,8 +54,8 @@ export default {
                     [
                         {
                             "command": {
-                                "name": "/^@long-list-test$/",
-                                "info": "长列表测试"
+                                "name": "/^@long-list-test1$/",
+                                "info": "长列表测试 1"
                             }
                         },
                         {
@@ -84,6 +92,43 @@ export default {
                                         "another1000_7",
                                         "another1000_8",
                                         "another1000_9"
+                                    ],
+                                }
+                            ]
+                        }
+                    ],
+                    [
+                        {
+                            "command": {
+                                "name": "/^@long-list-test2$/",
+                                "info": "长列表测试 2"
+                            }
+                        },
+                        {
+                            "grammar": "[列表内容]",
+                            "info": [
+                                {
+                                    "length": 1,
+                                    "list": [
+                                        "entity",
+                                        "entity.summonable",
+                                        "entity.family",
+                                        "block",
+                                        "item",
+                                        "particle_emitter",
+                                        "sound",
+                                        "music",
+                                        "animation",
+                                        "effect",
+                                        "enchantment",
+                                        "fog",
+                                        "location",
+                                        "command",
+                                        // "selector.variable",
+                                        // "selector.argument",
+                                        "difficulty",
+                                        "boolean",
+                                        "ability"
                                     ],
                                 }
                             ]

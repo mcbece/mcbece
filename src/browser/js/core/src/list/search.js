@@ -8,9 +8,10 @@ export function _search(__query, cacheName) {
         lists: {},
         names: {}
     }
+    const thisLists = deepCopy(this.list.lists)
     each(this.list.names, (listName, _header) => {
         const list = {
-            body: deepCopy(this.list.lists[listName]),
+            body: thisLists[listName],
             header: _header
         }
         let _query = __query
@@ -56,9 +57,10 @@ export function _search(__query, cacheName) {
 }
 
 function match(list, query, searchSpace) {
+    const template = objectGet(this.config, "list.template.highlight", { _return: (_, $1) => $1 })
     const result = list.filter(item => query.test(item[searchSpace]))
     return result.map(item => {
-        item[searchSpace] = item[searchSpace]?.replace(query, objectGet(this.config, "list.template.highlight", { _return: (_, $1) => $1 }))
+        item[searchSpace] = item[searchSpace]?.replace(query, template)
         return item
     })
 }

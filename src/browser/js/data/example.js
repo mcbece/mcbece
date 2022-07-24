@@ -160,7 +160,7 @@ export default {
                                         list.setHeader({
                                             _indexName: "@_tools",
                                         })
-                                        each(document.querySelectorAll("[id$='dialog']"), tool => {
+                                        each(document.querySelectorAll("[id$='-dialog']"), tool => {
                                             const name = tool.id.replace(/-dialog$/, "")
                                             list.setItem({
                                                 name,

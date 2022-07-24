@@ -3,7 +3,7 @@ include ./mixins/dialog.pug
 +dialog({
     id: "option",
     title: "设置",
-    subtitle: "你可以通过这个工具修改网站设置",
+    subtitle: "修改网站设置",
     content: [
         {
             title: "说明：",
@@ -19,7 +19,7 @@ include ./mixins/dialog.pug
 +dialog({
     id: "custom",
     title: "自定义",
-    subtitle: "你可以通过这个工具引入自己的自定义项",
+    subtitle: "引入自己的自定义项",
     content: [
         {
             title: "说明：",
@@ -45,7 +45,7 @@ include ./mixins/dialog.pug
 +dialog({
     id: "pwa",
     title: "PWA",
-    subtitle: "你可以通过这个工具使用 PWA 的相关功能",
+    subtitle: "使用 PWA 的相关功能",
     content: [
         {
             title: "安装：",
@@ -76,8 +76,30 @@ include ./mixins/dialog.pug
 +dialog({
     id: "history",
     title: "历史记录",
-    subtitle: "你可以通过这个工具管理自己的历史记录",
+    subtitle: "管理自己的历史记录",
+    contentClass: "mdui-p-a-0 virtual-scroll",
     content: `
-        
+        <div id="history-vlist" class="virtual-scroll__container mdui-list mdui-list-dense mdui-p-a-0"></div>
     `,
+    actions: [
+        {
+            text: "全部删除",
+            onclick: "_page.vlists.history.clear()"
+        }
+    ]
+})
++dialog({
+    id: "love",
+    title: "收藏",
+    subtitle: "管理自己的收藏",
+    contentClass: "mdui-p-a-0 virtual-scroll",
+    content: `
+        <div id="love-vlist" class="virtual-scroll__container mdui-list mdui-list-dense mdui-p-a-0"></div>
+    `,
+    actions: [
+        {
+            text: "全部删除",
+            onclick: "_page.vlists.love.clear()"
+        }
+    ]
 })

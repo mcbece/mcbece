@@ -28,7 +28,7 @@ export function objectGet(obj, key, { _return, handler = s => s, strict = false 
         if (!strict && output === undefined) return _return
         else return output
     } catch (err) {
-        console.debug(`Could not get "${key}" in \`obj\`, returning \`_return\`.`, {obj, _return})
+        console.warn(`Could not get "${key}" in \`obj\`, returning \`_return\`.`, {obj, _return})
         return _return
     }
 }
@@ -134,9 +134,19 @@ export function removeValueChangedListener(inputEle, listener, withEventListener
 }
 
 export function includesAll(arr, valuesToFind, fromIndex) {
-    return !valuesToFind.map(valueToFind => arr.includes(valueToFind, fromIndex)).includes(false)
+    return !valuesToFind
+        .map(valueToFind => arr.includes(valueToFind, fromIndex))
+        .includes(false)
 }
 
 export function includesSome(arr, valuesToFind, fromIndex) {
-    return valuesToFind.map(valueToFind => arr.includes(valueToFind, fromIndex)).includes(true)
+    return valuesToFind
+        .map(valueToFind => arr.includes(valueToFind, fromIndex))
+        .includes(true)
+}
+
+export function sliceByMaxLength(arr, maxLength) {
+    return arr.reverse()
+        .slice(0, maxLength)
+        .reverse()
 }

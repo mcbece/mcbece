@@ -9,7 +9,7 @@ const DEFAULT_THEME_COLOR = {
 }
 
 export default async function (app) {
-    const { DEFAULT_LANGUAGE } = app.config
+    const { DEFAULT_LANGUAGE, DEFAULT_BRANCH } = app.config
     
     const option = new __Option__("option", () => app.event.emit("app.reoption"))
     
@@ -35,7 +35,7 @@ export default async function (app) {
                 callback:(_selected, _original) => {
                     console.debug("Option: branch -> from", _original, "to", _selected)
                 },
-                defaultValue: branches[0]
+                defaultValue: DEFAULT_BRANCH || branches[0]
             })
         },
         defaultValue: DEFAULT_LANGUAGE

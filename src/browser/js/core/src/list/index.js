@@ -1,3 +1,4 @@
+import { deepEqual } from "fast-equals"
 import { objectGet, toString } from "../../util/common.js"
 import { DataCache } from "../../lib/DataCache.class.js"
 import { _get } from "./get.js"
@@ -11,7 +12,7 @@ export default class {
         
         Object.defineProperty(this, "_useVirtualScroll", {
             get() {
-                return objectGet(app.config, "list._useVirtualScroll") && document.querySelector(".virtual-scroll")
+                return objectGet(app.config, "list._useVirtualScroll")
             }
         })
         Object.defineProperty(this, "_useDivider", {
@@ -19,18 +20,27 @@ export default class {
                 return objectGet(app.config, "list._useDivider") && objectGet(app.config, "list.template.divider") && !this._useVirtualScroll
             }
         })
+        Object.defineProperty(this, "_height", {
+            get() {
+                return objectGet(app.config, "list._height")
+            }
+        })
+        Object.defineProperty(this, "_itemHeight", {
+            get() {
+                return objectGet(app.config, "list._itemHeight")
+            }
+        })
     }
     names = {}
     lists = {}
-    searchCache = new DataCache(10000, ([key, value]) => {
-        if (Object.keys(value.names).some(e => e.startsWith("@"))) return false
-        else return true
-    })
+    searchCache = new DataCache(10000)
     load(listGroup) {
         const result = _get.call(this, listGroup, false)
         this.event.emit("app.list.load", result, listGroup)
-        //@dev console.debug({ listGetResult: result })
-        if (toString(Object.keys(this.list.names).sort()) !== toString(Object.keys(result.names).sort())) {
+        
+        console.debug({ listGetResult: result })
+        
+        if (!deepEqual(Object.keys(this.list.names).sort(), Object.keys(result.names).sort())) {
             
             console.debug({ listLoadResult: result })
             
@@ -44,7 +54,9 @@ export default class {
         const cacheName = this.input.catchInput().join(" ")
         const result = _search.call(this, query, cacheName)
         this.event.emit("app.list.search", result, query)
-        //@dev console.debug({listSearchResult: result})
+        
+        console.debug({listSearchResult: result})
+        
         _load.call(this, result, this.config.$list)
         this.list.searchCache.push(cacheName, result)
     }
