@@ -104,7 +104,6 @@ window.app = new App({
         ],
         "app.init.end": [
             args => {
-                app.list.searchCache._data = args.userData_searchCache
                 app.config.$input.value = args.userData_inputting
             }
         ],
@@ -114,7 +113,7 @@ window.app = new App({
         "app.clear": [
             args => {
                 $funBtn.innerHTML = ""
-                if (args.autoClearSearchCache) app._userData.clear("searchCache").done().then(() => app.list.searchCache.clear())
+                if (args.autoClearSearchCache) app.list.searchCache.clear()
             }
         ],
         "app.change": [

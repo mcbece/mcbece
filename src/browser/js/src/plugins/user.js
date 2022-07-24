@@ -4,9 +4,7 @@ export default async function(app) {
     const user = new WebOption("userData")
     
     app.event.on("app.input", () => {
-        user.setItemVal("inputting", app.config.$input.value)
-            .setItemVal("searchCache", app.list.searchCache.data)
-            .done()
+        user.setItemVal("inputting", app.config.$input.value).done()
     }).on("app.input.copy", value => {
         user.setItemVal("history", value).done()
     }).on("app.input.love", value => {
@@ -20,13 +18,6 @@ export default async function(app) {
         defaultValue: "",
         callback(...args) {
             console.debug("userData: inputting -> from", args[1], "to", args[0])
-        }
-    })
-    .addItem({
-        name: "searchCache",
-        defaultValue: new Map(),
-        callback(...args) {
-            console.debug("userData: searchCache -> from", args[1], "to", args[0])
         }
     })
     .addItem({
