@@ -1,6 +1,6 @@
 @mixin lite() {
-    padding-top: 45px !important;
-    padding-bottom: 40px !important;
+    padding-top: 45px;
+    padding-bottom: 40px;
     
     .minecraft-font {
         font-family: Roboto, Noto, Helvetica, Arial, sans-serif !important;
@@ -10,8 +10,8 @@
         bottom: 56px;
     }
     
-    .mdui-toolbar {
-        &:nth-child(1) {
+    #header {
+        & > .mdui-toolbar {
             height: 40px !important;
             bottom: 0 !important;
             top: auto !important;
@@ -39,11 +39,19 @@
             }
         }
         
-        &:nth-child(2) {
-            height: 45px !important;
+        .mdui-collapse-item {
+            & > .mdui-toolbar {
+                height: 45px !important;
+                
+                .mdui-list-item-content {
+                    margin: 0 12px;
+                }
+            }
             
-            .mdui-list-item-content {
-                margin: 0 12px;
+            .mdui-collapse-item-body {
+                .mdui-toolbar {
+                    height: 45px !important;
+                }
             }
         }
     }

@@ -1,9 +1,11 @@
 import { deepEqual } from "fast-equals"
 import { objectGet, toString } from "../../util/common.js"
 import { DataCache } from "../../lib/DataCache.class.js"
+import { VirtualScroll } from "../../lib/VirtualScroll.class.js"
 import { _get } from "./get.js"
 import { _load } from "./load.js"
 import { _search } from "./search.js"
+import { _render } from "./render.js"
 
 export default class {
     constructor(app) {
@@ -29,6 +31,14 @@ export default class {
             get() {
                 return objectGet(app.config, "list._itemHeight")
             }
+        })
+        
+        if (this._useVirtualScroll) this.__vs = new VirtualScroll({
+            rootEle: document.querySelector(".list-container"),
+            app: this,
+            data: [],
+            render: _render.bind(app),
+            bench: 5
         })
     }
     names = {}

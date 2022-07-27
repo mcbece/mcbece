@@ -18,3 +18,7 @@ export function isAprilFools() {
 export function isChrome() {
     return testRegExp("!/Chrome/", navigator.userAgent)
 }
+
+export function hasLoved(cont) {
+    return app._userData._getItem("love").hasData(cont)
+}

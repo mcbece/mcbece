@@ -10,7 +10,8 @@ export default {
                             "__app_list__": true
                         },
                         {
-                            "name": "test"
+                            "name": "test",
+                            "info": ""
                         }
                     ]
                 },

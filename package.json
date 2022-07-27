@@ -5,13 +5,13 @@
     "private": true,
     "license": "GPL-3.0",
     "type": "module",
-    "homepage": "https://github.com/PFiS1737/mcbece#readme",
+    "homepage": "https://github.com/mcbece/mcbece#readme",
     "repository": {
         "type": "git",
-        "url": "https://github.com/PFiS1737/mcbece.git"
+        "url": "https://github.com/mcbece/mcbece.git"
     },
     "bugs": {
-        "url": "https://github.com/PFiS1737/mcbece/issues",
+        "url": "https://github.com/mcbece/mcbece/issues",
         "email": "pfis1737@qq.com"
     },
     "dependencies": {
@@ -44,12 +44,12 @@
         "serve": "^13.0.2"
     },
     "scripts": {
-        "s": "node app",
-        "g": "npm run g-css && npm run g-js",
         "d": "npm run g && npm run s",
-        "s-s": "serve public --listen 8080 --debug",
-        "g-s": "gulp && npm run g-js",
+        "g": "npm run g-css && npm run g-js",
+        "s": "node app",
         "d-s": "npm run g-s && npm run s-s",
+        "g-s": "gulp && npm run g-js",
+        "s-s": "serve public --listen 8080 --debug",
         "g-js": "rollup --config",
         "g-css": "gulp css",
         "g-html": "gulp html",

@@ -28,7 +28,6 @@
             - vs
                 - 完善 `Virtual Scroll`
                     - 支持加载不同高度的列表项
-                    - 使用 `IntersectionObserver` 优化虚拟滚动
         - grammar
             - 自动滚动的语法提示栏
             - 全面改进 `grammar` 数据的读取逻辑以适应更复杂的语法及其他模块的调用需求

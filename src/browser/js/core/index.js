@@ -78,14 +78,14 @@ export default class {
                 $note.innerHTML = result.note ?? this.data.get("text", "edit.end")
                 this.list.names = {}
                 this.list.lists = {}
-                if (this.list._useVirtualScroll) this.list.__vs?.destroy()
+                if (this.list._useVirtualScroll) this.list.__vs.destroy()
             } else if (result._undefined) {
                 this.event.emit("app.grammar.undefined")
                 $list.innerHTML = ""
                 $note.innerHTML = "未知的命令"
                 this.list.names = {}
                 this.list.lists = {}
-                if (this.list._useVirtualScroll) this.list.__vs?.destroy()
+                if (this.list._useVirtualScroll) this.list.__vs.destroy()
             } else if (result._load) {
                 this.list.load(result.list ?? "")
                 this.list.search()

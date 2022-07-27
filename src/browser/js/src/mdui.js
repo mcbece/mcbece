@@ -3,7 +3,7 @@ import { THEME_COLOR } from "../../../data.js"
 export function snackbar(message, option) {
     mdui.snackbar({
         message,
-        position: window._LITE_MODELL ? "bottom" : "left-top",
+        position: window._LITE_MODEL ? "bottom" : "left-top",
         timeout: 2000,
         ...option
     })

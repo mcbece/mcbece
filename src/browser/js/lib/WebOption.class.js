@@ -77,9 +77,9 @@ export class WebOption {
         })
         return this
     }
-    deleteStoreData(name, index) {
+    deleteStoreData(name, data) {
         const item = this._getItem(name)
-        if (item instanceof WebStorageItem) item.delData(index)
+        if (item instanceof WebStorageItem) item.delData(data)
         return this
     }
     clearStoreData(...names) {
@@ -187,21 +187,21 @@ class WebStorageItem {
         this.description = description
         this.maxLength = maxLength
     }
-    data = []
+    data = new Set()
     setData(data) {
-        this.data = data || []
+        this.data = data || new Set()
     }
     addData(data) {
-        this.data.push(data)
-        this.data = sliceByMaxLength(this.data, this.maxLength)
+        this.data.add(data)
+        this.data = new Set(sliceByMaxLength([...this.data], this.maxLength))
     }
-    delData(index) {
-        this.data.splice(index, 1)
+    delData(data) {
+        this.data.delete(data)
     }
     hasData(data) {
-        return this.data.some(e => e === data)
+        return this.data.has(data)
     }
     clear() {
-        this.data = []
+        this.data = new Set()
     }
 }

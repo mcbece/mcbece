@@ -10,10 +10,7 @@ html
         // Manifest 
         link(rel="manifest" href="/manifest.json")
         // MDUI CSS 
-        if bundle
-            link(rel="stylesheet" href="//fastly.jsdelivr.net/npm/mdui/dist/css/mdui.min.css")
-        else
-            link(rel="stylesheet" href="/lib/mdui/dist/css/mdui.min.css")
+        link(rel="stylesheet" href="/lib/mdui/dist/css/mdui.min.css")
         // CSS 
         link(rel="stylesheet" href="/css/index.min.css")
     body.loading
@@ -29,9 +26,6 @@ html
         .list-container.virtual-scroll
             #list.virtual-scroll__container.mdui-list.mdui-p-y-0
         // MDUI JS 
-        if bundle
-            script(src="//fastly.jsdelivr.net/npm/mdui/dist/js/mdui.min.js")
-        else
-            script(src="/lib/mdui/dist/js/mdui.min.js")
+        script(src="/lib/mdui/dist/js/mdui.min.js")
         // JavaScript 
         script(type="module" src="/js/bundle.min.js")

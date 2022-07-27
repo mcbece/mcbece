@@ -5,11 +5,6 @@ export default async function(app) {
     
     app.event.on("app.input", value => {
         user.setItemVal("inputting", value).done()
-    }).on("app.input.copy", value => {
-        user.setItemVal("history", value).done()
-        // app.event.emit("app._history.add")
-    }).on("app.input.love", () => {
-        user.setItemVal("love", app.config.$input.value).done()
     })
     
     return user
@@ -26,7 +21,8 @@ export default async function(app) {
         callback(...args) {
             console.debug("userData: history -> add", args[1], "to", args[0])
         },
-        storageModel: true
+        storageModel: true,
+        maxLength: 10000
     })
     .addItem({
         name: "love",

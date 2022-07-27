@@ -1,5 +1,4 @@
 import { each, stringToNode } from "../../util/common.js"
-import { VirtualScroll } from "../../lib/VirtualScroll.class.js"
 import { _render } from "./render.js"
 
 export function _load({ names, lists }, container) {
@@ -20,25 +19,8 @@ export function _load({ names, lists }, container) {
             )
         )
     })
-    if (this.list._useVirtualScroll) {
-        if (this.list.__vs) this.list.__vs.resetData(data).scrollToTop()
-        else {
-            const vs = new VirtualScroll({
-                rootEle: document.querySelector(".list-container"),
-                app: this,
-                data,
-                render: _render.bind(this),
-                bench: 5,
-                callback: (container, _items) => {
-                    const items = document.createDocumentFragment()
-                    each(_items, item => items.appendChild(item))
-                    container.innerHTML = ""
-                    container.appendChild(items)
-                }
-            })
-            this.list.__vs = vs.scrollToTop()
-        }
-    } else {
+    if (this.list._useVirtualScroll) this.list.__vs.resetData(data).scrollToTop()
+    else {
         container.innerHTML = ""
         const items = document.createDocumentFragment()
         each(_render.call(this, data), item => items.appendChild(stringToNode(item, true)))

@@ -57,8 +57,8 @@ function replace(grammar) {
 
 function handle(target) {
     if (Array.isArray(target)) {
-        return target.sort()
+        return target
     } else if (typeof target === "string") {
-        return target.split(/\s*;\s*/).sort()
+        return target.split(/\s*;\s*/)
     } else return target
 }

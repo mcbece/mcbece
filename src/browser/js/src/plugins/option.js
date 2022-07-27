@@ -72,9 +72,9 @@ export default async function (app) {
             console.debug("Option: liteModel -> from", original, "to", selected)
             if (selected) document.body.classList.add("lite")
             else document.body.classList.remove("lite")
-            window._LITE_MODELL = selected
+            window._LITE_MODEL = selected
         },
-        defaultValue: false
+        defaultValue: window.matchMedia("(max-width: 1023.9px)").matches
     })
     
     // Others

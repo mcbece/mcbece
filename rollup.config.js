@@ -14,18 +14,6 @@ const banner = `
 `.trim()
 
 export default [
-    // utils
-    _({
-        src: "core/util/common.js",
-        dest: "lib/util.min.js",
-        name: "util"
-    }),
-    _({
-        src: "core/util/betterJSON.js",
-        dest: "lib/betterJSON.min.js",
-        name: "util"
-    }),
-    
     // core
     _({
         src: "core/index.js",

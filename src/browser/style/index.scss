@@ -1,4 +1,5 @@
 @import "./mdui.extension.scss";
+@import "./mdui.change.scss";
 @import "./virtualScroll.scss";
 @import "./lite.scss";
 
@@ -43,6 +44,7 @@ body.loading {
 
 body {
     padding-top: 120px;
+    transition: padding-top .3s ease-in-out !important;
     
     &:not(.loading) .loading-box {
         display: none !important;

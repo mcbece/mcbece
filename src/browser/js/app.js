@@ -9,14 +9,6 @@ import createWebOptionManager from "./src/plugins/option.js"
 import createUserDataManager from "./src/plugins/user.js"
 import createPWAManager from "./src/plugins/pwa.js"
 
-const $funBtn = document.querySelector("#function")
-const funBtnCont = {
-    send: '<i class="mdui-icon material-icons mdui-text-color-theme-icon">send</i>',
-    wiki: '<i class="mdui-icon material-icons mdui-text-color-theme-icon">import_contacts</i>',
-    copy: '<i class="mdui-icon material-icons mdui-text-color-theme-icon">content_copy</i>',
-    love: '<i class="mdui-icon material-icons mdui-text-color-theme-icon">bookmark_border</i>'
-}
-
 window.app = new App({
     DEFAULT_LANGUAGE: "zh-CN",
     DEFAULT_BRANCH: "vanilla",
@@ -28,13 +20,16 @@ window.app = new App({
     
     list: {
         _useVirtualScroll: true,
-        _useDivider: !window._LITE_MODELL,
+        _useDivider: !window._LITE_MODEL,
         get _height() {
-            const _fix = window._LITE_MODELL ? 85 : 120
-            return document.documentElement.clientHeight - _fix
+            const _fix1 = window._LITE_MODEL ? 85 : 120
+            const _fix2 = _page.collapses.header.$element[0].querySelector(".mdui-collapse-item-open")
+                ? window._LITE_MODEL ? 45 : 90
+                : 0
+            return document.documentElement.clientHeight - _fix1 - _fix2
         },
         get _itemHeight() {
-            if (window._LITE_MODELL) {
+            if (window._LITE_MODEL) {
                 const height = window.innerHeight / 16
                 if (height > 36) return 36
                 else if (height < 24) return 24
@@ -45,12 +40,12 @@ window.app = new App({
             item(_id, _name, renderer) {
                 const item = stringToNode(`
                     <li class="mdui-list-item mdui-ripple" id="${_id}" data-list-name="${_name}">
-                        ${ window._LITE_MODELL ? renderer.get("image") : "" }
+                        ${ window._LITE_MODEL ? "" : renderer.get("image") }
                         <div class="mdui-list-item-content">
                             <div class="mdui-list-item-title minecraft-font" id="name">${renderer.get("name")}</div>
                             <div class="mdui-list-item-text mdui-list-item-one-line" id="info">${renderer.get("info")}</div>
                         </div>
-                        ${ window._LITE_MODELL ? renderer.get("url") : "" }
+                        ${ window._LITE_MODEL ? "" : renderer.get("url") }
                     </li>
                 `.trim())
                 item.onclick = () => {
@@ -122,22 +117,18 @@ window.app = new App({
         ],
         "app.clear": [
             args => {
-                $funBtn.innerHTML = ""
+                _page.toolbar.clear()
                 if (args.autoClearSearchCache) app.list.searchCache.clear()
             }
         ],
         "app.change": [
             () => {
-                $funBtn.innerHTML = funBtnCont.wiki
-                $funBtn.setAttribute("mdui-tooltip", `{content: "WIKI"}`)
-                $funBtn.onclick = () => window.open(app.data.get("text", "url.command_page") + app.input.catchName(), "_blank")
+                _page.toolbar.load("wiki")
             }
         ],
         "app.grammar.finish": [
             () => {
-                $funBtn.innerHTML = funBtnCont.copy
-                $funBtn.setAttribute("mdui-tooltip", `{content: "COPY"}`)
-                $funBtn.onclick = app.input.copy
+                _page.toolbar.load("love", "wiki", "run", "__", "copy")
             }
         ],
         "app.input.love": [
@@ -149,6 +140,11 @@ window.app = new App({
         "app.reoption": [
             () => {
                 document.body.classList.add("loading")
+                
+                document.body.style.paddingTop = _page.collapses.header.$element[0].querySelector(".mdui-collapse-item-open")
+                    ? window._LITE_MODEL ? "90px" : "180px"
+                    : window._LITE_MODEL ? "45px" : "120px"
+                
                 app.initialize({
                     ...app.option.getItemValMap(),
                     userData: app._userData.getItemValMap()
