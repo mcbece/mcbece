@@ -1,5 +1,5 @@
+import serialize from "serialize-javascript"
 import { asyncEach } from "./browser/js/core/util/common.js"
-import { stringify } from "./browser/js/core/util/betterJSON.js"
 
 export async function mcbelist(lang, branch) {
     /*
@@ -11,11 +11,11 @@ export async function mcbelist(lang, branch) {
         const data = await importDefault(`./data/${lang}/${branch}/index.js`)
         const text = await importDefault(`./languages/${lang}.json.js`)
         Object.assign(data.text, text)
-        return stringify(data)
+        return serialize(data)
     }
 }
 
-// 因为相对链接的问题，不能直接引用 common.js 里的 importDefault，所以这里再写一遍，以后和改（大概吧
+// 因为相对链接的问题，不能直接引用 common.js 里的 importDefault，所以这里再写一遍，以后再改（大概吧
 async function importDefault(url) {
     try {
         const data = await import(url)

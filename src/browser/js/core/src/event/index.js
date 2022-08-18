@@ -1,4 +1,3 @@
-// import EventEmitter from "events"
 import EventEmitter from "../../../lib/EventEmitter.class.js"
 import { each } from "../../util/common.js"
 
@@ -22,7 +21,7 @@ export default class extends EventEmitter {
         super()
         this.on("error", console.error)
         
-        each(app.config.event, (eventName, listeners) => {
+        each(app.config.get("event", {}), (listeners, eventName) => {
             each(listeners, listener => this.on(eventName, listener))
         })
         

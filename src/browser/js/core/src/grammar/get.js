@@ -1,4 +1,4 @@
-import { objectHas, objectGet, testRegExp } from "../../util/common.js"
+import { objectHas, testRegExp } from "../../util/common.js"
 
 export function _get(commandName) {
     const grammarGroup = this.data.get("grammar", commandName)
@@ -14,7 +14,7 @@ export function _get(commandName) {
             for (let e = 0; e < this.input.catchInput().length - 1 && e < body[i].control.length; e++) {
                 const rule = body[i].control[e].rule
                 const input = this.input.catchInput(body[i].control[e].length)
-                const shortcut = Object.assign({}, getDefaultGrammarControlShortcut(), objectGet(this.config, "grammar.control.shortcut", { _return: {} }))
+                const shortcut = Object.assign({}, getDefaultGrammarControlShortcut(), this.config.get("grammar.control.shortcut", {}))
                 if (objectHas(shortcut, rule)) _result.push(testRegExp(shortcut[rule], input))
                 else _result.push(testRegExp(rule, input))
             }

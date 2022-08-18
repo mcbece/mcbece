@@ -4,39 +4,30 @@ import { each, objectGet, stringToNode } from "../util/common.js"
 // https://github.com/vuetifyjs/vuetify/blob/master/packages/vuetify/src/components/VVirtualScroll/VVirtualScroll.ts
 export class VirtualScroll {
     constructor({
-        app,
+        config = {},
         data,
         render,
         bench = 0,
         callback = defCallback,
         rootEle = document.querySelector(".virtual-scroll"),
-        otherEvent = new Map()
     }) {
         this.data = data
         this.render = render
         this.bench = bench
         this.callback = callback
         this.rootEle = rootEle
-        this.container = this.rootEle.querySelector(".virtual-scroll__container")
-        this.otherEvent = otherEvent
+        this.container = rootEle.querySelector(".virtual-scroll__container")
         
         Object.defineProperty(this, "height", {
             get() {
-                return objectGet(app, "_height", { _return: objectGet(app, "height") })
-            }
-        })
-        Object.defineProperty(this, "paddingTop", {
-            get() {
-                return objectGet(app, "_paddingTop", { _return: objectGet(app, "paddingTop", { _return: 0 }) })
+                return config.height
             }
         })
         Object.defineProperty(this, "itemHeight", {
             get() {
-                return objectGet(app, "_itemHeight", { _return: objectGet(app, "itemHeight") })
+                return config.itemHeight
             }
         })
-        
-        this.initScroll()
     }
     
     first = 0
@@ -50,7 +41,7 @@ export class VirtualScroll {
             scroll: () => this.onEvent(),
             resize: () => this.onEvent(true)
         }
-        this.rootEle.removeEventListener("scroll", this._listener.scrollTo)
+        this.rootEle.removeEventListener("scroll", this._listener.scroll)
         window.removeEventListener("resize", this._listener.resize)
         this.rootEle.addEventListener("scroll", listener.scroll)
         window.addEventListener("resize", listener.resize)
@@ -59,7 +50,7 @@ export class VirtualScroll {
     }
     destroy() {
         const listener = this._listener
-        this.rootEle.removeEventListener("scroll", listener.scrollTo)
+        this.rootEle.removeEventListener("scroll", listener.scroll)
         window.removeEventListener("resize", listener.resize)
         this.data = []
     }
@@ -73,7 +64,7 @@ export class VirtualScroll {
         return Math.floor(this.scrollTop / this.itemHeight)
     }
     getLast() {
-        return this.first + Math.ceil((this.height - this.paddingTop) / this.itemHeight)
+        return this.first + Math.ceil(this.height / this.itemHeight)
     }
     onEvent(forceload) {
         this.rootEle.style.height = this.height + "px"
@@ -93,7 +84,7 @@ export class VirtualScroll {
     }
     genItem(_item, index) {
         const item = _item instanceof Node ? _item : stringToNode(_item)
-        item.style.top = `${ (index + this.firstToRender) * this.itemHeight + this.paddingTop }px`
+        item.style.top = `${ (index + this.firstToRender) * this.itemHeight }px`
         item.classList.add("virtual-scroll__item")
         return item
     }

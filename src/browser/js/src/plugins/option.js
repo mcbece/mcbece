@@ -9,7 +9,7 @@ const DEFAULT_THEME_COLOR = {
 }
 
 export default async function (app) {
-    const { DEFAULT_LANGUAGE, DEFAULT_BRANCH } = app.config
+    const { DEFAULT_LANGUAGE } = app.config
     
     const option = new __Option__("option", () => app.event.emit("app.reoption"))
     
@@ -21,13 +21,13 @@ export default async function (app) {
         description: "语言",
         values: Object.entries(!function() {
             const _languages = {}
-            each(LANGUAGES, (lang, {name}) => _languages[lang] = name)
+            each(LANGUAGES, ({ name }, lang) => _languages[lang] = name)
             return _languages
         }),
         callback: (selected, original) => {
             document.documentElement.lang = selected
             console.debug("Option: lang -> from", original, "to", selected)
-            const branches = LANGUAGES[selected].branch
+            const branches = LANGUAGES[selected].branches
             option.addItem({
                 name: "branch",
                 description: "分支",
@@ -35,7 +35,7 @@ export default async function (app) {
                 callback:(_selected, _original) => {
                     console.debug("Option: branch -> from", _original, "to", _selected)
                 },
-                defaultValue: DEFAULT_BRANCH || branches[0]
+                defaultValue: branches[0]
             })
         },
         defaultValue: DEFAULT_LANGUAGE
@@ -103,7 +103,7 @@ export default async function (app) {
         callback: (selected, original) => {
             console.debug("Option: autoClearSearchCache -> from", original, "to", selected)
         },
-        defaultValue: false
+        defaultValue: true
     })
 }
 

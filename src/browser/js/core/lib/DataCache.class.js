@@ -1,4 +1,4 @@
-import { each, sliceByMaxLength } from "../util/common.js"
+import { sliceByMaxLength } from "../util/common.js"
 
 export class DataCache {
     constructor(maxLength) {

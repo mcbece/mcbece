@@ -1,7 +1,8 @@
 import { deepEqual } from "fast-equals"
-import { objectGet, toString } from "../../util/common.js"
 import { DataCache } from "../../lib/DataCache.class.js"
 import { VirtualScroll } from "../../lib/VirtualScroll.class.js"
+import { getReturn } from "../../util/common.js"
+import { _reconstruction } from "./reconstruction.js"
 import { _get } from "./get.js"
 import { _load } from "./load.js"
 import { _search } from "./search.js"
@@ -10,64 +11,58 @@ import { _render } from "./render.js"
 export default class {
     constructor(app) {
         this.load = this.load.bind(app)
+        this.reload = this.reload.bind(app)
         this.search = this.search.bind(app)
+        this.clear = this.clear.bind(app)
         
-        Object.defineProperty(this, "_useVirtualScroll", {
-            get() {
-                return objectGet(app.config, "list._useVirtualScroll")
-            }
-        })
-        Object.defineProperty(this, "_useDivider", {
-            get() {
-                return objectGet(app.config, "list._useDivider") && objectGet(app.config, "list.template.divider") && !this._useVirtualScroll
-            }
-        })
-        Object.defineProperty(this, "_height", {
-            get() {
-                return objectGet(app.config, "list._height")
-            }
-        })
-        Object.defineProperty(this, "_itemHeight", {
-            get() {
-                return objectGet(app.config, "list._itemHeight")
-            }
-        })
-        
-        if (this._useVirtualScroll) this.__vs = new VirtualScroll({
+        this.__vs = new VirtualScroll({
             rootEle: document.querySelector(".list-container"),
-            app: this,
+            config: {
+                get height() {
+                    return getReturn(app.config.get("list._height"))
+                },
+                get itemHeight() {
+                    return getReturn(app.config.get("list._itemHeight"))
+                }
+            },
             data: [],
             render: _render.bind(app),
-            bench: 5
+            bench: 10 // TODO 加入 option
         })
     }
     names = {}
     lists = {}
+    _lists = []
     searchCache = new DataCache(10000)
-    load(listGroup) {
-        const result = _get.call(this, listGroup, false)
-        this.event.emit("app.list.load", result, listGroup)
-        
-        console.debug({ listGetResult: result })
-        
-        if (!deepEqual(Object.keys(this.list.names).sort(), Object.keys(result.names).sort())) {
-            
-            console.debug({ listLoadResult: result })
-            
+    load(_listGroup) {
+        const lists = _reconstruction.call(this, _listGroup)
+        const _lists = lists.map(({ name }) => name)
+        if (!deepEqual(this.list._lists, _lists)) {
+            this.list._lists = _lists
+            const result = _get.call(this, lists)
+            this.event.emit("app.list.load", result)
             this.list.names = result.names
             this.list.lists = result.lists
-            _load.call(this, result, this.config.$list)
+            _load.call(this, result)
         }
+    }
+    reload() {
+        this.list.__vs.initScroll()
     }
     search() {
         const query = this.input.catchInput(-1)
         const cacheName = this.input.catchInput().join(" ")
         const result = _search.call(this, query, cacheName)
-        this.event.emit("app.list.search", result, query)
-        
-        console.debug({listSearchResult: result})
-        
-        _load.call(this, result, this.config.$list)
         this.list.searchCache.push(cacheName, result)
+        this.event.emit("app.list.search", result, query)
+        _load.call(this, result)
+    }
+    clear(autoClearSearchCache) {
+        this.config.$list.innerHTML = ""
+        this.list.names = {}
+        this.list.lists = {}
+        this.list._lists = []
+        this.list.__vs.destroy()
+        if (autoClearSearchCache) this.list.searchCache.clear()
     }
 }

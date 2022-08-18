@@ -1,10 +1,11 @@
-import { objectHas, objectGet, getReturn } from "../../util/common.js"
+import { objectHas, getReturn } from "../../util/common.js"
 import { InputGetter } from "../../lib/InputGetter.class.js"
 import { typeFromSelector } from "../input/type.js"
 
 export function rename(listName) {
+    //@return string || string[]
     const { input: { catchInput }, config: { $input } } = this
-    const listShortcut = Object.assign({}, getDefaultListShortcut(), objectGet(this.config, "list.shortcut", { _return: {} }))
+    const listShortcut = Object.assign({}, getDefaultListShortcut(), this.config.get("list.shortcut", {}))
     const inputGetter = new InputGetter(this)
     const lastInput = catchInput(-1)
     const parsedSelector = typeFromSelector(lastInput)
@@ -12,19 +13,20 @@ export function rename(listName) {
         const { types, keywords } = parsedSelector
         const output = []
         if (types.includes("variable")) output.push("selector.variable")
+        if (types.includes("player")) output.push("player")
         if (types.includes("next")) output.push("selector.next")
         if (types.includes("argument")) output.push("selector.argument")
         if (types.includes("_end")) output.push("next")
         if (types.includes("argument.next")) output.push("selector.next_argument")
-        if (types.includes("argument.value")) output.push(inputGetter.searchFrom("selector.argument", keywords.key, i => `selector.argument{${i}}.value`))
+        if (types.includes("argument.value")) output.push(`selector.argument.value.${keywords.key}`)
         return output
     } else if (/^coordinate.(x|y|z)$/.test(listName)) {
         if (!lastInput || parsedSelector.types.includes("argument.value.coordinate")) return listName
-        else if (lastInput === "~" || lastInput === "^" || parsedSelector.types.includes("argument.value.coordinate.value")) return `${listName}.header.value`
+        else if (lastInput === "~" || lastInput === "^" || parsedSelector.types.includes("argument.value.coordinate.value")) return `${listName}.value`
         else return "next"
     } else if (/^rotation.(x|y)$/.test(listName)) {
         if (!lastInput) return listName
-        else if (lastInput === "~") return `${listName}.header.value`
+        else if (lastInput === "~") return `${listName}.value`
         else return "next"
     }
     else if (objectHas(listShortcut, listName)) return getReturn(listShortcut[listName], inputGetter, listName) ?? listName
@@ -36,14 +38,11 @@ function getDefaultListShortcut() {
         "enchantment.level": handler,
         "entity.event": handler,
         "block.data": handler,
-        "item.data": handler,
-        "entity.family": "entity_family",
-        "entity.summonable": "entity.header.summonable"
+        "item.data": handler
     }
     
     function handler(getter, item) {
-        const fixReg = /^(?<name>.+)\.(?<subname>.+)$/
-        const { groups: { name, subname, option } } = item.match(fixReg)
-        return getter.searchFrom(name, getter.catchInput(-2), i => `${name}{${i}}.${subname}`)
+        //@return string || string[]
+        return `${item}.${getter.catchInput(-2)}`
     }
 }

@@ -1,7 +1,7 @@
 export const LANGUAGES = {
-    "zh-CN": {
+    "zh_cn": {
         name: "中文（简体）",
-        branch: {
+        branches: {
             vanilla: "原版",
             experiment: "实验性玩法",
             education: "教育版"

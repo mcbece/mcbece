@@ -1,9 +1,9 @@
-import { each, asyncEach, importDefault, objectHas, objectGet } from "../../util/common.js"
+import { each, asyncEach, importDefault, objectHas } from "../../util/common.js"
 import { ListData, List } from "../../lib/ListData.class.js"
 import { Grammar } from "../../lib/GrammarData.class.js"
 
 export async function setCustom(urlsInput) {
-    const _custom = objectGet(this.config, "data.custom")
+    const _custom = this.config.get("data.custom")
     if (_custom) await asyncEach(_custom, async item => {
         if (item) setFrom.call(this, await _get(item))
     })
@@ -13,35 +13,25 @@ export async function setCustom(urlsInput) {
 }
 
 function setFrom(data) {
-    const { data: appData, LANG, BRANCH, config: { DEFAULT_LANGUAGE } } = this
+    const { data: appData, LANG, BRANCH } = this
+    const DEFAULT_LANGUAGE = this.config.get("DEFAULT_LANGUAGE", "langDef")
     if (objectHas(data, LANG) && objectHas(data[LANG], BRANCH)) parse(LANG, data[LANG][BRANCH] || {})
     if (LANG !== DEFAULT_LANGUAGE && objectHas(data, DEFAULT_LANGUAGE) && objectHas(data[DEFAULT_LANGUAGE], BRANCH)) parse(DEFAULT_LANGUAGE, data[DEFAULT_LANGUAGE][BRANCH] || {})
+    
     function parse(lang, _data) {
         if (_data.list) parseList(_data.list)
         if (_data.grammar) parseGrammar(_data.grammar)
         if (_data.text) parseList(_data.text)
         
         function parseList(_list) {
-            each(_list, (key, value) => {
-                if (key === "__new") {
-                    const newLists = new ListData(value)
-                    each(newLists._data, (name, list) => {
-                        if (list instanceof List) appData[lang].list.set(name, list)
-                        // else {
-                        //     新增列表暂时只支持一级索引，
-                        //     其他将会忽略
-                        // }
-                    })
-                } else appData[lang].list.get(key).addItem(...value)
+            each(_list, (list, indexName) => {
+                const appDataList = appData[lang].list
+                if (appDataList.has(indexName)) appDataList.get(indexName).addItem(...list)
+                else appDataList.set(indexName, list)
             })
         }
         function parseGrammar(_grammar) {
-            each(_grammar, (key, value) => {
-                if (key === "__new") each(value, grammar => appData[lang].grammar.add(new Grammar(grammar)))
-                // else {
-                //    目前只支持新增语法，不能修改既有的内容
-                // }
-            })
+            each(_grammar, grammar => appData[lang].grammar.add(new Grammar(grammar)))
         }
         function parseText(_text) {
             each(_text, (key, value) => appData[lang].text.set(key, value))

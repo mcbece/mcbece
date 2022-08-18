@@ -3,18 +3,18 @@ export const sleepAsync = ms => new Promise(resolve => setTimeout(resolve, ms))
 export function each(target, callbackfn, thisArg) {
     if (Array.isArray(target)) target.forEach(callbackfn, thisArg)
     else if (target && target[Symbol.iterator]) for (let item of target) callbackfn.call(thisArg, item, target)
-    else if (typeof target === "object") each(Object.keys(target), (key, i) => callbackfn.call(thisArg, key, target[key], i, target))
+    else if (typeof target === "object") each(Object.keys(target), (key, i) => callbackfn.call(thisArg, target[key], key, i, target))
 }
 
 export async function asyncEach(target, asyncfn, thisArg) {
     if (Array.isArray(target)) for (let i = 0; i < target.length; i++) await asyncfn.call(thisArg, target[i], i, target)
     else if (target && target[Symbol.iterator]) for (let item of target) await asyncfn.call(thisArg, item, target)
-    else if (typeof target === "object") await asyncEach(Object.keys(target), async (key, i) => await asyncfn.call(thisArg, key, target[key], i, target))
+    else if (typeof target === "object") await asyncEach(Object.keys(target), async (key, i) => await asyncfn.call(thisArg, target[key], key, i, target))
 }
 
 export function mapObject(obj, callbackfn, thisArg) {
     const newObj = {}
-    each(obj, (key, value, i, _obj) => {
+    each(obj, (value, key, i, _obj) => {
         const result = callbackfn.call(thisArg, key, value, i, _obj)
         newObj[result[0]] = result[1]
     })
@@ -74,11 +74,11 @@ export function readLine(text, len) {
     else return all
 }
 
-export function toJSON(str) {
+export function deserialize(str) {
     try {
         return JSON.parse(str)
     } catch (err) {
-        console.warn(`Could not use \`JSON.parse()\` to deserialise the JSON, trying \`eval()\`.`, { json: str })
+        console.warn(`Could not use \`JSON.parse()\` to deserialise the string, trying \`eval()\`.`, { string: str })
         return eval(`(${str})`)
     }
 }

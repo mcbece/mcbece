@@ -25,8 +25,8 @@ const ALL_TOOLS = {
         },
         onclick() {
             const cont = app.config.$input.value
-            _page.history.toogleLoveState(cont)
             _page.history.add(cont)
+            _page.history.toogleLoveState(cont)
             this.querySelector("i").innerText = getReturn(ALL_TOOLS.love.icon)
         }
     },
@@ -54,6 +54,22 @@ export const toolbar = {
                 $toolbar.appendChild(ele)
             })
             this._openCollapse()
+        }
+    },
+    reload() {
+        const toolNames = this._names
+        if (toolNames.length === 1) {
+            const tool = ALL_TOOLS[toolNames[0]]
+            $funBtn.innerHTML = tmpl(tool, true)
+            $funBtn.onclick = tool.onclick.bind($funBtn)
+            $funBtn.style.display = ""
+        } else {
+            $toolbar.innerHTML = ""
+            each(toolNames, name => {
+                const tool = ALL_TOOLS[name]
+                const ele = name === "__" ? stringToNode(`<div class="mdui-toolbar-spacer"></div>`) : tmpl(tool)
+                $toolbar.appendChild(ele)
+            })
         }
     },
     clear() {

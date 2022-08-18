@@ -11,11 +11,11 @@ export class VirtualList {
         this.$ = $list
         this.vs = new VirtualScroll({
             rootEle: $list.parentNode,
-            app: {
-                get _height() {
+            config: {
+                get height() {
                     return $list.parentNode.offsetHeight
                 },
-                get _itemHeight() {
+                get itemHeight() {
                     return ITEM_HEIGHT
                 }
             },
@@ -30,9 +30,10 @@ export class VirtualList {
             }
         })
     }
-    load() {
+    load(reloadToolbar) {
         const data = [...app._userData.getItemVal(this.id)].map((cont, i) => { return { cont, i } }).reverse()
         this.vs.resetData(data).scrollToTop()
+        if (reloadToolbar) _page.toolbar.reload()
     }
     clear() {
         const dialog = _page.dialogs[this.id]
@@ -42,7 +43,10 @@ export class VirtualList {
             onConfirm: () => {
                 app._userData.clearStoreData(this.id).done().then(() => snackbar("已全部删除"))
                 dialog.open()
-                this.load()
+                this.load(true)
+            },
+            onCancel: () => {
+                dialog.open()
             }
         })
     }
@@ -54,7 +58,10 @@ export class VirtualList {
             onConfirm: () => {
                 app._userData.deleteStoreData(this.id, cont).done().then(() => snackbar("已删除"))
                 dialog.open()
-                this.load()
+                this.load(true)
+            },
+            onCancel: () => {
+                dialog.open()
             }
         })
     }
@@ -73,13 +80,9 @@ export class HistoryList extends VirtualList {
         this.load()
     }
     toogleLoveState(cont) {
-        if (hasLoved(cont)) {
-            _page.love.unlove(cont)
-            return false
-        } else {
-            _page.love.add(cont)
-            return true
-        }
+        if (hasLoved(cont)) _page.love.unlove(cont)
+        else _page.love.add(cont)
+        this.load(true)
     }
     // TODO: loveAll()
 }
@@ -103,14 +106,14 @@ function rendererTmpl(btn = () => "") {
     return function(items) {
         return items.map(({ cont, i }) => {
             return `
-                    <div class="mdui-list-item mdui-ripple" id="${i}" style="height: ${ITEM_HEIGHT}px;">
-                        <div class="mdui-list-item-content" style="overflow-x: scroll; white-space: nowrap;">${i} - ${cont}</div>
-                        ${btn(cont, i)}
-                        <button class="mdui-btn mdui-btn-icon mdui-list-item-things-display-when-hover" onclick="_page.vlists.${this.id}.remove('${cont}')">
-                            <i class="mdui-icon material-icons mdui-text-color-black-icon">delete</i>
-                        </button>
-                    </div>
-                `
+                <div class="mdui-list-item mdui-ripple" id="${i}" style="height: ${ITEM_HEIGHT}px;">
+                    <div class="mdui-list-item-content" style="overflow-x: scroll; white-space: nowrap;">${i} - ${cont}</div>
+                    ${btn(cont, i)}
+                    <button class="mdui-btn mdui-btn-icon mdui-list-item-things-display-when-hover" onclick="_page.vlists.${this.id}.remove('${cont}')">
+                        <i class="mdui-icon material-icons mdui-text-color-black-icon">delete</i>
+                    </button>
+                </div>
+            `
         })
     }
 }

@@ -11,7 +11,7 @@ export class WebOption {
                         autoIncrement: true
                     })
                     store.createIndex("value", "value")
-                    each(wo.items, name => store.put({
+                    each(wo.items, (_, name) => store.put({
                         name,
                         value: wo.getItemVal(name)
                     }))
@@ -39,7 +39,7 @@ export class WebOption {
                     autoIncrement: true
                 })
                 store.createIndex("value", "value")
-                each(this.items, name => store.put({
+                each(this.items, (_, name) => store.put({
                     name,
                     value: this.getItemVal(name)
                 }))
@@ -103,7 +103,7 @@ export class WebOption {
     }
     getItemValMap() {
         const result = {}
-        each(this.items, name => result[name] = this.getItemVal(name))
+        each(this.items, (_, name) => result[name] = this.getItemVal(name))
         return result
     }
     async _setStorage() {

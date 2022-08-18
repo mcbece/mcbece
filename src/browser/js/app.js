@@ -1,5 +1,5 @@
 import App from "./core/index.js"
-import { toString, stringToNode, getReturn } from "./core/util/common.js"
+import { stringToNode, getReturn } from "./core/util/common.js"
 import { setThemeColor, snackbar } from "./src/mdui.js"
 import { isAprilFools } from "./src/util.js"
 import { WebOption } from "./lib/WebOption.class.js"
@@ -10,8 +10,7 @@ import createUserDataManager from "./src/plugins/user.js"
 import createPWAManager from "./src/plugins/pwa.js"
 
 window.app = new App({
-    DEFAULT_LANGUAGE: "zh-CN",
-    DEFAULT_BRANCH: "vanilla",
+    DEFAULT_LANGUAGE: "zh_cn",
     
     $input: document.querySelector("#edit"),
     $grammar: document.querySelector("#grammar"),
@@ -19,16 +18,14 @@ window.app = new App({
     $list: document.querySelector("#list"),
     
     list: {
-        _useVirtualScroll: true,
-        _useDivider: !window._LITE_MODEL,
-        get _height() {
+        _height() {
             const _fix1 = window._LITE_MODEL ? 85 : 120
             const _fix2 = _page.collapses.header.$element[0].querySelector(".mdui-collapse-item-open")
                 ? window._LITE_MODEL ? 45 : 90
                 : 0
             return document.documentElement.clientHeight - _fix1 - _fix2
         },
-        get _itemHeight() {
+        _itemHeight() {
             if (window._LITE_MODEL) {
                 const height = window.innerHeight / 16
                 if (height > 36) return 36
@@ -37,25 +34,23 @@ window.app = new App({
             } else return 72
         },
         template: {
-            item(_id, _name, renderer) {
+            item(_id, _name, i, renderer) {
                 const item = stringToNode(`
-                    <li class="mdui-list-item mdui-ripple" id="${_id}" data-list-name="${_name}">
-                        ${ window._LITE_MODEL ? "" : renderer.get("image") }
+                    <li class="mdui-list-item mdui-ripple" data-id="${_id}" data-list-name="${_name}" id="${i}">
+                        ${ ( window._LITE_MODEL || !app.list.withImage ) ? "" : renderer.get("image") }
                         <div class="mdui-list-item-content">
                             <div class="mdui-list-item-title minecraft-font" id="name">${renderer.get("name")}</div>
-                            <div class="mdui-list-item-text mdui-list-item-one-line" id="info">${renderer.get("info")}</div>
+                            <div class="mdui-list-item-text mdui-list-item-one-line" id="description">${renderer.get("description")}</div>
                         </div>
                         ${ window._LITE_MODEL ? "" : renderer.get("url") }
                     </li>
                 `.trim())
                 item.onclick = () => {
-                    eval(renderer.get("input") || "")
+                    getReturn(renderer.get("input"))
                     getReturn(renderer.get("onclick"))
                 }
+                if (renderer.get("active")) item.classList.add("mdui-list-item-active")
                 return item
-            },
-            divider(name, _name) {
-                return `<li class="mdui-subheader" data-list-name="${_name}">${name}</li>`
             },
             highlight(_, $1) {
                 return `<span class="mdui-text-color-theme-accent">${$1}</span>`
@@ -69,11 +64,6 @@ window.app = new App({
                             <img src="${url}" />
                         </div>
                     `
-                }
-            },
-            input: {
-                callbackFun(input) {
-                    return `app.input.input(${toString(input)})`
                 }
             },
             url: {
@@ -108,6 +98,7 @@ window.app = new App({
         "app.init.end": [
             args => {
                 app.config.$input.value = args.userData.inputting
+                app.list.withImage = args.listWithImage
                 app.event.emit("app._history.add")
                 document.body.classList.remove("loading")
             }
@@ -118,7 +109,6 @@ window.app = new App({
         "app.clear": [
             args => {
                 _page.toolbar.clear()
-                if (args.autoClearSearchCache) app.list.searchCache.clear()
             }
         ],
         "app.change": [
@@ -128,7 +118,7 @@ window.app = new App({
         ],
         "app.grammar.finish": [
             () => {
-                _page.toolbar.load("love", "wiki", "run", "__", "copy")
+                _page.toolbar.load("love", "wiki", "__", "copy")
             }
         ],
         "app.input.love": [
@@ -149,6 +139,16 @@ window.app = new App({
                     ...app.option.getItemValMap(),
                     userData: app._userData.getItemValMap()
                 })
+            }
+        ],
+        "app.list.load": [
+            result => {
+                console.debug({ listLoadResult: result })
+            }
+        ],
+        "app.list.search": [
+            result => {
+                //@dev console.debug({listSearchResult: result})
             }
         ]
     },

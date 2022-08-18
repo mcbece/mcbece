@@ -54,8 +54,8 @@ async function mcbelistData() {
             force: true
         })
         fs.mkdirSync("./public/api")
-        each(LANGUAGES, (lang, _) => {
-            each(_.branch, branch => {
+        each(LANGUAGES, ({ branches }, lang) => {
+            each(branches, (_, branch) => {
                 mcbelist(lang, branch).then(data => {
                     fs.writeFileSync(`./public/api/mcbelist.${lang}.${branch}.min.js`, "export default " + data)
                     resolve()

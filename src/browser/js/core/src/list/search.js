@@ -1,5 +1,5 @@
 import deepCopy from "fast-copy"
-import { each, toRegExp, objectGet } from "../../util/common.js"
+import { each } from "../../util/common.js"
 
 export function _search(__query, cacheName) {
     const { list: { searchCache }, input: { catchInput, typeFrom } } = this
@@ -9,7 +9,7 @@ export function _search(__query, cacheName) {
         names: {}
     }
     const thisLists = deepCopy(this.list.lists)
-    each(this.list.names, (listName, _header) => {
+    each(this.list.names, (_header, listName) => {
         const list = {
             body: thisLists[listName],
             header: _header
@@ -23,18 +23,14 @@ export function _search(__query, cacheName) {
             result.names[listName] = list.header
             return
         }
-        const query = (() => {
-            if (/^\/.*\/[gimsuy]*$/.test(_query)) return toRegExp(_query)
-            else return new RegExp(`(${_query})`)
-        })()
-        let _lists = []
+        const query = new RegExp(`(${_query.replace("?", "\\?")})`)
         for (let searchSpace of list.header.option.search_spaces) {
-            _lists = match.call(this, list.body, query, searchSpace)
-            if (_lists.length) break
-        }
-        if (_lists.length) {
-            result.lists[listName] = _lists
-            result.names[listName] = list.header
+            const _lists = match.call(this, list.body, query, searchSpace)
+            if (_lists.length) {
+                result.lists[listName] = _lists
+                result.names[listName] = list.header
+                break
+            }
         }
     })
     if (Object.keys(result.lists).length) return result
@@ -42,7 +38,7 @@ export function _search(__query, cacheName) {
         lists: {
             _: [
                 {
-                    info: "没有搜索到任何东西"
+                    description: "没有搜索到任何东西"
                 }
             ]
         },
@@ -57,7 +53,7 @@ export function _search(__query, cacheName) {
 }
 
 function match(list, query, searchSpace) {
-    const template = objectGet(this.config, "list.template.highlight", { _return: (_, $1) => $1 })
+    const template = this.config.get("list.template.highlight")
     const result = list.filter(item => query.test(item[searchSpace]))
     return result.map(item => {
         item[searchSpace] = item[searchSpace]?.replace(query, template)

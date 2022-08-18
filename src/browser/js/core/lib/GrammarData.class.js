@@ -1,4 +1,4 @@
-import { each, testRegExp } from "../util/common.js"
+import { testRegExp } from "../util/common.js"
 
 export class GrammarData {
     constructor(data) {

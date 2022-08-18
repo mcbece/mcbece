@@ -1,36 +1,28 @@
-import { each, objectGet, mapObject } from "../util/common.js"
+import { each, objectGet } from "../util/common.js"
 
 export class ListData {
-    constructor(data) {
-        this._data = parse(data) ?? {}
+    constructor(_data) {
+        if (_data) each(_data, (_list, indexName) => this.set(indexName, _list))
     }
-    get(name) {
-        return objectGet(this._data, name, { _return: new List(), handler: s => s?.replace(/\{([\-0-9]+)\}/g, ".getItem($1)")})
+    _data = {}
+    get(indexName) {
+        return objectGet(this._data, indexName)
     }
-    set(name, list) {
-        this._data[name] = list
+    set(indexName, _list) {
+        const list = new List(indexName)
+        list.setHeader(_list[0])
+        for (let i = 1; i < _list.length; i++) list.addItem(_list[i])
+        this._data[indexName] = list
         return this
     }
-}
-
-function parse(data) {
-    if (Array.isArray(data)) {
-        if (data.__app_list__ || data[0]?.__app_list__) return parse(new List(data))
-        else return data.map(item => parse(item))
-    } else if (data instanceof List) {
-        each(data.header, (key, value) => data.setHeader(key, parse(value)))
-        each(data.body, (item, i) => data.setItem(i, parse(item)))
-        return data
-    } else if (typeof data === "object") return mapObject(data, (key, item) => ([ key, parse(item) ]))
-    else return data
+    has(indexName) {
+        return this._data[indexName] ? true : false
+    }
 }
 
 export class List {
-    constructor(list) {
-        if (list) {
-            this.setHeader(list.shift())
-            each(list, e => this.setItem(e)) 
-        }
+    constructor(indexName) {
+        this._indexName = indexName
     }
     _header = {}
     _body = []
@@ -39,27 +31,19 @@ export class List {
         else this._header = header
         return this
     }
-    setItem(item, key, value) {
-        if (key && this._body[item]) {
-            if (value) this._body[item][key] = value
-            else this._body[item] = key
-        }
-        else this._body.push(item)
+    setItem(index, key, value) {
+        if (value) this._body[index][key] = value
+        else this._body[index] = key
         return this
     }
     addItem(...items) {
-        this._body = this.body.concat(items)
+        this._body = this._body.concat(items)
         return this
     }
-    getItem(index) {
-        if (index >= 0) return this._body[index]
-        else if (index < 0) return this._header
-        else return this._body
-    }
-    get header() {
-        return this.getItem(-1)
-    }
-    get body() {
-        return this.getItem()
+    get export() {
+        return [
+            this._header,
+            ...this._body
+        ]
     }
 }

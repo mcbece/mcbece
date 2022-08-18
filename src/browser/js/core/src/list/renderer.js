@@ -5,8 +5,8 @@ export class ListItemRenderer {
         if (listItem) this.setListItem(listItem)
         
         const DEFAULT_CONFIG = getDefaultConfig(app)
-        each(DEFAULT_CONFIG, (name, { handlerFun, callbackFun, defaultVal }) => this.addItem(name, handlerFun, callbackFun, defaultVal))
-        each(target, (name, { handlerFun, callbackFun, defaultVal }) => {
+        each(DEFAULT_CONFIG, ({ handlerFun, callbackFun, defaultVal }, name) => this.addItem(name, handlerFun, callbackFun, defaultVal))
+        each(target, ({ handlerFun, callbackFun, defaultVal }, name) => {
             if (objectHas(DEFAULT_CONFIG, name)) {
                 if (handlerFun) this.getItem(name).setHandlerFun(handlerFun)
                 if (callbackFun) this.getItem(name).setCallbackFun(callbackFun)
@@ -68,13 +68,6 @@ class ListItemRendererItem {
 
 function getDefaultConfig(app) {
     return {
-        image: {
-            handlerFun(item) {
-                if (!app.list.withImage) return
-                const image = item.image
-                if (image) return image
-            }
-        },
         input: {
             handlerFun(item) {
                 const input = item.input
@@ -88,11 +81,16 @@ function getDefaultConfig(app) {
                     if (text) output.text = replaceString(text, {
                         name: toString(item.name, "")
                             .replace(/\<.+\>(.*)\<\/.+\>/g, "$1"),
-                        info: toString(item.info, "")
+                        description: toString(item.description, "")
                             .replace(/{color:\s?.+}/g, "")
                             .replace(/\<.+\>(.*)\<\/.+\>/g, "$1")
                     })
                     return output
+                }
+            },
+            callbackFun(opt) {
+                return function() {
+                    app.input.input(opt)
                 }
             }
         },
@@ -102,11 +100,11 @@ function getDefaultConfig(app) {
                 return name
             }
         },
-        info: {
+        description: {
             handlerFun(item) {
-                const info = toString(item.info, "")
+                const description = toString(item.description, "")
                 const colorReg = /{color:\s?(#[0-9A-Za-z]{6}|rgb\([.0-9]+,\s?[.0-9]+,\s?[.0-9]+\)|rgba\([.0-9]+,\s?[.0-9]+,\s?[.0-9]+,\s?[.0-9]+\)|[a-z]+)}/g
-                return info.replace(colorReg, '<span style="background-color: $1; margin: 0 4px; border: 1px inset black">&emsp;</span>')
+                return description.replace(colorReg, '<span style="background-color: $1; margin: 0 4px; border: 1px inset black">&emsp;</span>')
             }
         },
         url: {
@@ -115,7 +113,7 @@ function getDefaultConfig(app) {
                 if (url) return replaceString(url, {
                     name: toString(item.name, "")
                         .replace(/\<.+\>.*\<\/.+\>/g, ""),
-                    info: toString(item.info, "")
+                    description: toString(item.description, "")
                         .replace(/{color:\s?.+}/g, "")
                         .replace(/\[.*\]/g, "")
                         .replace(/\<.+\>.*\<\/.+\>/g, ""),

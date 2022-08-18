@@ -1,5 +1,3 @@
-import { objectGet } from "../../util/common.js"
-
 export function copy() {
     const value = this.config.$input.value
     navigator.clipboard.writeText(value).then(() => {

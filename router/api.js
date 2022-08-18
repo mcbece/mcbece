@@ -1,13 +1,12 @@
 import express from "express"
-import { objectGet, importDefault } from "../src/browser/js/core/util/common.js"
-import { stringify } from "../src/browser/js/core/util/betterJSON.js"
+import serialize from "serialize-javascript"
 import { mcbelist } from "../src/mcbelist.js"
 
 const api = express.Router()
 
 api.get("/processEnv.:name", (req, res) => {
     const result = process.env[req.params.name]
-    if (result) res.status(200).type(".js").send("export default " + stringify(result))
+    if (result) res.status(200).type(".js").send("export default " + serialize(result))
     else res.status(404).end()
 })
 api.get("/mcbelist.:lang.:branch.min.js", (req, res) => {

@@ -1,4 +1,3 @@
-import { deepEqual } from "fast-equals"
 import { _get } from "./get.js"
 import { InputGetter } from "../../lib/InputGetter.class.js"
 import { getReturn } from "../../util/common.js"
@@ -23,21 +22,16 @@ export default class {
             } else {
                 $grammar.innerHTML += `<span>${replace(result.body.grammar)}</span>`
                 $grammar.querySelectorAll("span")[commandLength].style.fontWeight = "bold"
-                // $grammar.querySelectorAll("span")[commandLength].scrollIntoView({
-                //     behavior: "smooth",
-                //     inline: "start"
-                // })
+                /* $grammar.querySelectorAll("span")[commandLength].scrollIntoView({
+                    behavior: "smooth",
+                    inline: "start"
+                }) */
                 $note.innerHTML = getReturn(result.body.info[commandLength - 1].note, new InputGetter(this))
-                const list = handle(getReturn(result.body.info[commandLength - 1].list, new InputGetter(this)))
-                if (!this.grammar._list || !deepEqual(this.grammar._list, list)) {
-                    this.grammar._list = list
-                    return {
-                        _load: true,
-                        list
-                    }
-                } else return {
-                    _search: true
-                }
+                const list = getReturn(
+                    result.body.info[commandLength - 1].list,
+                    new InputGetter(this)
+                )
+                return { list }
             }
         } else {
             return {
@@ -53,12 +47,4 @@ function replace(grammar) {
         .replace(/\>/g, "&lrm;>")
         .replace(/x y z/g, "x&ensp;<span>y&ensp;</span><span>z</span>")
         .replace(/(>|]|[a-zA-Z])\s(<|\[|[a-zA-Z])/g, "$1 </span><span>$2")
-}
-
-function handle(target) {
-    if (Array.isArray(target)) {
-        return target
-    } else if (typeof target === "string") {
-        return target.split(/\s*;\s*/)
-    } else return target
 }

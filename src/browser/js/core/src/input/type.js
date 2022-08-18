@@ -19,11 +19,12 @@ export function typeFrom(...targets) {
 
 export function typeFromSelector(selector, prefix = "", ...targets) {
     const types = []
-    types.pushWithPrefix = function (...items) {
+    types.pushWithPrefix = function(...items) {
         this.push(...items.map(e => prefix + e))
     }
     const keywords = {}
     if (selector === "" || selector === "@") types.pushWithPrefix("variable")
+    else if (!selector.startsWith("@")) types.pushWithPrefix("player")
     else if (selector.startsWith("@") && !selector.includes("[")) types.pushWithPrefix("next", "variable")
     else if (selector.startsWith("@") && selector.includes("[")) {
         const item = selector.split("[")[1].split("]")[0].split(",").at(-1); keywords._item = item
