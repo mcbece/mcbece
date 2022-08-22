@@ -1,5 +1,5 @@
-import App from "./core/index.js"
-import { stringToNode, getReturn } from "./core/util/common.js"
+import App from "@core/index.js"
+import { stringToNode, getReturn } from "@util/index.js"
 import { setThemeColor, snackbar } from "./src/mdui.js"
 import { isAprilFools } from "./src/util.js"
 import { WebOption } from "./lib/WebOption.class.js"

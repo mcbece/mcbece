@@ -1,8 +1,8 @@
 import { PWAManager } from "../../lib/PWAManager.class.js"
-import { importDefault } from "../../core/util/common.js"
+import { importDefault } from "@util/index.js"
 import { snackbar } from "../mdui.js"
 
-export default async function (app) {
+export default async function(app) {
     try {
         const env = await importDefault("/api/processEnv.NODE_ENV")
         if (env === "production") return new __PWA__(app, "/service-worker.js")

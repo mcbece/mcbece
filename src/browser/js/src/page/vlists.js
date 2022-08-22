@@ -1,4 +1,4 @@
-import { each } from "../../core/util/common.js"
+import { each } from "@util/index.js"
 import { HistoryList, LoveList, VirtualList } from "./classes/VirtualList.js"
 
 const vlists = {}

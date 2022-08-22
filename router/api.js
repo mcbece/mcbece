@@ -1,6 +1,6 @@
 import express from "express"
 import serialize from "serialize-javascript"
-import { mcbelist } from "../src/mcbelist.js"
+import { getMcbelist } from "../src/mcbelist.js"
 
 const api = express.Router()
 
@@ -10,7 +10,7 @@ api.get("/processEnv.:name", (req, res) => {
     else res.status(404).end()
 })
 api.get("/mcbelist.:lang.:branch.min.js", (req, res) => {
-    mcbelist(req.params.lang, req.params.branch).then(data => {
+    getMcbelist(req.params.lang, req.params.branch).then(data => {
         res.status(200)
             .set("Access-Control-Allow-Origin", "*")
             .type(".js")

@@ -1,5 +1,5 @@
 import { openDB } from "idb/with-async-ittr"
-import { each, asyncEach, toString, sliceByMaxLength } from "../core/util/common.js"
+import { each, asyncEach, toString, sliceByMaxLength } from "@util/index.js"
 
 export class WebOption {
     static async initAll(...wos) {

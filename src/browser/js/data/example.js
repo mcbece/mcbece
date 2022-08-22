@@ -1,4 +1,4 @@
-import { each, replaceString, toString } from "../core/util/common.js"
+import { each, replaceString, toString } from "@util/index.js"
 import { snackbar, confirm } from "../src/mdui.js"
 import { isAprilFools } from "../src/util.js"
 

@@ -1,5 +1,5 @@
 import { deepEqual } from "fast-equals"
-import { each, getReturn, stringToNode } from "../../core/util/common.js"
+import { each, getReturn, stringToNode } from "@util/index.js"
 import { hasLoved } from "../util.js"
 
 const $funBtn = document.querySelector("#function")

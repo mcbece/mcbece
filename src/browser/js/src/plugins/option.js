@@ -8,7 +8,7 @@ const DEFAULT_THEME_COLOR = {
     accent: "pink"
 }
 
-export default async function (app) {
+export default async function(app) {
     const { DEFAULT_LANGUAGE } = app.config
     
     const option = new __Option__("option", () => app.event.emit("app.reoption"))

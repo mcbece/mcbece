@@ -1,4 +1,4 @@
-import { testRegExp } from "../core/util/common.js"
+import { testRegExp } from "@util/index.js"
 
 export function getDate() {
     const _date = new Date()
