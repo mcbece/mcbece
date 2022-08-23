@@ -1,6 +1,6 @@
 import { VirtualScroll } from "@core/lib/VirtualScroll.class.js"
 import { each } from "@util/index.js"
-import { snackbar, confirm } from "../../mdui.js"
+import { snackbar, confirm } from "@util/mdui.js"
 import { hasLoved } from "../../util.js"
 
 const ITEM_HEIGHT = 40

@@ -1,6 +1,4 @@
-import { each, replaceString, toString } from "@util/index.js"
-import { snackbar, confirm } from "../src/mdui.js"
-import { isAprilFools } from "../src/util.js"
+import { each } from "@util/index.js"
 
 const List = app.data._forCustom.List
 
@@ -25,14 +23,6 @@ export default {
                     {
                         name: "@list",
                         description: "加载任意列表",
-                        input: {
-                            replace: "all",
-                            text: "{name} "
-                        }
-                    },
-                    {
-                        name: "@option",
-                        description: "切换页面设置",
                         input: {
                             replace: "all",
                             text: "{name} "
@@ -87,66 +77,6 @@ export default {
                                 },
                                 list(getter) {
                                     return getter.catchInput(1)
-                                }
-                            }
-                        ]
-                    }
-                ],
-                [
-                    {
-                        command: {
-                            name: "/^@option$/",
-                            info: "切换页面设置"
-                        }
-                    },
-                    {
-                        grammar: "<设置名> <值>",
-                        info: [
-                            {
-                                length: 1,
-                                note: "指定要切换设置的名称",
-                                list() {
-                                    const keys = app.option.keys()
-                                    const list = new List("_option.keys")
-                                    list.setHeader({
-                                        template: {
-                                            input: {
-                                                text: "{name} "
-                                            }
-                                        }
-                                    })
-                                    each(keys, key => {
-                                        const item = app.option._getItem(key)
-                                        if (item.values.size) list.addItem({
-                                           name: key,
-                                           description: item.description
-                                        })
-                                    })
-                                    return list
-                                }
-                            },
-                            {
-                                length: 2,
-                                note: "指定要设置的值",
-                                list(getter) {
-                                    const key = getter.catchInput(1)
-                                    const values = app.option.valuesOf(key)
-                                    const list = new List("_option.values")
-                                    each(values, ([name, description]) => list.addItem({
-                                        name: toString(name),
-                                        active: name === app.option._getItem(key).selected,
-                                        description: description + (key === "themePrimaryColor" || key === "themeAccentColor" ? ` {color: ${description}}` : ""),
-                                        onclick() {
-                                            confirm({
-                                                message: replaceString("你确定要将 {key} 的值改为 {name} 吗？", { key, name }),
-                                                onConfirm: () => app.option.setItem(key, name)
-                                            }).then(([result, e]) => {
-                                                if (e) snackbar(e)  // Happy April Fools!
-                                                else if (result) snackbar("设置成功")
-                                            }).catch(console.error)
-                                        }
-                                    }))
-                                    return list
                                 }
                             }
                         ]

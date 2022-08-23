@@ -1,13 +1,7 @@
 import App from "@core/index.js"
 import { stringToNode, getReturn } from "@util/index.js"
-import { setThemeColor, snackbar } from "./src/mdui.js"
-import { isAprilFools } from "./src/util.js"
-import { WebOption } from "./lib/WebOption.class.js"
-
-// Plugins
-import createWebOptionManager from "./src/plugins/option.js"
-import createUserDataManager from "./src/plugins/user.js"
-import createPWAManager from "./src/plugins/pwa.js"
+import { setThemeColor, snackbar } from "@util/mdui.js"
+import { isAprilFools } from "@util/date.js"
 
 window.app = new App({
     DEFAULT_LANGUAGE: "zh_cn",
@@ -96,10 +90,7 @@ window.app = new App({
             }
         ],
         "app.init.end": [
-            args => {
-                app.config.$input.value = args.userData.inputting
-                app.list.withImage = args.listWithImage
-                app.event.emit("app._history.add")
+            () => {
                 document.body.classList.remove("loading")
             }
         ],
@@ -135,7 +126,7 @@ window.app = new App({
                     ? window._LITE_MODEL ? "90px" : "180px"
                     : window._LITE_MODEL ? "45px" : "120px"
                 
-                app.initialize({
+                app.init({
                     ...app.option.getItemValMap(),
                     userData: app._userData.getItemValMap()
                 })
@@ -148,24 +139,18 @@ window.app = new App({
         ],
         "app.list.search": [
             result => {
-                //@dev console.debug({listSearchResult: result})
+                //@dev console.debug({ listSearchResult: result })
+            }
+        ],
+        "app.plugin.load": [
+            name => {
+                console.debug(`Loading plugin: '${name}'.`)
             }
         ]
     },
     
-    plugin: {
-        plugins: [
-            createWebOptionManager,
-            createPWAManager,
-            createUserDataManager
-        ],
-        init([ option, pwa, user]) {
-            WebOption.initAll(option, user).then(() => {
-                app.option = option
-                app._userData = user
-                app.event.emit("app.reoption")
-            }).catch(console.error)
-            if (pwa && !pwa._noServiceWorker) app.pwa = pwa
-        }
+    plugins: {
+        allStorage: true,
+        pwa: true
     }
 })

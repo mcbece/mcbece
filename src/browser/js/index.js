@@ -1,6 +1,6 @@
 import "./app.js"
 import page from "./src/page/index.js"
-import { isChrome } from "./src/util.js"
+import { isChrome } from "@util/browser.js"
 
 window._page = page
 

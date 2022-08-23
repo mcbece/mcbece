@@ -52,12 +52,16 @@ export default function(banner, pkg) {
                 alias({
                     entries: [
                         {
-                            find: "@core",
-                            replacement: resolvePath("../lib/core", import.meta)
+                            find: /^\@\//,
+                            replacement: resolvePath("..", import.meta) + "/"
                         },
                         {
-                            find: "@util",
-                            replacement: resolvePath("../lib/util", import.meta)
+                            find: /^\@core\//,
+                            replacement: resolvePath("../lib/core", import.meta) + "/"
+                        },
+                        {
+                            find: /^\@util\//,
+                            replacement: resolvePath("../lib/util", import.meta) + "/"
                         }
                     ]
                 }),
