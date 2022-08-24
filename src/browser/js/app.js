@@ -40,6 +40,7 @@ window.app = new App({
                     </li>
                 `.trim())
                 item.onclick = () => {
+                    
                     getReturn(renderer.get("input"))
                     getReturn(renderer.get("onclick"))
                 }
@@ -110,6 +111,11 @@ window.app = new App({
         "app.grammar.finish": [
             () => {
                 _page.toolbar.load("love", "wiki", "__", "copy")
+            }
+        ],
+        "app.input": [
+            () => {
+                // console.log("input event")
             }
         ],
         "app.input.love": [
