@@ -40,7 +40,6 @@ window.app = new App({
                     </li>
                 `.trim())
                 item.onclick = () => {
-                    
                     getReturn(renderer.get("input"))
                     getReturn(renderer.get("onclick"))
                 }
@@ -48,7 +47,7 @@ window.app = new App({
                 return item
             },
             highlight(_, $1) {
-                return `<span class="mdui-text-color-theme-accent">${$1}</span>`
+                return `{Highlight: ${$1}}`
             }
         },
         renderer: {
@@ -68,6 +67,16 @@ window.app = new App({
                             <i class="mdui-icon material-icons mdui-text-color-black-icon">import_contacts</i>
                         </a>
                     `
+                }
+            }
+        },
+        replacer: {
+            "Highlight:": {
+                directReturn(name) {
+                    return `<span class="mdui-text-color-theme-accent">${name}</span>`
+                },
+                indirectReturn(name) {
+                    return name
                 }
             }
         }

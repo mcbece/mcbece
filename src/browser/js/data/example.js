@@ -10,7 +10,7 @@ export default {
                     {
                         template: {
                             input: {
-                                text: "{name} "
+                                text: "{This: name} "
                             }
                         }
                     },
@@ -25,7 +25,7 @@ export default {
                         description: "加载任意列表",
                         input: {
                             replace: "all",
-                            text: "{name} "
+                            text: "{This: name} "
                         }
                     },
                     {
@@ -33,7 +33,7 @@ export default {
                         description: "打开对应工具",
                         input: {
                             replace: "all",
-                            text: "{name} "
+                            text: "{This: name} "
                         }
                     }
                 ]
@@ -57,7 +57,7 @@ export default {
                                     list.setHeader({
                                         template: {
                                             input: {
-                                                text: "{name} "
+                                                text: "{This: name} "
                                             }
                                         }
                                     })

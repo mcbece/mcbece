@@ -8,10 +8,15 @@ export default {
             list: {
                 another10000: deepCopy(app.data.get("list", "lang").export),
                 test: [
-                    {},
                     {
-                        name: "test",
-                        description: ""
+                        test: "testHeader"
+                    },
+                    {
+                        name: "testName",
+                        description: "testDesc {Color: red}",
+                        url: `{Global: url.command_page}`
+                            + `{This: name}` + `{This: description}`
+                            + `{Header: test}`
                     }
                 ],
                 command: [
@@ -20,7 +25,7 @@ export default {
                         description: "长列表测试",
                         input: {
                             replace: "all",
-                            text: "{name} "
+                            text: "{This: name} "
                         }
                     }
                 ]
