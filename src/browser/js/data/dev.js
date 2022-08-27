@@ -17,6 +17,16 @@ export default {
                         url: `{Global: url.command_page}`
                             + `{This: name}` + `{This: description}`
                             + `{Header: test}`
+                    },
+                    {
+                        name: "testSprite",
+                        description: "test block sprite",
+                        sprite: {
+                            img: "/image/BlockCSS.png",
+                            imgWidth: 768,
+                            size: 16,
+                            pos: 3
+                        }
                     }
                 ],
                 command: [
