@@ -2,8 +2,9 @@
 public/css/
 public/js/
 public/api/
+public/lib/
+public/test/
 public/index.html
-public/lib
 
 # Logs
 logs

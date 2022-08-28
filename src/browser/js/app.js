@@ -1,5 +1,5 @@
 import App from "@core/index.js"
-import { stringToNode, getReturn, trimString } from "@util/index.js"
+import { stringToNode, getReturn } from "@util/index.js"
 import { setThemeColor, snackbar } from "@util/mdui.js"
 import { isAprilFools } from "@util/date.js"
 
@@ -29,21 +29,24 @@ window.app = new App({
         },
         template: {
             item(_id, _name, i, renderer) {
-                const item = stringToNode(trimString(`
+                const item = stringToNode(`
                     <li class="mdui-list-item mdui-ripple" data-id="${_id}" data-list-name="${_name}" id="${i}">
-                        ${ ( window._LITE_MODEL || !app.list.withImage ) ? "" : renderer.get("image") }
                         <div class="mdui-list-item-content">
-                            <div class="mdui-list-item-title minecraft-font" id="name" style="display: inline-block; margin-right: 8px;">${renderer.get("name")}</div>
+                            <div class="mdui-list-item-title minecraft-font" id="name" style="display: inline-block; margin-right: 8px;">${renderer.get("sprite", { style: "margin-right: 8px;" })}${renderer.get("name")}</div>
                             <div class="mdui-list-item-text mdui-list-item-one-line" id="description">${renderer.get("description")}</div>
                         </div>
                         ${ window._LITE_MODEL ? "" : renderer.get("url") }
                     </li>
-                `))
+                `)
                 item.onclick = () => {
                     getReturn(renderer.get("input"))
                     getReturn(renderer.get("onclick"))
                 }
                 if (renderer.get("active")) item.classList.add("mdui-list-item-active")
+                const media = renderer.get("media")
+                if (!window._LITE_MODEL && media) {
+                    item.insertBefore(media, item.firstChild)
+                }
                 return item
             },
             highlight(_, $1) {
@@ -51,13 +54,28 @@ window.app = new App({
             }
         },
         renderer: {
-            image: {
-                callbackFun(url) {
-                    return `
-                        <div class="mdui-list-item-avatar" id="image">
-                            <img src="${url}" />
-                        </div>
-                    `
+            media: {
+                callbackFun({ type, src, ...setting }) {
+                    if (type === "image") {
+                        return stringToNode(`
+                            <div class="mdui-list-item-avatar" style="border-radius: 10%; border: 1px solid #757575;">
+                                <img style="border-radius: inherit;" src="${src}" />
+                            </div>
+                        `)
+                    } else if (type === "audio") {
+                        const node = stringToNode(`<i class="mdui-list-item-avatar mdui-icon material-icons mdui-text-color-theme-icon mdui-color-white" style="border-radius: 10%; border: 1px solid #757575;">play_arrow</i>`)
+                        const audio = new Audio(src)
+                        node.addEventListener("click", () => {
+                            if (audio.paused) audio.play()
+                            else audio.pause()
+                        })
+                        audio.addEventListener("ended", () => node.innerText = "play_arrow")
+                        audio.addEventListener("pause", () => node.innerText = "play_arrow")
+                        audio.addEventListener("play", () => node.innerText = "pause")
+                        return node
+                    } else {
+                        return stringToNode(`<span>${src}</span>`)
+                    }
                 }
             },
             url: {
@@ -108,7 +126,7 @@ window.app = new App({
             getText => app.config.$input.placeholder = getText("input")
         ],
         "app.clear": [
-            args => {
+            () => {
                 _page.toolbar.clear()
             }
         ],
@@ -166,7 +184,9 @@ window.app = new App({
     
     plugins: {
         allStorage: true,
+        colorReplacer: true,
         pwa: true,
-        sprite: true
+        spriteRenderer: true,
+        mediaRenderer: true
     }
 })

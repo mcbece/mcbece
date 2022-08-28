@@ -13,7 +13,7 @@ export default {
                     },
                     {
                         name: "testName",
-                        description: "testDesc {Color: red}",
+                        description: "testDesc: test color {Color: red}",
                         url: `{Global: url.command_page}`
                             + `{This: name}` + `{This: description}`
                             + `{Header: test}`
@@ -22,10 +22,26 @@ export default {
                         name: "testSprite",
                         description: "test block sprite",
                         sprite: {
-                            img: "/image/BlockCSS.png",
+                            img: "/test/image/BlockCSS.png",
                             imgWidth: 768,
                             size: 16,
                             pos: 3
+                        }
+                    },
+                    {
+                        name: "testImage",
+                        description: "test image",
+                        media: {
+                            type: "image",
+                            src: "/test/image/image.gif"
+                        }
+                    },
+                    {
+                        name: "testAudio",
+                        description: "test audio",
+                        media: {
+                            type: "audio",
+                            src: "/test/audio/audio.mp3"
                         }
                     }
                 ],
