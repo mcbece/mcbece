@@ -62,6 +62,10 @@ export default function(banner, pkg) {
                         {
                             find: /^\@util\//,
                             replacement: resolvePath("../lib/util", import.meta) + "/"
+                        },
+                        {
+                            find: /^\@lib\//,
+                            replacement: resolvePath("../lib", import.meta) + "/"
                         }
                     ]
                 }),

@@ -3,6 +3,8 @@ import { each } from "@util/index.js"
 import { snackbar, confirm } from "@util/mdui.js"
 import { hasLoved } from "../../util.js"
 
+import dialogs from "../dialogs.js"
+
 const ITEM_HEIGHT = 40
 
 export class VirtualList {
@@ -23,11 +25,9 @@ export class VirtualList {
             render: renderer.bind(this),
             bench: 5
         })
-        window.addEventListener("open.mdui.dialog", evt => {
-            if (evt._detail.inst.$element[0].id.replace(/-dialog$/, "") === this.id) {
-                this.load()
-                this.vs.onEvent(true)
-            }
+        dialogs[id].$element.on("open.mdui.dialog", () => {
+            this.load()
+            this.vs.onEvent(true)
         })
     }
     load(reloadToolbar) {

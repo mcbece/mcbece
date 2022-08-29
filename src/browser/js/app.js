@@ -2,6 +2,7 @@ import App from "@core/index.js"
 import { stringToNode, getReturn } from "@util/index.js"
 import { setThemeColor, snackbar } from "@util/mdui.js"
 import { isAprilFools } from "@util/date.js"
+import { playAudio_v1 } from "@util/audio.js"
 
 window.app = new App({
     DEFAULT_LANGUAGE: "zh_cn",
@@ -64,14 +65,8 @@ window.app = new App({
                         `)
                     } else if (type === "audio") {
                         const node = stringToNode(`<i class="mdui-list-item-avatar mdui-icon material-icons mdui-text-color-theme-icon mdui-color-white" style="border-radius: 10%; border: 1px solid #757575;">play_arrow</i>`)
-                        const audio = new Audio(src)
-                        node.addEventListener("click", () => {
-                            if (audio.paused) audio.play()
-                            else audio.pause()
-                        })
-                        audio.addEventListener("ended", () => node.innerText = "play_arrow")
-                        audio.addEventListener("pause", () => node.innerText = "play_arrow")
-                        audio.addEventListener("play", () => node.innerText = "pause")
+                        const srcArr = Array.isArray(src) ? src : [src]
+                        node.addEventListener("click", () => playAudio_v1(srcArr))
                         return node
                     } else {
                         return stringToNode(`<span>${src}</span>`)

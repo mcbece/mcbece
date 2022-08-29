@@ -41,7 +41,11 @@ export default {
                         description: "test audio",
                         media: {
                             type: "audio",
-                            src: "/test/audio/audio.mp3"
+                            src: [
+                                "/test/audio/audio1.mp3",
+                                "/test/audio/audio2.mp3",
+                                "/test/audio/audio3.ogg"
+                            ]
                         }
                     }
                 ],
