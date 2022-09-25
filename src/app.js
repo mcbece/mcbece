@@ -1,8 +1,8 @@
-import App from "@core/index.js"
-import { stringToNode, getReturn } from "@util/index.js"
-import { setThemeColor, snackbar } from "@util/mdui.js"
-import { isAprilFools } from "@util/date.js"
-import { playAudio_v1 } from "@util/audio.js"
+import App from "@/core/index.js"
+import { stringToNode, getReturn } from "@/util/index.js"
+import { setThemeColor, snackbar } from "@/util/mdui.js"
+import { isAprilFools } from "@/util/date.js"
+import { playAudio_v1 } from "@/lib/playAudio.js"
 
 window.app = new App({
     DEFAULT_LANGUAGE: "zh_cn",

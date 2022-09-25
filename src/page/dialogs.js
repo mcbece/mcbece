@@ -1,4 +1,4 @@
-import { each } from "@util/index.js"
+import { each } from "@/util/index.js"
 
 const dialogs = {}
 each(document.querySelectorAll("[id$='-dialog']"), $dialog => {

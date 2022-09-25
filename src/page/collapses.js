@@ -1,4 +1,4 @@
-import { each } from "@util/index.js"
+import { each } from "@/util/index.js"
 
 const collapses = {}
 each(document.querySelectorAll(".mdui-collapse"), $collapse => {

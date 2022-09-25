@@ -1,4 +1,4 @@
-import { resolvePath } from "./util.js"
+import { resolvePath } from "./lib/util/node.js"
 
 import commonjs from "@rollup/plugin-commonjs"
 import alias from "@rollup/plugin-alias"
@@ -7,6 +7,13 @@ import { uglify } from "rollup-plugin-uglify"
 
 export default function(banner, pkg) {
     return [
+        // bundle.js
+        _({
+            src: "./index.js",
+            dest: "bundle.min.js",
+            name: "bundle"
+        }),
+        
         // core
         _({
             src: "./lib/core/index.js",
@@ -14,21 +21,14 @@ export default function(banner, pkg) {
             name: "core"
         }),
         
-        // bundle.js
-        _({
-            src: "index.js",
-            dest: "bundle.min.js",
-            name: "bundle"
-        }),
-        
         // custom file
         _({
-            src: "data/example.js",
+            src: "custom/example.js",
             dest: "custom/example.min.js",
             name: "custom-file-example"
         }),
         _({
-            src: "data/dev.js",
+            src: "custom/dev.js",
             dest: "custom/dev.min.js",
             name: "custom-file-dev"
         })
@@ -38,7 +38,7 @@ export default function(banner, pkg) {
         const name = `${pkg.name}${ _name ? `-${_name}` : "" }.js`
         return {
             name, 
-            input: src.startsWith(".") ? src : `./src/browser/js/${src}`,
+            input: src.startsWith(".") ? src : `./src/${src}`,
             output: {
                 file: dest.startsWith(".") ? dest : `./public/js/${dest}`,
                 strict: true,
@@ -52,20 +52,20 @@ export default function(banner, pkg) {
                 alias({
                     entries: [
                         {
-                            find: /^\@\//,
-                            replacement: resolvePath("..", import.meta) + "/"
+                            find: /^\@\/src\//,
+                            replacement: resolvePath("./src", import.meta) + "/"
                         },
                         {
-                            find: /^\@core\//,
-                            replacement: resolvePath("../lib/core", import.meta) + "/"
+                            find: /^\@\/lib\//,
+                            replacement: resolvePath("./lib", import.meta) + "/"
                         },
                         {
-                            find: /^\@util\//,
-                            replacement: resolvePath("../lib/util", import.meta) + "/"
+                            find: /^\@\/core\//,
+                            replacement: resolvePath("./lib/core", import.meta) + "/"
                         },
                         {
-                            find: /^\@lib\//,
-                            replacement: resolvePath("../lib", import.meta) + "/"
+                            find: /^\@\/util\//,
+                            replacement: resolvePath("./lib/util", import.meta) + "/"
                         }
                     ]
                 }),
