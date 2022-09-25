@@ -48,3 +48,21 @@ body {
         display: none !important;
     }
 }
+
+// ==========
+
+#list {
+    .mdui-list-item {
+        height: 72px;
+    }
+    
+    .mdui-list-item-content {
+        .mdui-list-item-title:empty {
+            display: none !important;
+        }
+        
+        .mdui-list-item-text:empty {
+            display: none !important;
+        }
+    }
+}

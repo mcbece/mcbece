@@ -3,7 +3,7 @@
  * 说明：
  * 因为 mdui.Collapse 构造器会自动给元素加上事件监听器，以达到点击 .mdui-collapse-item-header 就展开的效果
  * 但我不想要这种效果，而改 js 又不方便，于是将 .mdui-collapse-item-header 的范围缩到最小，和 .mdui-collapse-item-arrow 放在了同一个元素上
- * 而这个元素不是 .mdui-collapse-item-open 的之间子元素，导致 .mdui-collapse-item-arrow 不能正常翻转，故进行更改
+ * 而这个元素不是 .mdui-collapse-item-open 的直接子元素，导致 .mdui-collapse-item-arrow 不能正常翻转，故进行更改
  */
 .mdui-collapse-item-open {
     .mdui-collapse-item-header {

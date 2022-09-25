@@ -1,5 +1,5 @@
 import App from "@/core/index.js"
-import { stringToNode, getReturn } from "@/util/index.js"
+import { stringToNode, getReturn, trimString } from "@/util/index.js"
 import { setThemeColor, snackbar } from "@/util/mdui.js"
 import { isAprilFools } from "@/util/date.js"
 import { playAudio_v1 } from "@/lib/playAudio.js"
@@ -30,15 +30,20 @@ window.app = new App({
         },
         template: {
             item(_id, _name, i, renderer) {
-                const item = stringToNode(`
+                const item = stringToNode(trimString(`
                     <li class="mdui-list-item mdui-ripple" data-id="${_id}" data-list-name="${_name}" id="${i}">
                         <div class="mdui-list-item-content">
-                            <div class="mdui-list-item-title minecraft-font" id="name" style="display: inline-block; margin-right: 8px;">${renderer.get("sprite", { style: "margin-right: 8px;" })}${renderer.get("name")}</div>
-                            <div class="mdui-list-item-text mdui-list-item-one-line" id="description">${renderer.get("description")}</div>
+                            <div class="mdui-list-item-title minecraft-font" id="name" style="display: inline-block; margin-right: 8px;">
+                                ${ renderer.get("sprite", { style: "margin-right: 8px;" }) }
+                                ${ renderer.get("name") }
+                            </div>
+                            <div class="mdui-list-item-text mdui-list-item-one-line" id="description">
+                                ${ renderer.get("description") }
+                            </div>
                         </div>
                         ${ window._LITE_MODEL ? "" : renderer.get("url") }
                     </li>
-                `)
+                `))
                 item.onclick = () => {
                     getReturn(renderer.get("input"))
                     getReturn(renderer.get("onclick"))
