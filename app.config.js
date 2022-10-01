@@ -1,10 +1,9 @@
-import App from "@/core/index.js"
 import { stringToNode, getReturn, trimString } from "@/util/index.js"
 import { setThemeColor, snackbar } from "@/util/mdui.js"
 import { isAprilFools } from "@/util/date.js"
 import { playAudio_v1 } from "@/lib/playAudio.js"
 
-window.app = new App({
+export default {
     DEFAULT_LANGUAGE: "zh_cn",
     
     $input: document.querySelector("#edit"),
@@ -189,4 +188,4 @@ window.app = new App({
         spriteRenderer: true,
         mediaRenderer: true
     }
-})
+}

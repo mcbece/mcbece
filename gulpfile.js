@@ -35,7 +35,13 @@ export const js = gulp.series(...rollupConfig.map(config => {
     const fn = async function() {
         const result = await rollup({
             input: config.input,
-            plugins: config.plugins
+            plugins: config.plugins,
+            onwarn({ loc, frame, message, code }) {
+                if (loc) {
+                    console.warn(`${loc.file} (${loc.line}:${loc.column}) ${message} (${code})`)
+                    if (frame) console.warn("\x1b[2m%s\x1b[0m", frame)
+                } else console.warn(message)
+            }
         })
         await result.write(config.output)
     }
