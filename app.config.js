@@ -2,6 +2,8 @@ import { stringToNode, getReturn, trimString } from "@/util/index.js"
 import { setThemeColor, snackbar } from "@/util/mdui.js"
 import { isAprilFools } from "@/util/date.js"
 import { playAudio_v1 } from "@/lib/playAudio.js"
+import pluginPackage from "@/lib/plugins/index.js"
+
 
 export default {
     DEFAULT_LANGUAGE: "zh_cn",
@@ -182,10 +184,15 @@ export default {
     },
     
     plugins: {
-        allStorage: true,
-        colorReplacer: true,
-        pwa: true,
-        spriteRenderer: true,
-        mediaRenderer: true
+        packages: [ pluginPackage ],
+        groups: {
+            allStorage: true,
+            // option: true,
+            // userData: true,
+            colorReplacer: true,
+            pwa: true,
+            spriteRenderer: true,
+            mediaRenderer: true
+        }
     }
 }
