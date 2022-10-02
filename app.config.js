@@ -119,32 +119,19 @@ export default {
             }
         ],
         "app.init.end": [
-            () => {
-                document.body.classList.remove("loading")
-            }
+            () => document.body.classList.remove("loading")
         ],
         "app.i18n": [
             getText => app.config.$input.placeholder = getText("input")
         ],
         "app.clear": [
-            () => {
-                _page.toolbar.clear()
-            }
+            () => _page.toolbar.clear()
         ],
         "app.change": [
-            () => {
-                _page.toolbar.load("wiki")
-            }
+            () => _page.toolbar.load("wiki")
         ],
         "app.grammar.finish": [
-            () => {
-                _page.toolbar.load("love", "wiki", "__", "copy")
-            }
-        ],
-        "app.input": [
-            () => {
-                // console.log("input event")
-            }
+            () => _page.toolbar.load("love", "wiki", "__", "copy")
         ],
         "app.input.love": [
             () => snackbar("已收藏")
@@ -152,7 +139,7 @@ export default {
         "app.input.copy": [
             () => snackbar("已复制")
         ],
-        "app.reoption": [
+        "app.reoption": [  // 整个 app 的启动入口在这
             () => {
                 document.body.classList.add("loading")
                 
@@ -186,9 +173,8 @@ export default {
     plugins: {
         packages: [ pluginPackage ],
         groups: {
-            allStorage: true,
-            // option: true,
-            // userData: true,
+            storage: true,
+            storage_extend: true,
             colorReplacer: true,
             pwa: true,
             spriteRenderer: true,

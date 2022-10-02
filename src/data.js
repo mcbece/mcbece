@@ -13,6 +13,10 @@ export const LANGUAGES = {
 }
 
 export const THEME_COLOR = {
+    DEFAULT: {
+        primary: "indigo",
+        accent: "pink"
+    },
     primary: {
         "red": "#F44336",
         "pink": "#E91E63",
