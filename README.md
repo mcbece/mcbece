@@ -15,7 +15,6 @@
         - 见 [mcbewscc](https://github.com/PFiS1737/mcbewscc)
     - core
         - list
-            - 支持 Sprite 插入
             - CSS 优化，加载内容较长的列表项时会出现换行，而不是截住或出现滚动条
                 - 可以输入 '@list _command ' 看一下是什么意思
         - input
