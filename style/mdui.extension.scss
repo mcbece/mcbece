@@ -1,16 +1,24 @@
 // Drawer
-.mdui-drawer-always-wide {
-    &.mdui-drawer {
+.mdui-drawer {
+    &.mdui-drawer-always-wide {
+        background-color: white !important;
         width: 320px !important;
         max-width: 320px !important;
+        
+        &.mdui-drawer-close {
+            transform: translateX(-330px) !important;
+            
+            &.mdui-drawer-right {
+                transform: translateX(330px) !important;
+            }
+        }
     }
-    
-    &.mdui-drawer-close {
-        transform: translateX(-330px) !important;
-    }
-    
-    &.mdui-drawer-close.mdui-drawer-right {
-        transform: translateX(330px) !important;
+}
+.mdui-theme-layout-dark {
+    .mdui-drawer {
+        &.mdui-drawer-always-wide {
+            background-color: #424242 !important;
+        }
     }
 }
 
