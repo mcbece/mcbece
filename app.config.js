@@ -83,7 +83,7 @@ export default {
                 callbackFun(url) {
                     return `
                         <a class="mdui-btn mdui-btn-icon mdui-list-item-things-display-when-hover" href="${url}" target="_blank">
-                            <i class="mdui-icon material-icons mdui-text-color-black-icon">import_contacts</i>
+                            <i class="mdui-icon material-icons mdui-text-color-theme-icon">import_contacts</i>
                         </a>
                     `
                 }
