@@ -1,4 +1,4 @@
-@mixin lite() {
+@mixin lite-mode() {
     padding-top: 45px;
     padding-bottom: 40px;
     
@@ -99,6 +99,6 @@
     }
 }
 
-body.lite {
-    @include lite()
+body.lite-mode {
+    @include lite-mode()
 }

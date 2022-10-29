@@ -1,7 +1,7 @@
 import { VirtualScroll } from "@/core/lib/VirtualScroll.class.js"
 import { each } from "@/util/index.js"
 import { snackbar, confirm } from "@/util/mdui.js"
-import { hasLoved } from "../util.js"
+import { hasLoved } from "@/util/page.js"
 
 import dialogs from "../dialogs.js"
 

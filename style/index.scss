@@ -1,13 +1,13 @@
 @import "./mdui.extension.scss";
 @import "./mdui.change.scss";
 @import "./virtualScroll.scss";
-@import "./lite.scss";
+@import "./lite-mode.scss";
 
 // ==========
 
 @font-face {
     font-family: Minecraft;
-    src: url(/fonts/Mojangles.ttf) format('truetype');
+    src: url(/fonts/Mojangles.ttf) format("truetype");
 }
 
 .minecraft-font {

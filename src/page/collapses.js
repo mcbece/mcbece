@@ -1,4 +1,5 @@
 import { each } from "@/util/index.js"
+import { setBodyPaddingTop } from "@/util/page.js"
 
 const collapses = {}
 each(document.querySelectorAll(".mdui-collapse"), $collapse => {
@@ -15,13 +16,11 @@ each(document.querySelectorAll(".mdui-collapse"), $collapse => {
 export default collapses
 
 window.addEventListener("open.mdui.collapse", evt => {
-    if (evt._detail.inst.$element[0].id = "header") {
-        document.body.style.paddingTop = window._LITE_MODEL ? "90px" : "180px"
-    }
+    if (evt._detail.inst.$element[0].id = "header") setBodyPaddingTop()
 })
 window.addEventListener("close.mdui.collapse", evt => {
     if (evt._detail.inst.$element[0].id = "header") {
-        document.body.style.paddingTop = window._LITE_MODEL ? "45px" : "120px"
+        setBodyPaddingTop()
         setTimeout(() => app.list.__vs.onEvent(true), 0)
     }
 })

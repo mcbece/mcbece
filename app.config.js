@@ -1,6 +1,7 @@
 import { stringToNode, getReturn, trimString } from "@/util/index.js"
 import { setThemeColor, snackbar } from "@/util/mdui.js"
 import { isAprilFools } from "@/util/date.js"
+import { setBodyPaddingTop } from "@/util/page.js"
 import { playAudio_v1 } from "@/lib/playAudio.js"
 import pluginPackage from "@/lib/plugins/index.js"
 
@@ -15,14 +16,14 @@ export default {
     
     list: {
         _height() {
-            const _fix1 = window._LITE_MODEL ? 85 : 120
+            const _fix1 = window._LITE_MODE ? 85 : 120
             const _fix2 = _page.collapses.header.$element[0].querySelector(".mdui-collapse-item-open")
-                ? window._LITE_MODEL ? 45 : 90
+                ? window._LITE_MODE ? 45 : 90
                 : 0
             return document.documentElement.clientHeight - _fix1 - _fix2
         },
         _itemHeight() {
-            if (window._LITE_MODEL) {
+            if (window._LITE_MODE) {
                 const height = window.innerHeight / 16
                 if (height > 36) return 36
                 else if (height < 24) return 24
@@ -42,7 +43,7 @@ export default {
                                 ${ renderer.get("description") }
                             </div>
                         </div>
-                        ${ window._LITE_MODEL ? "" : renderer.get("url") }
+                        ${ window._LITE_MODE ? "" : renderer.get("url") }
                     </li>
                 `))
                 item.onclick = () => {
@@ -51,7 +52,7 @@ export default {
                 }
                 if (renderer.get("active")) item.classList.add("mdui-list-item-active")
                 const media = renderer.get("media")
-                if (!window._LITE_MODEL && media) {
+                if (!window._LITE_MODE && media) {
                     item.insertBefore(media, item.firstChild)
                 }
                 return item
@@ -143,9 +144,7 @@ export default {
             () => {
                 document.body.classList.add("loading")
                 
-                document.body.style.paddingTop = _page.collapses.header.$element[0].querySelector(".mdui-collapse-item-open")
-                    ? window._LITE_MODEL ? "90px" : "180px"
-                    : window._LITE_MODEL ? "45px" : "120px"
+                setBodyPaddingTop()
                 
                 app.init({
                     ...app.option.getItemValMap(),
