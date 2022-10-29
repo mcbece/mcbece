@@ -1,6 +1,5 @@
 import { stringToNode, getReturn, trimString } from "@/util/index.js"
-import { setThemeColor, snackbar } from "@/util/mdui.js"
-import { isAprilFools } from "@/util/date.js"
+import { snackbar, setFestivalTheme } from "@/util/mdui.js"
 import { setBodyPaddingTop } from "@/util/page.js"
 import { playAudio_v1 } from "@/lib/playAudio.js"
 import pluginPackage from "@/lib/plugins/index.js"
@@ -113,10 +112,6 @@ export default {
         "app.init": [
             () => {
                 if (app.LANG === "en") app.config.$grammar.classList.add("minecraft-font")
-                if (isAprilFools()) setThemeColor({
-                    primary: [app.option._getItem("themePrimaryColor").selected, "green"],
-                    accent: [app.option._getItem("themeAccentColor").selected, "red"]
-                })
             }
         ],
         "app.init.end": [
@@ -144,6 +139,7 @@ export default {
             () => {
                 document.body.classList.add("loading")
                 
+                setFestivalTheme(app.option)
                 setBodyPaddingTop()
                 
                 app.init({
