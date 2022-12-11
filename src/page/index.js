@@ -8,6 +8,7 @@ export default {
     collapses,
     history: vlists.history,
     love: vlists.love,
+    extensions: vlists.extensions,
     vlists,
     toolbar
 }

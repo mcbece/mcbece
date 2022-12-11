@@ -1,7 +1,7 @@
 // Drawer
 .mdui-drawer {
     &.mdui-drawer-always-wide {
-        background-color: white !important;
+        background-color: #fff !important;
         width: 320px !important;
         max-width: 320px !important;
         
@@ -22,31 +22,122 @@
     }
 }
 
+// Dialog
+.mdui-dialog-full-screen {
+    // => ./lite-mode.sass
+}
+
 // Textfield
-.mdui-textfield-white {
+.mdui-textfield-white,
+.mdui-textfield-white-theme {
     .mdui-textfield-input {
-        border-bottom: 1px solid white !important;
+        border-bottom: 1px solid rgba(255, 255, 255, .7) !important;
+    }
+    
+    &.mdui-textfield-floating-label {
+        .mdui-textfield-label {
+            color: rgba(255, 255, 255, .35) !important;
+        }
     }
     
     .mdui-textfield-input:not([disabled]):hover {
-        border-bottom: 1px solid white !important;
-        box-shadow: 0 1px 0 0 white !important;
+        border-bottom: 1px solid #fff !important;
+        box-shadow: 0 1px 0 0 #fff !important;
         cursor: text !important;
     }
     
-    &.mdui-textfield-focus .mdui-textfield-input,
-    &.mdui-textfield-focus .mdui-textfield-input:hover {
-        border-bottom-color: white !important;
-        box-shadow: 0 1px 0 0 white !important;
+    &.mdui-textfield-focus {
+        .mdui-textfield-input {
+            &, &:hover {
+                border-bottom-color: #fff !important;
+                box-shadow: 0 1px 0 0 #fff !important;
+            }
+        }
+        
+        &.mdui-textfield-floating-label {
+            .mdui-textfield-label {
+                color: #fff !important;
+            }
+        }
+    }
+    
+    &.mdui-textfield-invalid,
+    &.mdui-textfield-invalid-html5 {
+        &, &.mdui-textfield-focus {
+            .mdui-textfield-input {
+                border-bottom-color: #fff !important;
+                box-shadow: 0 1px 0 0 #fff !important;
+            }
+        }
+        
+        &.mdui-textfield-floating-label {
+            &.mdui-textfield-focus,
+            &.mdui-textfield-not-empty {
+                .mdui-textfield-label {
+                    color: #fff !important;
+                }
+            }
+        }
     }
 }
+.mdui-theme-layout-dark .mdui-textfield-white-theme {
+    @extend .mdui-textfield-black
+}
 
-.mdui-textfield-black {
-    &.mdui-textfield-focus .mdui-textfield-input,
-    &.mdui-textfield-focus .mdui-textfield-input:hover {
-        border-bottom-color: rgba(0,0,0,0.7);
-        box-shadow: 0 1px 0 0 rgba(0,0,0,0.7);
+.mdui-textfield-black,
+.mdui-textfield-black-theme {
+    .mdui-textfield-input {
+        border-bottom: 1px solid rgba(0, 0, 0, .42) !important;
     }
+    
+    &.mdui-textfield-floating-label {
+        .mdui-textfield-label {
+            color: rgba(0, 0, 0, .35) !important;
+        }
+    }
+    
+    .mdui-textfield-input:not([disabled]):hover {
+        border-bottom: 1px solid rgba(0, 0, 0, .87) !important;
+        box-shadow: 0 1px 0 0 rgba(0, 0, 0, .87) !important;
+        cursor: text !important;
+    }
+    
+    &.mdui-textfield-focus {
+        .mdui-textfield-input {
+            &, &:hover {
+                border-bottom-color: rgba(0, 0, 0, .87) !important;
+                box-shadow: 0 1px 0 0 rgba(0, 0, 0, .87) !important;
+            }
+        }
+        
+        &.mdui-textfield-floating-label {
+            .mdui-textfield-label {
+                color: rgba(0, 0, 0, .65) !important;
+            }
+        }
+    }
+    
+    &.mdui-textfield-invalid,
+    &.mdui-textfield-invalid-html5 {
+        &, &.mdui-textfield-focus {
+            .mdui-textfield-input {
+                border-bottom-color: rgba(0, 0, 0, .87) !important;
+                box-shadow: 0 1px 0 0 rgba(0, 0, 0, .87) !important;
+            }
+        }
+        
+        &.mdui-textfield-floating-label {
+            &.mdui-textfield-focus,
+            &.mdui-textfield-not-empty {
+                .mdui-textfield-label {
+                    color: rgba(0, 0, 0, .65) !important;
+                }
+            }
+        }
+    }
+}
+.mdui-theme-layout-dark .mdui-textfield-black-theme {
+    @extend .mdui-textfield-white
 }
 
 // List
@@ -59,3 +150,34 @@
         display: inline !important;
     }
 }
+
+// Helper
+@mixin gen-spacing($spacing) {
+    @if $spacing > 5 {  // 0-5 已经包含在原生 MDUI 中了，故不再生成
+        @include gen-spacing($spacing - 1);
+        $spacing-base: 8px;
+        $spacing-type: (
+            "m": "margin",
+            "p": "padding"
+        );
+        $spacing-pos: (
+            "a": ("top", "bottom", "right", "left"),
+            "x": ("right", "left"),
+            "y": ("top", "bottom"),
+            "t": ("top"),
+            "b": ("bottom"),
+            "r": ("right"),
+            "l": ("left")
+        );
+        @each $type-abbr, $type in $spacing-type {
+            @each $pos-abbr, $poses in $spacing-pos {
+                .mdui-#{$type-abbr}-#{$pos-abbr}-#{$spacing} {
+                    @each $pos in $poses {
+                        #{$type}-#{$pos}: $spacing * $spacing-base !important;
+                    }
+                }
+            }
+        }
+    }
+}
+@include gen-spacing(10);

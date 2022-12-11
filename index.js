@@ -1,9 +1,7 @@
-import App from "@/core/index.js"
-import appConfig from "./app.config.js"
+import "@/src/app.js"
 import page from "@/src/page/index.js"
 import { isChrome } from "@/util/browser.js"
 
-window.app = new App(appConfig)
 window._page = page
 
 if (isChrome()) mdui.confirm(

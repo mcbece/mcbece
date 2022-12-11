@@ -1,10 +1,10 @@
 import { each } from "@/util/index.js"
 
-const List = app.data._forCustom.List
+const List = app.data.__extensionPackLib.List
 
-export default {
+const content = {
     zh_cn: {
-        vanilla: {
+        "*": {
             list: {
                 player: [
                     {
@@ -116,4 +116,12 @@ export default {
             ]
         }
     }
+}
+
+export default {
+    id: "io.github.mcbece.packages.example",
+    name: "示例包",
+    author: "mcbece",
+    version: [ 0, 0, 1 ],
+    content
 }

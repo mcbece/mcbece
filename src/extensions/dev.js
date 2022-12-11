@@ -1,30 +1,30 @@
 import deepCopy from "fast-copy"
 
-const List = app.data._forCustom.List
-
-export default {
+const content = {
     zh_cn: {
-        vanilla: {
+        "*": {
             list: {
                 another10000: deepCopy(app.data.get("list", "lang").export),
                 test: [
                     {
-                        test: "testHeader"
+                        test: "testHeader",
+                        template: {
+                            sprite: {
+                                img: "/test/image/BlockCSS.png",
+                                imgWidth: 384,
+                                size: 16
+                            }
+                        }
                     },
                     {
                         name: "testName",
                         description: "testDesc: test color {Color: red}",
-                        url: `{Global: url.command_page}`
-                            + `{This: name}` + `{This: description}`
-                            + `{Header: test}`
+                        url: `{Global: url.command_page} {This: name} {This: description} {Header: test}`
                     },
                     {
                         name: "testSprite",
                         description: "test block sprite",
                         sprite: {
-                            img: "/test/image/BlockCSS.png",
-                            imgWidth: 768,
-                            size: 16,
                             pos: 3
                         }
                     },
@@ -61,7 +61,7 @@ export default {
                 ]
             },
             grammar: [
-                    [
+                [
                     {
                         command: {
                             name: "/^@long-list-test$/",
@@ -69,7 +69,7 @@ export default {
                         }
                     },
                     {
-                        grammar: "[列表内容]",
+                        grammar: "(长列表)",
                         info: [
                             {
                                 length: 1,
@@ -103,4 +103,12 @@ export default {
             ]
         }
     }
+}
+
+export default {
+    id: "io.github.mcbece.packages.dev",
+    name: "开发者测试包",
+    author: "mcbece",
+    version: [ 0, 0, 1 ],
+    content
 }

@@ -103,8 +103,9 @@ export default {
     
     data: {
         url: "/api/mcbelist.{lang}.{branch}.min.js",
-        custom: [
-            "/js/custom/example.min.js"
+        extensionPacks: [
+            "/js/extensions/example.min.js",
+            "/js/extensions/dev.min.js",
         ]
     },
     
@@ -135,7 +136,7 @@ export default {
         "app.input.copy": [
             () => snackbar("已复制")
         ],
-        "app.reoption": [  // 整个 app 的启动入口在这
+        "app.reoption": [  // 整个 app 的启动入口在这里
             () => {
                 document.body.classList.add("loading")
                 
@@ -168,7 +169,7 @@ export default {
     plugins: {
         packages: [ pluginPackage ],
         groups: {
-            storage: true,
+            storage: true,  // Internal
             storage_extend: true,
             colorReplacer: true,
             pwa: true,

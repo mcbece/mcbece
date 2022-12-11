@@ -1,6 +1,6 @@
 include ./mixins/dialog.pug
 
-+dialog({
+//- +dialog({
     id: "option",
     title: "设置",
     subtitle: "修改网站设置",
@@ -15,37 +15,32 @@ include ./mixins/dialog.pug
             `
         }
     ]
-})
+//- })
 +dialog({
-    id: "custom",
-    title: "自定义",
-    subtitle: "引入自己的自定义项",
-    content: [
-        {
-            title: "说明：",
-            content: `
-                <span class="mdui-typo">
-                    每行一个链接<br />
-                    有关如何编写，请见<a href="./docs/how-to-custom.md" target="_blank">此处</a><br />
-                    您添加的所有信息都将保存在 <code>IndexedDB</code> 中
-                </span>
-            `
-        },
-        {
-            title: "输入：",
-            content: `
-                <div class="mdui-textfield mdui-textfield-black mdui-p-a-0">
-                    <textarea class="mdui-textfield-input" rows="4" placeholder="请输入文件链接" id="customURL"></textarea>
-                </div>
-            `
-        }
-    ],
-    onsave: "app.option.setItem('customURL', document.querySelector('#customURL').value.split('\\n'))"
+    id: "extensions",
+    title: "扩展包",
+    subtitle: "引入自己的扩展包",
+    contentClass: "mdui-p-a-0 virtual-scroll",
+    contentPaddingX: 7,
+    footerDivider: true,
+    content: `
+        <div class="mdui-toolbar mdui-color-theme" style="position: fixed; top: 92px;">
+            <div class="mdui-toolbar-spacer"></div>
+            <button class="mdui-btn mdui-btn-icon" onclick="_page.extensions.clear()">
+                <i class="mdui-icon material-icons">block</i>
+            </button>
+            <button class="mdui-btn mdui-btn-icon" onclick="_page.extensions.new()">
+                <i class="mdui-icon material-icons">add</i>
+            </button>
+        </div>
+        <div id="extensions-vlist" class="virtual-scroll__container mdui-list mdui-list-dense mdui-p-y-0"></div>
+    `
 })
 +dialog({
     id: "pwa",
     title: "PWA",
     subtitle: "使用 PWA 的相关功能",
+    contentClass: "mdui-p-t-3",
     content: [
         {
             title: "安装：",

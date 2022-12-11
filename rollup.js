@@ -21,16 +21,16 @@ export default function(banner, pkg) {
             name: "core"
         }),
         
-        // custom file
+        // extension packs
         _({
-            src: "custom/example.js",
-            dest: "custom/example.min.js",
-            name: "custom-file-example"
+            src: "extensions/example.js",
+            dest: "extensions/example.min.js",
+            name: "extension-packs-example"
         }),
         _({
-            src: "custom/dev.js",
-            dest: "custom/dev.min.js",
-            name: "custom-file-dev"
+            src: "extensions/dev.js",
+            dest: "extensions/dev.min.js",
+            name: "extension-packs-dev"
         })
     ]
     

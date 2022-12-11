@@ -16,11 +16,13 @@ each(document.querySelectorAll(".mdui-collapse"), $collapse => {
 export default collapses
 
 window.addEventListener("open.mdui.collapse", evt => {
-    if (evt._detail.inst.$element[0].id = "header") setBodyPaddingTop()
+    if (evt._detail.inst.$element[0].id = "header") setTimeout(() => setBodyPaddingTop(), 0)
 })
 window.addEventListener("close.mdui.collapse", evt => {
     if (evt._detail.inst.$element[0].id = "header") {
-        setBodyPaddingTop()
-        setTimeout(() => app.list.__vs.onEvent(true), 0)
+        setTimeout(() => {
+            setBodyPaddingTop()
+            app.list.__vs.onEvent({ forceload: true })
+        }, 0)
     }
 })

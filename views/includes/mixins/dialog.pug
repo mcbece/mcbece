@@ -1,30 +1,40 @@
-mixin dialog({id, title, subtitle, tab, content, contentClass, onsave, actions})
-    .mdui-dialog.mdui-dialog-full-screen(id=`${id}-dialog`)
-        .mdui-dialog-title.mdui-color-theme
+mixin dialog({ id, title, subtitle, footerDivider, tabs, content, contentClass, contentPaddingX, onsave, actions })
+    .mdui-dialog.mdui-dialog-full-screen(id=`${id}-dialog` style="min-height: 30%;")
+        .mdui-dialog-title.mdui-color-theme(style="height: 92px;")
             span.mdui-typo-headline= title
             .mdui-typo-caption-opacity= subtitle
-        .mdui-divider(style="height: 2px;")
-        if tab
-            .mdui-tab.mdui-tab-full-width(mdui-tab)
-                each item in tab
-                    a.mdui-ripple(id=e.id)= item.name
-        if content
-            .mdui-dialog-content(class=contentClass)
+        if tabs
+            .mdui-dialog-content.mdui-p-t-0.mdui-p-x-0(class=contentClass + (contentPaddingX ? ` mdui-m-t-${contentPaddingX}` : ""))
+                .mdui-tab.mdui-tab-full-width(mdui-tab)
+                    each tab in tabs
+                        a.mdui-ripple(href=`#${id}-dialog-tab-${tab.id}`)= tab.name
+                .mdui-divider.mdui-m-b-3
+                .mdui-p-x-3
+                    each tab in tabs
+                        +genContent(tab.content, `${id}-dialog-tab-${tab.id}`)
+        else if content
+            .mdui-dialog-content(class=contentClass + (contentPaddingX ? ` mdui-m-t-${contentPaddingX}` : ""))
                 if Array.isArray(content)
-                    .mdui-row
-                        each item in content
-                            .mdui-col-xs-12.mdui-p-b-1
-                                .mdui-typo-title= item.title
-                            if item.content
-                                .mdui-col-xs-1.mdui-p-b-1.retract
-                                .mdui-col-xs-10.mdui-col-sm-11.mdui-p-b-1!= item.content.trim().replaceAll("\n", "").replaceAll("    ", "")
+                    +genContent(content)
                 else
                     != content
                     
-        .mdui-dialog-actions
+        if footerDivider
+            .mdui-divider.mdui-m-t-0
+        .mdui-dialog-actions(class=contentPaddingX ? `mdui-p-b-${contentPaddingX + 1}` : "")
             if actions
                 each action in actions
                     button.mdui-btn.mdui-ripple(onclick=action.onclick mdui-dialog-close=action.close)= action.text
             if onsave
                 button.mdui-btn.mdui-ripple(onclick=onsave) 保存
             button.mdui-btn.mdui-ripple(mdui-dialog-close) 关闭
+
+mixin genContent(content, id)
+    .mdui-row(id=id)
+        if content
+            each item in content
+                .mdui-col-xs-12.mdui-p-b-1
+                    .mdui-typo-title= item.title
+                if item.content
+                    .mdui-col-xs-1.mdui-p-b-1.retract
+                    .mdui-col-xs-10.mdui-col-sm-11.mdui-p-b-1!= item.content.trim().replaceAll("\n", "").replaceAll("    ", "")
