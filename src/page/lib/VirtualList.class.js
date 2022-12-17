@@ -18,18 +18,19 @@ export class VirtualList {
         this.$ = $list
         this.vs = new VirtualScroll({
             rootEle: $list.parentNode,
-            config: {
-                get height() {
-                    return $list.parentNode.offsetHeight
-                },
-                get itemHeight() {
-                    return itemHeight ?? ITEM_HEIGHT
-                }
-            },
             data: [],
             render: renderer.bind(this),
-            bench: 10,
-            callback
+            callback,
+            
+            _getter: {
+                get bench() {
+                    return app.plugin.get(/^(.+):option$/).getItem("listBench")
+                },
+                get height() {
+                    return $list.parentNode.offsetHeight
+                }
+            },
+            itemHeight: itemHeight ?? ITEM_HEIGHT
         })
         dialogs[id].$element.on("open.mdui.dialog", () => {
             this.load()
