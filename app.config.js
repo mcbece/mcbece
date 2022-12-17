@@ -110,6 +110,9 @@ export default {
     },
     
     event: {
+        "app.construct.end": [
+            () => app.event.emit("app.reoption")
+        ],
         "app.init": [
             () => {
                 if (app.LANG === "en") app.config.$grammar.classList.add("minecraft-font")
@@ -136,7 +139,7 @@ export default {
         "app.input.copy": [
             () => snackbar("已复制")
         ],
-        "app.reoption": [  // 整个 app 的启动入口在这里
+        "app.reoption": [
             () => {
                 document.body.classList.add("loading")
                 

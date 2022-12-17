@@ -24,7 +24,7 @@ export class VirtualList {
             
             _getter: {
                 get bench() {
-                    return app.plugin.get(/^(.+):option$/).getItem("listBench")
+                    return app.plugin.get(/^(.+):option$/).getItemVal("listBench")
                 },
                 get height() {
                     return $list.parentNode.offsetHeight
