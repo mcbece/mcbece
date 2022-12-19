@@ -78,6 +78,10 @@
             padding: 0;
             height: 20px;
             
+            white-space: nowrap;
+            overflow-x: scroll;
+            overflow-y: hidden;
+            
             .mdui-list-item-title {
                 display: inline;
                 font-size: 13px;
