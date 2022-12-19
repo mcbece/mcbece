@@ -82,7 +82,7 @@ export function rendererTmpl(btn = () => "") {
                     <div class="mdui-list-item-content" style="overflow-x: scroll; white-space: nowrap;">${i} - ${cont}</div>
                     ${btn(cont, i)}
                     <button class="mdui-btn mdui-btn-icon mdui-list-item-things-display-when-hover" onclick="_page.vlists.${this.id}.remove('${cont}')">
-                        <i class="mdui-icon material-icons mdui-text-color-black-icon">delete</i>
+                        <i class="mdui-icon material-icons mdui-text-color-theme-icon">delete</i>
                     </button>
                 </div>
             `

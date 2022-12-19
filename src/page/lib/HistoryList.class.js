@@ -8,7 +8,7 @@ export class HistoryList extends VirtualList {
             $list,
             renderer: rendererTmpl((cont, i) => `
                 <button class="mdui-btn mdui-btn-icon mdui-list-item-things-display-when-hover" onclick="_page.history.toogleLoveState('${cont}')">
-                    <i class="mdui-icon material-icons mdui-text-color-black-icon">${ hasLoved(cont) ? "favorite" : "favorite_border" }</i>
+                    <i class="mdui-icon material-icons mdui-text-color-theme-icon">${ hasLoved(cont) ? "favorite" : "favorite_border" }</i>
                 </button>
             `)
         })
