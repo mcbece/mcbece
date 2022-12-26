@@ -68,8 +68,8 @@ function genContent(item) {
         version: () => `<p>版本：${item.version.join(".")}</p>`,
         description: () => `<p>描述：${item.description}</p>`,
         id: () => `<p>ID：${item.id}</p>`,
-        homepage: () => `<p>主页：<a href="${item.homepage}">${item.homepage}</a></p>`,
-        bugs: () => `<p>反馈：<a href="${item.bugs}" class="mdui-text-truncate">${item.bugs}</a></p>`,
+        homepage: () => `<p>主页：<a class="mdui-text-color-theme-accent-revise-primary" href="${item.homepage}">${item.homepage}</a></p>`,
+        bugs: () => `<p>反馈：<a class="mdui-text-color-theme-accent-revise-primary" href="${item.bugs}" class="mdui-text-truncate">${item.bugs}</a></p>`,
     }
     const content = []
     each(item, (value, key) => {

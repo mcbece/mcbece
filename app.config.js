@@ -92,7 +92,7 @@ export default {
         replacer: {
             "Highlight:": {
                 directReturn(name) {
-                    return `<span class="mdui-text-color-theme-accent">${name}</span>`
+                    return `<span class="mdui-text-color-theme-accent-revise-primary">${name}</span>`
                 },
                 indirectReturn(name) {
                     return name
