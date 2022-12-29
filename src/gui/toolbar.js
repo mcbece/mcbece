@@ -9,24 +9,24 @@ const ALL_TOOLS = {
     copy: {
         icon: "content_copy",
         onclick: () => {
-            const cont = app.config.$input.value
-            app.input.copy()
-            _page.history.add(cont)
+            const cont = core.config.$input.value
+            core.input.copy()
+            app.gui.history.add(cont)
         }
     },
     wiki: {
         icon: "import_contacts",
-        onclick: () => window.open(app.data.get("text", "url.command_page") + app.input.catchName(), "_blank")
+        onclick: () => window.open(core.data.get("text", "url.command_page") + core.input.catchName(), "_blank")
     },
     love: {
         icon() {
-            const cont = app.config.$input.value
+            const cont = core.config.$input.value
             return hasLoved(cont) ? "favorite" : "favorite_border"
         },
         onclick() {
-            const cont = app.config.$input.value
-            _page.history.add(cont)
-            _page.history.toogleLoveState(cont)
+            const cont = core.config.$input.value
+            app.gui.history.add(cont)
+            app.gui.history.toogleLoveState(cont)
             this.querySelector("i").innerText = getReturn(ALL_TOOLS.love.icon)
         }
     },
@@ -36,9 +36,9 @@ const ALL_TOOLS = {
     }
 }
 
-export const toolbar = {
+export default {
     load(...toolNames) {
-        if (!toolNames.length || app.input.catchName().startsWith("@")) return this.clear()
+        if (!toolNames.length || core.input.catchName().startsWith("@")) return this.clear()
         if (deepEqual(this._names, toolNames)) return
         this.clear()
         this._names = toolNames
@@ -82,11 +82,11 @@ export const toolbar = {
     },
     _closeCollapse() {
         $arrow.style.display = "none"
-        _page.collapses.header.close(0)
+        app.gui.collapses.header.close(0)
     },
     _openCollapse() {
         $arrow.style.display = ""
-        _page.collapses.header.open(0)
+        app.gui.collapses.header.open(0)
     }
 }
 

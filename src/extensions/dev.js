@@ -4,7 +4,7 @@ const content = {
     zh_cn: {
         "*": {
             list: {
-                another10000: deepCopy(app.data.get("list", "lang").export),
+                another10000: deepCopy(core.data.get("list", "lang").export),
                 test: [
                     {
                         test: "testHeader",

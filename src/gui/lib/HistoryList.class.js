@@ -7,19 +7,19 @@ export class HistoryList extends VirtualList {
             id: "history",
             $list,
             renderer: rendererTmpl((cont, i) => `
-                <button class="mdui-btn mdui-btn-icon mdui-list-item-things-display-when-hover" onclick="_page.history.toogleLoveState('${cont}')">
+                <button class="mdui-btn mdui-btn-icon mdui-list-item-things-display-when-hover" onclick="app.gui.history.toogleLoveState('${cont}')">
                     <i class="mdui-icon material-icons mdui-text-color-theme-icon">${ hasLoved(cont) ? "favorite" : "favorite_border" }</i>
                 </button>
             `)
         })
     }
     add(cont) {
-        app._userData.setItemVal("history", cont).done()
+        core._userData.setItemVal("history", cont).done()
         this.load()
     }
     toogleLoveState(cont) {
-        if (hasLoved(cont)) _page.love.unlove(cont)
-        else _page.love.add(cont)
+        if (hasLoved(cont)) app.gui.love.unlove(cont)
+        else app.gui.love.add(cont)
         this.load({ reloadToolbar: true })
     }
     // TODO: loveAll()

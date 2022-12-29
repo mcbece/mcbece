@@ -22,7 +22,7 @@ window.addEventListener("close.mdui.collapse", evt => {
     if (evt._detail.inst.$element[0].id = "header") {
         setTimeout(() => {
             setBodyPaddingTop()
-            app.list.__vs.onEvent({ forceload: true })
+            core.list.__vs.onEvent({ forceload: true })
         }, 0)
     }
 })

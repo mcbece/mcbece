@@ -6,11 +6,11 @@ export class LoveList extends VirtualList {
         super({ id: "love", $list })
     }
     add(cont) {
-        app._userData.setItemVal("love", cont).done().then(() => snackbar("已收藏"))
+        core._userData.setItemVal("love", cont).done().then(() => snackbar("已收藏"))
         this.load()
     }
     unlove(cont) {
-        app._userData.deleteStoreData("love", cont).done().then(() => snackbar("已取消收藏"))
+        core._userData.deleteStoreData("love", cont).done().then(() => snackbar("已取消收藏"))
         this.load()
     }
 }

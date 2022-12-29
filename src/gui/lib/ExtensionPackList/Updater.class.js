@@ -8,7 +8,7 @@ export class Updater {
         this.id = extensionPackList.id
     }
     check(newData, thisData) {
-        const store = app._userData._getItem(this.id)
+        const store = core._userData._getItem(this.id)
         const index = newData.id
         if (thisData ? thisData.id === newData.id : true && store.hasByIndex(index)) {
             const oldData = thisData
@@ -62,11 +62,11 @@ export class Updater {
         }
     }
     update({ newData, index, message = "更新成功", extendEnableState = true }) {
-        const store = app._userData._getItem(this.id)
+        const store = core._userData._getItem(this.id)
         const oldData = store.getByIndex(index)
         if (extendEnableState) newData.__enable = oldData.__enable
         store.setByIndex(index, newData)
-        app._userData.done().then(() => snackbar(message))
+        core._userData.done().then(() => snackbar(message))
     }
     // updateURL(newURL) {
         // TODO 支持更新某个扩展包的 URL

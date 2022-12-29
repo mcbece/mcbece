@@ -26,10 +26,10 @@ include ./mixins/dialog.pug
     content: `
         <div class="mdui-toolbar mdui-color-theme" style="position: fixed; top: 92px;">
             <div class="mdui-toolbar-spacer"></div>
-            <button class="mdui-btn mdui-btn-icon" onclick="_page.extensions.clear()">
+            <button class="mdui-btn mdui-btn-icon" onclick="app.gui.extensions.clear()">
                 <i class="mdui-icon material-icons">block</i>
             </button>
-            <button class="mdui-btn mdui-btn-icon" onclick="_page.extensions.new()">
+            <button class="mdui-btn mdui-btn-icon" onclick="app.gui.extensions.new()">
                 <i class="mdui-icon material-icons">add</i>
             </button>
         </div>
@@ -46,7 +46,7 @@ include ./mixins/dialog.pug
             title: "安装：",
             content: `
                 <div class="mdui-typo">
-                    如果你是第一次访问该网站，你可以选择安装该 PWA <a class="mdui-float-right" onclick="app.pwa.install()">点击安装</a>
+                    如果你是第一次访问该网站，你可以选择安装该 PWA <a class="mdui-float-right" onclick="core.pwa.install()">点击安装</a>
                 </div>
             `
         },
@@ -54,7 +54,7 @@ include ./mixins/dialog.pug
             title: "检查更新：",
             content: `
                 <div class="mdui-typo">
-                    检查是否有新的版本<a class="mdui-float-right" onclick="app.pwa.check()">点击检查</a>
+                    检查是否有新的版本<a class="mdui-float-right" onclick="core.pwa.check()">点击检查</a>
                 </div>
             `
         },
@@ -62,7 +62,7 @@ include ./mixins/dialog.pug
             title: "立即更新：",
             content: `
                 <div class="mdui-typo">
-                    立即更新至最新版（如果有）<a class="mdui-float-right" onclick="app.pwa.update()">点击更新</a>
+                    立即更新至最新版（如果有）<a class="mdui-float-right" onclick="core.pwa.update()">点击更新</a>
                 </div>
             `
         }
@@ -79,7 +79,7 @@ include ./mixins/dialog.pug
     actions: [
         {
             text: "全部删除",
-            onclick: "_page.history.clear()"
+            onclick: "app.gui.history.clear()"
         }
     ]
 })
@@ -94,7 +94,7 @@ include ./mixins/dialog.pug
     actions: [
         {
             text: "全部删除",
-            onclick: "_page.love.clear()"
+            onclick: "app.gui.love.clear()"
         }
     ]
 })

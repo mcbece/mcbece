@@ -1,6 +1,6 @@
 import { each } from "@/util/index.js"
 
-const List = app.data.__extensionPackLib.List
+const List = core.data.__extensionPackLib.List
 
 const content = {
     zh_cn: {
@@ -61,7 +61,7 @@ const content = {
                                             }
                                         }
                                     })
-                                    each(app.data.get("list")._data, (_list, indexName) => {
+                                    each(core.data.get("list")._data, (_list, indexName) => {
                                         list.addItem({
                                            name: indexName,
                                            description: _list._header.name
@@ -103,7 +103,7 @@ const content = {
                                             name,
                                             description: tool.querySelector(".mdui-dialog-title .mdui-typo-headline").innerHTML + ": " + tool.querySelector(".mdui-dialog-title .mdui-typo-caption-opacity").innerHTML,
                                             onclick() {
-                                                _page.dialogs[name].open()
+                                                app.gui.dialogs[name].open()
                                             }
                                         })
                                     })

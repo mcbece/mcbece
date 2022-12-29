@@ -25,7 +25,7 @@ export class ExtensionPackList extends VirtualList {
                     `)
                     if (item.__enable) node.classList.add("mdui-list-item-active")
                     node.addEventListener("click", () => {
-                        const mainDialog = _page.dialogs[this.id]
+                        const mainDialog = app.gui.dialogs[this.id]
                         mainDialog.close()
                         const detailDialog = new DetailDialog(item, this)
                     })
@@ -36,11 +36,11 @@ export class ExtensionPackList extends VirtualList {
         })
         this.updater = new Updater(this)
         
-        app.event.once("app.data.init", async () => {
-            const store = app._userData._getItem(this.id)
+        core.event.once("core.data.init", async () => {
+            const store = core._userData._getItem(this.id)
             
-            // Set internal packs from `app.config.data.extensionPacks`
-            const internalPacks = app.config.get("data.extensionPacks")
+            // Set internal packs from `core.config.data.extensionPacks`
+            const internalPacks = core.config.get("data.extensionPacks")
             if (internalPacks && internalPacks.length) {
                 await asyncEach(internalPacks, async pack => {
                     let packData
@@ -68,11 +68,11 @@ export class ExtensionPackList extends VirtualList {
                 }
             })
             
-            await app._userData.done()
+            await core._userData.done()
         })
     }
     new() {
-        const mainDialog = _page.dialogs[this.id]
+        const mainDialog = app.gui.dialogs[this.id]
         mainDialog.close()
         const inputDialog = new InputDialog({
             title: "添加",
@@ -91,19 +91,19 @@ export class ExtensionPackList extends VirtualList {
     }
     reload() {
         this.load()
-        app.event.emit("app.reoption")
+        core.event.emit("core.reoption")
     }
     add(data) {
-        app._userData.setItemVal(this.id, data).done().then(() => snackbar("添加成功"))
+        core._userData.setItemVal(this.id, data).done().then(() => snackbar("添加成功"))
         this.reload()
     }
     remove(data, detailDialog) {
-        const mainDialog = _page.dialogs[this.id]
+        const mainDialog = app.gui.dialogs[this.id]
         detailDialog.close()
         confirm({
             message: "确认删除？",
             onConfirm: () => {
-                app._userData.deleteStoreData(this.id, data).done().then(() => snackbar("已删除"))  // TODO 可撤回
+                core._userData.deleteStoreData(this.id, data).done().then(() => snackbar("已删除"))  // TODO 可撤回
                 this.reload()
                 detailDialog.close().destroy({ thenOpen: mainDialog })
             },
@@ -113,17 +113,17 @@ export class ExtensionPackList extends VirtualList {
         })
     }
     clear() {
-        const mainDialog = _page.dialogs[this.id]
+        const mainDialog = app.gui.dialogs[this.id]
         mainDialog.close()
         confirm({
             message: "确认删除全部外部扩展包并禁用全部内部扩展包？",
             onConfirm: () => {
-                const store = app._userData._getItem(this.id)
+                const store = core._userData._getItem(this.id)
                 each(store.data, pack => {
                     if (!pack.__internal) store.delData(pack)
                     else pack.__enable = false
                 })
-                app._userData.done().then(() => snackbar("已全部删除"))
+                core._userData.done().then(() => snackbar("已全部删除"))
                 mainDialog.open()
                 this.reload()
             },
@@ -133,7 +133,7 @@ export class ExtensionPackList extends VirtualList {
         })
     }
     toggleEnable(data, detailDialog) {
-        const mainDialog = _page.dialogs[this.id]
+        const mainDialog = app.gui.dialogs[this.id]
         detailDialog.close()
         const keyword = data.__enable ? "禁用" : "启用"
         confirm({
@@ -168,6 +168,6 @@ const tmpl = i => ({
     content: {}
 })
 
-for (let i = 0; i < 100; i++) app._userData.setItemVal("extensions", tmpl(i))
-app._userData.done()
+for (let i = 0; i < 100; i++) core._userData.setItemVal("extensions", tmpl(i))
+core._userData.done()
 */

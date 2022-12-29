@@ -30,7 +30,7 @@ export class DetailDialog {
                 {
                     text: "关闭",
                     onClick: () => {
-                        const mainDialog = _page.dialogs[extensionPackList.id]
+                        const mainDialog = app.gui.dialogs[extensionPackList.id]
                         this.close().destroy({ thenOpen: mainDialog })
                     }
                 }

@@ -16,7 +16,7 @@ export default {
     list: {
         _height() {
             const _fix1 = window._LITE_MODE ? 85 : 120
-            const _fix2 = _page.collapses.header.$element[0].querySelector(".mdui-collapse-item-open")
+            const _fix2 = app.gui.collapses.header.$element[0].querySelector(".mdui-collapse-item-open")
                 ? window._LITE_MODE ? 45 : 90
                 : 0
             return document.documentElement.clientHeight - _fix1 - _fix2
@@ -110,59 +110,59 @@ export default {
     },
     
     event: {
-        "app.construct.end": [
-            () => app.event.emit("app.reoption")
+        "core.construct.end": [
+            () => core.event.emit("core.reoption")
         ],
-        "app.init": [
+        "core.init": [
             () => {
-                if (app.LANG === "en") app.config.$grammar.classList.add("minecraft-font")
+                if (core.LANG === "en") core.config.$grammar.classList.add("minecraft-font")
             }
         ],
-        "app.init.end": [
+        "core.init.end": [
             () => document.body.classList.remove("loading")
         ],
-        "app.i18n": [
-            getText => app.config.$input.placeholder = getText("input")
+        "core.i18n": [
+            getText => core.config.$input.placeholder = getText("input")
         ],
-        "app.clear": [
-            () => _page.toolbar.clear()
+        "core.clear": [
+            () => app.gui.toolbar.clear()
         ],
-        "app.change": [
-            () => _page.toolbar.load("wiki")
+        "core.change": [
+            () => app.gui.toolbar.load("wiki")
         ],
-        "app.grammar.finish": [
-            () => _page.toolbar.load("love", "wiki", "__", "copy")
+        "core.grammar.finish": [
+            () => app.gui.toolbar.load("love", "wiki", "__", "copy")
         ],
-        "app.input.love": [
+        "core.input.love": [
             () => snackbar("已收藏")
         ],
-        "app.input.copy": [
+        "core.input.copy": [
             () => snackbar("已复制")
         ],
-        "app.reoption": [
+        "core.reoption": [
             () => {
                 document.body.classList.add("loading")
                 
-                setFestivalTheme(app.option)
+                setFestivalTheme(core.option)
                 setBodyPaddingTop()
                 
-                app.init({
-                    ...app.option.getItemValMap(),
-                    userData: app._userData.getItemValMap()
+                core.init({
+                    ...core.option.getItemValMap(),
+                    userData: core._userData.getItemValMap()
                 })
             }
         ],
-        "app.list.load": [
+        "core.list.load": [
             result => {
                 console.debug({ listLoadResult: result })
             }
         ],
-        "app.list.search": [
+        "core.list.search": [
             result => {
                 //@dev console.debug({ listSearchResult: result })
             }
         ],
-        "app.plugin.load": [
+        "core.plugin.load": [
             name => {
                 console.debug(`Loading plugin: '${name}'.`)
             }
