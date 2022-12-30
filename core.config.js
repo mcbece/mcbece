@@ -23,10 +23,13 @@ export default {
         },
         _itemHeight() {
             if (window._LITE_MODE) {
-                const height = window.innerHeight / 16
-                if (height > 36) return 36
-                else if (height < 24) return 24
-                else return Math.round(height)
+                if (core.plugin.get(/^(.+):option$/).getItemVal("liteModeFixedListItemHeight")) return 36
+                else {
+                    const height = window.innerHeight / 16
+                    if (height > 36) return 36
+                    else if (height < 24) return 24
+                    else return Math.round(height)
+                }
             } else return 72
         },
         template: {
