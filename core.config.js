@@ -33,7 +33,7 @@ export default {
             } else return 72
         },
         template: {
-            item(_id, _name, i, renderer) {
+            item(renderer, _id, _name, i) {
                 const item = stringToNode(trimString(`
                     <li class="mdui-list-item mdui-ripple" data-id="${_id}" data-list-name="${_name}" id="${i}">
                         <div class="mdui-list-item-content">
@@ -149,10 +149,7 @@ export default {
                 setFestivalTheme(core.option)
                 setBodyPaddingTop()
                 
-                core.init({
-                    ...core.option.getItemValMap(),
-                    userData: core._userData.getItemValMap()
-                })
+                core.init()
             }
         ],
         "core.list.load": [

@@ -11,7 +11,7 @@ const content = {
                         template: {
                             sprite: {
                                 img: "/test/image/BlockCSS.png",
-                                imgWidth: 384,
+                                imgWidth: 768,
                                 size: 16
                             }
                         }
@@ -25,7 +25,7 @@ const content = {
                         name: "testSprite",
                         description: "test block sprite",
                         sprite: {
-                            pos: 3
+                            pos: 1537
                         }
                     },
                     {
@@ -46,6 +46,16 @@ const content = {
                                 "/test/audio/audio2.mp3",
                                 "/test/audio/audio3.ogg"
                             ]
+                        }
+                    },
+                    {
+                        name: "test",
+                        description: "test",
+                        sprite: {
+                            img: "/test/image/glyph_E0.png",
+                            imgWidth: 512,
+                            size: 32,
+                            pis: 1
                         }
                     }
                 ],

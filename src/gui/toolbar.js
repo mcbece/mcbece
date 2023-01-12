@@ -44,7 +44,7 @@ export default {
         this._names = toolNames
         if (toolNames.length === 1) {
             const tool = ALL_TOOLS[toolNames[0]]
-            $funBtn.innerHTML = tmpl(tool, true)
+            $funBtn.innerHTML = tmpl(tool, { onlyIcon: true })
             $funBtn.onclick = tool.onclick.bind($funBtn)
             $funBtn.style.display = ""
         } else {
@@ -60,7 +60,7 @@ export default {
         const toolNames = this._names
         if (toolNames.length === 1) {
             const tool = ALL_TOOLS[toolNames[0]]
-            $funBtn.innerHTML = tmpl(tool, true)
+            $funBtn.innerHTML = tmpl(tool, { onlyIcon: true })
             $funBtn.onclick = tool.onclick.bind($funBtn)
             $funBtn.style.display = ""
         } else {
@@ -90,7 +90,7 @@ export default {
     }
 }
 
-function tmpl(tool, onlyIcon) {
+function tmpl(tool, { onlyIcon }) {
     const icon = getReturn(tool.icon)
     if (onlyIcon) return `<i class="mdui-icon material-icons mdui-text-color-theme-icon">${icon}</i>`
     const btn = stringToNode(`
