@@ -48,7 +48,7 @@ export default {
                         ${ window._LITE_MODE ? "" : renderer.get("url") }
                     </li>
                 `))
-                item.onclick = () => {
+                item.querySelector(".mdui-list-item-content").onclick = () => {
                     getReturn(renderer.get("input"))
                     getReturn(renderer.get("onclick"))
                 }

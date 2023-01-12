@@ -39,6 +39,9 @@ const content = {
                     {
                         name: "testAudio",
                         description: "test audio",
+                        onclick() {
+                            alert("Test")
+                        },
                         media: {
                             type: "audio",
                             src: [
