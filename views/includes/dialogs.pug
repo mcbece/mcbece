@@ -1,21 +1,12 @@
 include ./mixins/dialog.pug
 
-//- +dialog({
++dialog({
     id: "option",
     title: "设置",
     subtitle: "修改网站设置",
-    content: [
-        {
-            title: "说明：",
-            content: `
-                <span class="mdui-typo">
-                    该工具暂时不能使用，请尝试使用 <code>@option</code> 命令<br />
-                    请确保加载了 <code>/js/custom/example.min.js</code> 扩展（已在配置文件中指定并加载）
-                </span>
-            `
-        }
-    ]
-//- })
+    contentClass: "mdui-p-b-0",
+    content: []
+})
 +dialog({
     id: "extensions",
     title: "扩展包",
@@ -40,7 +31,7 @@ include ./mixins/dialog.pug
     id: "pwa",
     title: "PWA",
     subtitle: "使用 PWA 的相关功能",
-    contentClass: "mdui-p-t-3",
+    contentPaddingX: 3,
     content: [
         {
             title: "安装：",

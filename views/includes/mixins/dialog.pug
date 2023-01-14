@@ -13,7 +13,7 @@ mixin dialog({ id, title, subtitle, footerDivider, tabs, content, contentClass, 
                     each tab in tabs
                         +genContent(tab.content, `${id}-dialog-tab-${tab.id}`)
         else if content
-            .mdui-dialog-content(class=contentClass + (contentPaddingX ? ` mdui-m-t-${contentPaddingX}` : ""))
+            .mdui-dialog-content(class=(contentClass ? contentClass : "") + (contentPaddingX ? ` mdui-m-t-${contentPaddingX}` : ""))
                 if Array.isArray(content)
                     +genContent(content)
                 else
