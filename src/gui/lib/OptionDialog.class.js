@@ -1,4 +1,4 @@
-import { each, stringToNode } from "@/util/index.js"
+import { each, stringToNode, objectMap } from "@/util/index.js"
 
 export class OptionDialog extends mdui.Dialog {
     constructor($dialog) {
@@ -6,25 +6,25 @@ export class OptionDialog extends mdui.Dialog {
             history: false,
             modal: true
         })
+        this.$content = this.$element[0].querySelector(".mdui-dialog-content")
         this.$element.on("closed.mdui.dialog", () => {
-            if (this._changed) {
-                core.event.emit("core.reoption")
-                this._changed = false
-            }
+            core.event.emit("core.reoption")
         })
         
         // 保证 core 的 option 插件加载并同步完成后再加载 GUI
-        core.event.on("core.reoption", () => this.load())
+        core.event.once("core.reoption", () => {
+            this.load()
+            core.event.on("core.reoption", () => this.reload())
+        })
     }
     load() {
-        const $content = this.$element[0].querySelector(".mdui-dialog-content")
         const stores = core.option.items
         const $fragment = new DocumentFragment()
         each(stores, storeItem => {
             $fragment.appendChild(this._genItem(storeItem))
         })
-        $content.innerHTML = ""
-        $content.appendChild($fragment)
+        this.$content.innerHTML = ""
+        this.$content.appendChild($fragment)
         // this.$element.mutation()
     }
     _genItem(item) {
@@ -47,9 +47,11 @@ export class OptionDialog extends mdui.Dialog {
             `)
             const $input = $label.querySelector("input")
             $input.checked = item.selected
-            $input.addEventListener("change", event => {
-                this._changed = true
-                core.option.setItemVal(name, $input.checked).done().catch(console.error)
+            $input.addEventListener("change", () => {
+                core.option.setItemVal(name, $input.checked).done().then(() => this.reload()).catch(console.error)
+            })
+            $input.addEventListener("app.core.option.sync", () => {
+                $input.checked = core.option.getItemVal(name)
             })
             $values.appendChild($label)
         } else {
@@ -57,15 +59,21 @@ export class OptionDialog extends mdui.Dialog {
             const $select = stringToNode(`<select class="mdui-select" style="width: 100%;"></select>`)
             $fragment.appendChild($select)
             let i = 0
-            const valueMap = []
+            const valueMap = {}
             each(values, ([valueName, valueDesc]) => {
-                valueMap[`${i}`] = valueName
+                valueMap[i] = valueName
                 $select.appendChild(stringToNode(`<option value="${i}"${ valueName === item.selected ? " selected" : "" }>${valueDesc}</option>`))
                 i++
             })
-            $select.addEventListener("change", event => {
-                this._changed = true
-                core.option.setItemVal(name, valueMap[$select.value]).done().catch(console.error)
+            $select.addEventListener("change", () => {
+                core.option.setItemVal(name, valueMap[$select.selectedIndex]).done().then(() => this.reload()).catch(console.error)
+            })
+            $select.addEventListener("app.core.option.sync", () => {
+                const _valueMap = objectMap(valueMap, (value, key) => ({
+                    value: key,
+                    key: value
+                }))
+                $select.selectedIndex = _valueMap[core.option.getItemVal(name)]
             })
             if (!window._LITE_MODE) {
                 const mduiSelect = new mdui.Select($select)
@@ -92,6 +100,8 @@ export class OptionDialog extends mdui.Dialog {
                 mduiSelect.$menu[0].style.position = "fixed"
                 this.$element[0].style.overflow = "visible"
                 
+                $select.addEventListener("app.core.option.sync", () => mduiSelect.handleUpdate())
+                
                 $fragment.appendChild($mduiSelect)
             }
             $values.appendChild($fragment)
@@ -99,6 +109,6 @@ export class OptionDialog extends mdui.Dialog {
         return $node
     }
     reload() {
-        return this.load()
+        each(this.$content.querySelectorAll("input, select"), e => e.dispatchEvent(new Event("app.core.option.sync")))
     }
 }
