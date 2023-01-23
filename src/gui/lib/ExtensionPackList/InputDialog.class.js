@@ -59,8 +59,9 @@ export class InputDialog {
         }
         this.dialog = mdui.dialog({
             title,
-            destroyOnClosed: false,
             modal: true,
+            history: false,
+            destroyOnClosed: false,
             closeOnEsc: false,
             content: nodeToString(content),
             buttons: [

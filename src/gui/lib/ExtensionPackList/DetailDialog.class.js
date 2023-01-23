@@ -5,8 +5,9 @@ export class DetailDialog {
         this.dialog = mdui.dialog({
             title: "详细信息",
             content: genContent(item),
-            destroyOnClosed: false,
             modal: true,
+            history: false,
+            destroyOnClosed: false,
             closeOnEsc: false,
             buttons: [
                 {
