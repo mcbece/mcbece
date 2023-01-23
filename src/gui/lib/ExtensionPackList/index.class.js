@@ -18,8 +18,8 @@ export class ExtensionPackList extends VirtualList {
                     const node = stringToNode(`
                         <div class="mdui-list-item mdui-ripple" id=${i} style="height: ${ITEM_HEIGHT}px;">
                             <div class="mdui-list-item-content">
-                                <div class="mdui-list-item-title">${item.name + ( item.__internal ? "（内部）" : "" )}</div>
-                                <div class="mdui-list-item-text mdui-list-item-two-line">By ${item.author} - v${item.version.join(".")}<br />${item.description}</div>
+                                <div class="mdui-list-item-title">${ item.name }${ item.__internal ? "（内部）" : "" }${ item.__error ? '<span class="mdui-text-color-red">（错误）</span>' : "" }</div>
+                                <div class="mdui-list-item-text mdui-list-item-two-line">By ${ item.author } - v${ item.version.join(".") }<br />${ item.description }</div>
                             </div>
                         </div>
                     `)
@@ -56,15 +56,15 @@ export class ExtensionPackList extends VirtualList {
             }
             
             // Init pack content
-            const packs = store.data
-            await asyncEach(packs, async pack => {
+            await asyncEach(store.data, async pack => {
                 if (!pack.__internal) {
-                    const { __file: file, __url: url, __enable: enable } = pack
-                    const packData = await importDefault(URL.createObjectURL(file))
-                    packData.__file = file
-                    packData.__url = url
-                    packData.__enable = enable
-                    store.setByIndex(pack.id, packData)
+                    const {
+                        __enable: enable,
+                        __file: file,
+                        __url: url
+                    } = pack
+                    const data = await InputDialog.initData({ file, url }, pack)
+                    store.setByIndex(pack.id, data)
                 }
             })
             
@@ -116,7 +116,7 @@ export class ExtensionPackList extends VirtualList {
         const mainDialog = app.gui.dialogs[this.id]
         mainDialog.close()
         confirm({
-            message: "确认删除全部外部扩展包并禁用全部内部扩展包？",
+            message: "确认删除全部第三方扩展包并禁用全部内部扩展包？",
             onConfirm: () => {
                 const store = core._userData._getItem(this.id)
                 each(store.data, pack => {

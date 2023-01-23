@@ -63,13 +63,20 @@ export class DetailDialog {
 
 function genContent(item) {
     const renderMap = {
-        name: () => `<p>名称：${item.name + ( item.__internal ? "（内部）" : "" )}</p>`,
-        author: () => `<p>作者：${item.author}</p>`,
-        version: () => `<p>版本：${item.version.join(".")}</p>`,
-        description: () => `<p>描述：${item.description}</p>`,
-        id: () => `<p>ID：${item.id}</p>`,
-        homepage: () => `<p>主页：<a class="mdui-text-color-theme-accent-revise-primary" href="${item.homepage}">${item.homepage}</a></p>`,
-        bugs: () => `<p>反馈：<a class="mdui-text-color-theme-accent-revise-primary" href="${item.bugs}" class="mdui-text-truncate">${item.bugs}</a></p>`,
+        name: () => `<p>名称：${ item.name }${ item.__internal ? "（内部）" : "" }</p>`,
+        author: () => `<p>作者：${ item.author }</p>`,
+        version: () => `<p>版本：${ item.version.join(".") }</p>`,
+        description: () => `<p>描述：${ item.description }</p>`,
+        id: () => `<p>ID：${ item.id }</p>`,
+        homepage: () => `<p>主页：<a class="mdui-text-color-theme-accent-revise-primary" href="${ item.homepage }">${ item.homepage }</a></p>`,
+        bugs: () => `<p>反馈：<a class="mdui-text-color-theme-accent-revise-primary" href="${ item.bugs }" class="mdui-text-truncate">${ item.bugs }</a></p>`,
+        content: () => ``,
+        __enable: () => `<p>已启用：${ item.__enable ? "是" : "否" }</p>`,
+        __internal: () => `<p>内部包：${ item.__internal ? "是" : "否" }</p>`,
+        __error: () => `<h5 class="mdui-text-color-red">加载这个扩展包时发生错误，这很可能导致该扩展包不难生效</h5>`,
+        __errMsg: () => `<p class="mdui-text-color-red">错误：${ item.__errMsg }</p>`,
+        __url: () => ``,
+        __file: () => ``
     }
     const content = []
     each(item, (value, key) => {

@@ -85,9 +85,9 @@ export class Updater {
                 if (state === "error") {
                     const { message } = args
                     if (message === "VERSION_BACKWARD_INCOMPATIBILITY") {
-                        inputDialog.alert("该版本已不再向后支持，请手动删除以前的版本后重新添加")
+                        inputDialog.alert("该版本已不再向后支持，请手动删除以前的版本后重新安装")
                     } else if (message === "BACKWARD_VERSION") {
-                        inputDialog.alert("该版本落后于以前版本，如需安装，请手动删除以前的版本")
+                        inputDialog.alert("该版本落后于已安装的版本，如需安装，请删除已安装的版本")
                     }
                 } else if (state === "unmatch") {
                     inputDialog.alert("扩展包识别信息（id）不一致")

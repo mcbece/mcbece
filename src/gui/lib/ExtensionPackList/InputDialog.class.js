@@ -42,12 +42,7 @@ export class InputDialog {
             </div>
         `)
         const content = stringToNode(`<div class="mdui-panel mdui-panel-gapless"></div>`)
-        if (!updateMode) {
-            // TODO -> ./Updater.class.js
-            // addNoteToUrlItem("提示：使用 URL 加载会在页面刷新且网络允许时自动检查更新")
-            urlItem.classList.add("mdui-panel-item-open")
-            content.append(urlItem, fileItem)
-        } else {
+        if (updateMode) {
             // TODO -> ./Updater.class.js
             // addNoteToUrlItem(
             //     `当前 URL ：${ item.__url ?? "（无）" }`,
@@ -55,6 +50,11 @@ export class InputDialog {
             // )
             if (item.__url) urlItem.classList.add("mdui-panel-item-open")
             else fileItem.classList.add("mdui-panel-item-open")
+            content.append(urlItem, fileItem)
+        } else {
+            // TODO -> ./Updater.class.js
+            // addNoteToUrlItem("提示：使用 URL 加载会在页面刷新且网络允许时自动检查更新")
+            urlItem.classList.add("mdui-panel-item-open")
             content.append(urlItem, fileItem)
         }
         this.dialog = mdui.dialog({
@@ -76,10 +76,7 @@ export class InputDialog {
                     onClick: () => {
                         this.getData().then(data => {
                             if (data) onConfirmWithData(data)
-                            else {
-                                this.close()
-                                mdui.alert("请输入文件链接或上传文件", () => this.open())
-                            }
+                            else if (data !== 0) this.alert("请输入文件链接或上传文件")
                         }).catch(console.error)
                     }
                 }
@@ -105,27 +102,64 @@ export class InputDialog {
         })
         dialogToOpen.open()
     }
-    async getData() {
-        const { url, file } = this.values
-        if (url) {
-            const data = await importDefault(url)
-            const fileString = await (await fetch(url)).text()
-            data.__url = url
-            data.__file = new File([ fileString ], url.split("/").at(-1), { type: "text/javascript" })
-            return data
-        } else if (file) {
-            const objURL = URL.createObjectURL(file)
-            const data = await importDefault(objURL)
+    static async initData(value, _data) {
+        const { file, url } = value
+        if (file.type === "application/json") {
+            const fileString = await file.text()
+            const data = JSON.parse(fileString)
+            if (url) data.__url = url
             data.__file = file
             return data
+        } else if (file.type === "text/javascript") {
+            if (core.option.getItemVal("jsExtensions")) {
+                const objURL = URL.createObjectURL(file)
+                const data = await importDefault(objURL)
+                if (url) data.__url = url
+                data.__file = file
+                return data
+            } else {
+                const error = {
+                    __error: "DISABLE_JS_EXTENSION_PACKS",
+                    __errMsg: "当前设置不允许加载使用 JavaScript 编写的第三方扩展包",
+                    __file: file
+                }
+                if (url) data.__url = url
+                if (_data) Object.assign(error, _data)
+                return error
+            }
         }
     }
-    get values() {
-        const output = {}
-        each(this.dialog.$element[0].querySelectorAll("input"), input => {
-            if (input.type === "file") output.file = input.files[0]
-            else output.url = input.value
-        })
-        return output
+    async getData() {
+        const value = await this.value()
+        if (value) {
+            const data = await InputDialog.initData(value)
+            if (data.__error) {
+                this.alert(data.__errMsg)
+                return 0
+            } else return data
+        }
+    }
+    async value() {
+        for (const input of this.dialog.$element[0].querySelectorAll("input")) {
+            if (input.type === "file") {
+                const file = input.files[0]
+                if (file) return {
+                    file,
+                    url: null
+                }
+                else continue
+            } else {
+                if (input.value) {
+                    const res = await fetch(url)
+                    const type = res.headers.get("Content-Type")
+                    const fileString = await res.text()
+                    return {
+                        file: new File([ fileString ], url.split("/").at(-1), { type }),
+                        url
+                    }
+                }
+                else continue
+            }
+        }
     }
 }
