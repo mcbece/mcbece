@@ -10,11 +10,13 @@ export class DetailDialog extends Dialog {
             buttons: [
                 {
                     text: "更新",
-                    onClick: () => extensionPackList.updater.dialog(data, this)
+                    onClick: () => extensionPackList.updater.dialog(data, this),
+                    disabled: data.__internal
                 },
                 {
                     text: "删除",
-                    onClick: () => this.remove()
+                    onClick: () => this.remove(),
+                    disabled: data.__internal
                 },
                 {
                     text: data.__enable ? "禁用" : "启用",
@@ -29,11 +31,6 @@ export class DetailDialog extends Dialog {
         const $dialog = this.dialog.$dialog
         $dialog.classList.add("mdui-dialog-full-screen")
         this.dialog.$content.classList.add("mdui-typo")
-        if (data.__internal) {
-            const btns = $dialog.querySelectorAll(".mdui-dialog-actions > *")
-            btns[0].setAttribute("disabled", true)
-            btns[1].setAttribute("disabled", true)
-        }
         
         this.__extensionPackList = extensionPackList
         this.data = data
