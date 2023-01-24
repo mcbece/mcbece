@@ -1,6 +1,7 @@
-import { each, importDefault, stringToNode, nodeToString } from "@/util/index.js"
+import { each, importDefault, stringToNode } from "@/util/index.js"
+import { Dialog } from "@/util/mdui.js"
 
-export class InputDialog {
+export class InputDialog extends Dialog {
     constructor({
         title,
         item = {},
@@ -57,13 +58,9 @@ export class InputDialog {
             urlItem.classList.add("mdui-panel-item-open")
             content.append(urlItem, fileItem)
         }
-        this.dialog = mdui.dialog({
+        super({
             title,
-            modal: true,
-            history: false,
-            destroyOnClosed: false,
-            closeOnEsc: false,
-            content: nodeToString(content),
+            content,
             buttons: [
                 {
                     text: "取消",
@@ -83,50 +80,23 @@ export class InputDialog {
                 }
             ]
         })
-        const panel = new mdui.Panel(this.dialog.$element[0].querySelector(".mdui-panel"), { accordion: true })
+        const panel = new mdui.Panel(this.dialog.$content.querySelector(".mdui-panel"), { accordion: true })
     }
-    open() {
-        this.dialog.open()
-        return this
-    }
-    close() {
-        this.dialog.close()
-        return this
-    }
-    alert(message) {
-        this.close()
-        mdui.alert(message, () => this.open())
-    }
-    destroy({ thenOpen: dialogToOpen }) {
-        dialogToOpen.$element.one("opened.mdui.dialog", () => {
-            this.dialog.destroy()
-        })
-        dialogToOpen.open()
-    }
-    static async initData(value, _data) {
+    static async initData(value, _data = {}) {
         const { file, url } = value
         if (file.type === "application/json") {
             const fileString = await file.text()
-            const data = JSON.parse(fileString)
-            if (url) data.__url = url
-            data.__file = file
-            return data
+            return await getData(() => JSON.parse(fileString), file, url)
         } else if (file.type === "text/javascript") {
             if (core.option.getItemVal("jsExtensions")) {
                 const objURL = URL.createObjectURL(file)
-                const data = await importDefault(objURL)
-                if (url) data.__url = url
-                data.__file = file
-                return data
+                return await getData(async () => await importDefault(objURL), file, url, _data)
             } else {
                 const error = {
                     __error: "DISABLE_JS_EXTENSION_PACKS",
                     __errMsg: "当前设置不允许加载使用 JavaScript 编写的第三方扩展包",
-                    __file: file
                 }
-                if (url) data.__url = url
-                if (_data) Object.assign(error, _data)
-                return error
+                return Object.assign(_data, error)
             }
         }
     }
@@ -163,4 +133,19 @@ export class InputDialog {
             }
         }
     }
+}
+
+async function getData(fn, file, url, _data = {}) {
+    let data
+    try {
+        data = await fn()
+        data.__file = file
+        if (url) data.__url = url
+    } catch (err) {
+        data = {
+            __error: err,
+            __errMsg: err
+        }
+    }
+    return Object.assign(_data, data)
 }

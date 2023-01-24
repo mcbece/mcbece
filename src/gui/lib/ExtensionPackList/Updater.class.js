@@ -10,7 +10,7 @@ export class Updater {
     check(newData, thisData) {
         const store = core._userData._getItem(this.id)
         const index = newData.id
-        if (thisData ? thisData.id === newData.id : true && store.hasByIndex(index)) {
+        if (thisData ? thisData.id === index : true && store.hasByIndex(index)) {
             const oldData = thisData
             // ID 匹配
             if (compareVersion(newData, oldData, 0) === 0) {
@@ -19,7 +19,6 @@ export class Updater {
                         // OK e.g. v0.1.5 -> v0.1.7
                         return ["ok", {
                             newData,
-                            index,
                             oldData
                         }]
                     } else {
@@ -33,7 +32,6 @@ export class Updater {
                     // OK e.g. v0.1.5 -> v0.2.0
                     return ["ok", {
                         newData,
-                        index,
                         oldData
                     }]
                 } else {
@@ -61,12 +59,15 @@ export class Updater {
             return ["unmatch"]
         }
     }
-    update({ newData, index, message = "更新成功", extendEnableState = true }) {
+    update({ newData, message = "更新成功", extendEnableState = true, done = true }) {
         const store = core._userData._getItem(this.id)
+        const index = newData.id
         const oldData = store.getByIndex(index)
         if (extendEnableState) newData.__enable = oldData.__enable
         store.setByIndex(index, newData)
-        core._userData.done().then(() => snackbar(message))
+        if (done) core._userData.done().then(() => {
+            if (message) snackbar(message)
+        }).catch(console.error)
     }
     // updateURL(newURL) {
         // TODO 支持更新某个扩展包的 URL
@@ -96,12 +97,13 @@ export class Updater {
                     inputDialog.close()
                     const newDetailDialog = new DetailDialog(data, this.__extensionPackList)
                     // 因为上面 newDetailDialog 构建后会自动打开，
-                    // 再调用 inputDialog.destroy 和 detailDialog.destroy 会导致 newDetailDialog 被多次打开（同时只能打开一个，其余的会排队等待）
+                    // 再调用 inputDialog.destroy 和 detailDialog.destroy 会导致 newDetailDialog 被多次打开（同时只能打开一个，其余的请求会排队等待）
                     // inputDialog.destroy({ thenOpen: newDetailDialog.dialog })
                     // detailDialog.destroy({ thenOpen: newDetailDialog.dialog })
-                    newDetailDialog.dialog.$element.on("opened.mdui.dialog", () => {
-                        inputDialog.dialog.destroy()
-                        detailDialog.dialog.destroy()
+                    // 所以使用下面这种写法
+                    newDetailDialog.dialog.$element.one("opened.mdui.dialog", () => {
+                        inputDialog.destroy()
+                        detailDialog.destroy()
                     })
                 }
             },
