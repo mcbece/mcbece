@@ -1,4 +1,6 @@
+import fs from "node:fs"
 import { resolvePath } from "./lib/util/node.js"
+import { each } from "./lib/util/index.js"
 
 import commonjs from "@rollup/plugin-commonjs"
 import alias from "@rollup/plugin-alias"
@@ -6,34 +8,6 @@ import { nodeResolve } from "@rollup/plugin-node-resolve"
 import { uglify } from "rollup-plugin-uglify"
 
 export default function(banner, pkg) {
-    return [
-        // bundle.js
-        _({
-            src: "./index.js",
-            dest: "bundle.min.js",
-            name: "bundle"
-        }),
-        
-        // core
-        _({
-            src: "./lib/core/index.js",
-            dest: "lib/core.min.js",
-            name: "core"
-        }),
-        
-        // extension packs
-        _({
-            src: "extensions/example.js",
-            dest: "extensions/example.min.js",
-            name: "extension-packs-example"
-        }),
-        _({
-            src: "extensions/dev.js",
-            dest: "extensions/dev.min.js",
-            name: "extension-packs-dev"
-        })
-    ]
-    
     function _({ src, dest, name: _name }) {
         const name = `${pkg.name}${ _name ? `-${_name}` : "" }.js`
         return {
@@ -78,4 +52,33 @@ export default function(banner, pkg) {
             ]
         }
     }
+    
+    const output = [
+        // bundle.js
+        _({
+            src: "./index.js",
+            dest: "bundle.min.js",
+            name: "bundle"
+        }),
+        
+        // core
+        _({
+            src: "./lib/core/index.js",
+            dest: "lib/core.min.js",
+            name: "core"
+        })
+    ]
+    
+    // extension packs
+    const extensions = fs.readdirSync("./src/extensions")
+    each(extensions, fullname => {
+        const name = fullname.split(".")[0]
+        output.push(_({
+            src: `extensions/${fullname}`,
+            dest: `extensions/${name}.min.js`,
+            name: `extensions-packs-${name}`
+        }))
+    })
+    
+    return output
 }
