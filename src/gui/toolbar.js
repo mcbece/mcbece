@@ -90,7 +90,7 @@ export default {
     }
 }
 
-function tmpl(tool, { onlyIcon }) {
+function tmpl(tool, { onlyIcon } = {}) {
     const icon = getReturn(tool.icon)
     if (onlyIcon) return `<i class="mdui-icon material-icons mdui-text-color-theme-icon">${icon}</i>`
     const btn = stringToNode(`
