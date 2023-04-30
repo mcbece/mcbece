@@ -1,5 +1,15 @@
 @use "sass:map";
 
+// Header
+#header > .mdui-collapse-item {
+    background-color: #fff !important;
+}
+.mdui-theme-layout-dark {
+    #header > div.mdui-collapse-item {
+        background-color: #303030 !important;
+    }
+}
+
 // Drawer
 .mdui-drawer {
     &.mdui-drawer-always-wide {
