@@ -5,7 +5,7 @@ import { each } from "./lib/util/index.js"
 import commonjs from "@rollup/plugin-commonjs"
 import alias from "@rollup/plugin-alias"
 import { nodeResolve } from "@rollup/plugin-node-resolve"
-import { uglify } from "rollup-plugin-uglify"
+import terser from "@rollup/plugin-terser"
 
 export default function(banner, pkg) {
     function _({ src, dest, name: _name }) {
@@ -17,12 +17,10 @@ export default function(banner, pkg) {
                 file: dest.startsWith(".") ? dest : `./public/js/${dest}`,
                 strict: true,
                 sourcemap: true,
-                format: "es"
+                format: "es",
+                banner: banner(name)
             },
             plugins: [
-                nodeResolve({
-                    preferBuiltins: false
-                }),
                 alias({
                     entries: [
                         {
@@ -44,10 +42,11 @@ export default function(banner, pkg) {
                     ]
                 }),
                 commonjs(),
-                uglify({
-                    output: {
-                        preamble: banner(name)
-                    }
+                nodeResolve({
+                    preferBuiltins: false
+                }),
+                terser({
+                    maxWorkers: 4
                 })
             ]
         }
