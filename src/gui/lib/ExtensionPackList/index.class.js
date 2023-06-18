@@ -1,5 +1,5 @@
 import dialogs from "../../dialogs.js"
-import { stringToNode, asyncEach, importDefault, each } from "@/util/index.js"
+import { stringToNode, eachAsync, importDefault, each } from "@/util/index.js"
 import { snackbar, confirm } from "@/util/mdui.js"
 import { VirtualList } from "../VirtualList.class.js"
 import { DetailDialog } from "./DetailDialog.class.js"
@@ -44,7 +44,7 @@ export class ExtensionPackList extends VirtualList {
             // Set internal packs from `core.config.data.extensionPacks`
             const internalPacks = core.config.get("data.extensionPacks")
             if (internalPacks?.length) {
-                await asyncEach(internalPacks, async pack => {
+                await eachAsync(internalPacks, async pack => {
                     let packData
                     if (typeof pack === "string") packData = await importDefault(pack)
                     else packData = pack
@@ -55,7 +55,7 @@ export class ExtensionPackList extends VirtualList {
             }
             
             // Init pack content
-            await asyncEach(store.data, async pack => {
+            await eachAsync(store.data, async pack => {
                 if (!pack.__internal) {
                     const {
                         __enable: enable,

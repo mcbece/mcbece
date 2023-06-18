@@ -14,7 +14,7 @@ import pug from "gulp-pug"
 import { rollup } from "rollup"
 import genRollupConfig from "./rollup.js"
 
-import { asyncEach } from "./lib/util/index.js"
+import { eachAsync } from "./lib/util/index.js"
 import { getMcbelist } from "./lib/mcbelist.node.js"
 import { LANGUAGES } from "./src/data.js"
 
@@ -82,8 +82,8 @@ export const data = gulp.parallel(
             force: true
         })
         await fs.mkdir("./public/api")
-        await asyncEach(LANGUAGES, async ({ branches }, lang) => {
-            await asyncEach(branches, async (_, branch) => {
+        await eachAsync(LANGUAGES, async ({ branches }, lang) => {
+            await eachAsync(branches, async (_, branch) => {
                 const data = await getMcbelist(lang, branch)
                 const name = `mcbelist.${lang}.${branch}.min.js`
                 await fs.writeFile(`./public/api/${name}`, `${banner(name)}export default ${data}`)
